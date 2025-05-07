@@ -136,11 +136,12 @@ export const restoreProduct = handleAsyncError(async (req, res) => {
 
 export const getAllProducts = handleAsyncError(async (req, res, next) => {
   try {
+    const resultPerPage = parseInt(req.query.limit) || 10;
     const total_count = await Product.countDocuments();
-    const apiFunctionality = new APIFunctionality(
-      Product.find(),
-      req.query
-    ).seacrh();
+    const apiFunctionality = new APIFunctionality(Product.find(), req.query)
+      .seacrh()
+      .filter()
+      .pagination(resultPerPage);
     const products = await apiFunctionality.query;
     if (products.length === 0)
       return next(new HandleEror("No products found", 404));
