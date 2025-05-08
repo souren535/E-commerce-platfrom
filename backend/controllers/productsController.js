@@ -24,40 +24,38 @@ export const createProducts = handleAsyncError(async (req, res, next) => {
 });
 
 // GetAllProducts
-// export const getAllProducts = handleAsyncError(async (req, res, next) => {
-//   try {
-//     //  pagination parameters
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 10;
-//     const skip = (page - 1) * limit;
+export const getAllProducts = handleAsyncError(async (req, res, next) => {
+  try {
+    const resultPerPage = parseInt(req.query.limit) || 3;
+    const apiFeture = new APIFunctionality(Product.find(), req.query)
+      .seacrh()
+      .filter();
 
-//     const filter = { is_deleted: false };
-//     if (req.query.category) {
-//       filter.category = req.query.category;
-//     }
+    const filteredQuery = apiFeture.query.clone();
+    const totalProducts = await filteredQuery.countDocuments();
 
-//     // case-insensitive search just like laptop in search lap
-//     if (req.query.name) filter.name = { $regex: req.query.name, $options: "i" };
+    const totalPages = Math.ceil(totalProducts / resultPerPage);
+    const page = parseInt(req.query.page) || 1;
 
-//     const total_count = await Product.countDocuments(filter);
-//     const products = await Product.find(filter)
-//       .skip(skip)
-//       .limit(limit)
-//       .sort({ createdAt: -1 });
-//     if (products.length === 0)
-//       return next(new HandleEror("No products found", 404));
-//     res.status(200).json({
-//       success: true,
-//       message: "products fetched successfully",
-//       total_count: total_count,
-//       current_page: page,
-//       total_pages: Math.ceil(total_count / limit),
-//       products: products,
-//     });
-//   } catch (error) {
-//     next(new HandleEror(error.message, 500));
-//   }
-// });
+    if (page > totalPages && totalProducts > 0)
+      return next(new HandleEror("This Page doesn't exist", 404));
+
+    apiFeture.pagination(resultPerPage);
+    const products = await apiFeture.query;
+    if (!products || products.length === 0)
+      return next(new HandleEror("No products found", 404));
+    res.status(200).json({
+      success: true,
+      message: "products fetched successfully",
+      totalProducts,
+      totalPages,
+      currentPage: page,
+      products: products,
+    });
+  } catch (error) {
+    next(new HandleEror(error.message, 500));
+  }
+});
 
 // GetSingleProductbyId
 export const GetSingleProduct = handleAsyncError(async (req, res, next) => {
@@ -128,28 +126,6 @@ export const restoreProduct = handleAsyncError(async (req, res) => {
       success: true,
       message: "Product restored successfully",
       product: product,
-    });
-  } catch (error) {
-    next(new HandleEror(error.message, 500));
-  }
-});
-
-export const getAllProducts = handleAsyncError(async (req, res, next) => {
-  try {
-    const resultPerPage = parseInt(req.query.limit) || 10;
-    const total_count = await Product.countDocuments();
-    const apiFunctionality = new APIFunctionality(Product.find(), req.query)
-      .seacrh()
-      .filter()
-      .pagination(resultPerPage);
-    const products = await apiFunctionality.query;
-    if (products.length === 0)
-      return next(new HandleEror("No products found", 404));
-    res.status(200).json({
-      success: true,
-      message: "products fetched successfully",
-      total_count: total_count,
-      products: products,
     });
   } catch (error) {
     next(new HandleEror(error.message, 500));

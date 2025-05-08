@@ -9,10 +9,9 @@ export default (err, req, res, next) => {
     const message = `Invalid ID format: ${err.value}`;
     err = new HandleEror(message, 400); // 400 = Bad Request
   }
-  
 
   res.status(err.statusCode).json({
-    success: false,
+    success: err.statusCode === 200 || err.statusCode === 201,
     message: err.message,
   });
 };
