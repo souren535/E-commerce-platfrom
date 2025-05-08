@@ -2,15 +2,12 @@ import { Product, productValidationSchema } from "../models/productModel.js";
 import HandleEror from "../utils/handleError.js";
 import handleAsyncError from "../middleware/handleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
+import JoiValidation from "../utils/joivalidation.js";
 
 //  CreateProduct
 export const createProducts = handleAsyncError(async (req, res, next) => {
   try {
-    const { error } = productValidationSchema.validate(req.body);
-    if (error) {
-      const messages = error.details.map((err) => err.message);
-      return next(new HandleEror(messages, 400));
-    }
+    new JoiValidation(req.body, productValidationSchema).validator();
 
     const result = await Product.findOne({ name: req.body.name });
     if (result) return next(new HandleEror("Product already exists", 400));
