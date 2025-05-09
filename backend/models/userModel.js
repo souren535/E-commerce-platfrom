@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Joi from "joi";
+import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
   {
@@ -40,6 +41,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.methods.getJWTToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
+
 const userModel = mongoose.model("user", userSchema);
 
 const registerValidation = Joi.object({
@@ -63,17 +70,16 @@ const registerValidation = Joi.object({
     "any.required": "Password is required.",
   }),
   avatar: Joi.object({
-    public_id: Joi.string().required().messages({
+    public_id: Joi.string().optional().messages({
       "string.empty": "Avatar public_id is required.",
-      "any.required": "Avatar public_id is required.",
     }),
-    url: Joi.string().uri().required().messages({
+    url: Joi.string().uri().optional().messages({
       "string.empty": "Avatar URL is required.",
       "string.uri": "Avatar URL must be a valid URI.",
-      "any.required": "Avatar URL is required.",
     }),
   })
-    .required()
+    .optional()
+
     .messages({
       "object.base": "Avatar is required and must include public_id and url.",
       "any.required": "Avatar is required.",
@@ -81,12 +87,12 @@ const registerValidation = Joi.object({
 });
 
 const loginValidation = Joi.object({
-  email: Joi.string().email().required().messages({
+  email: Joi.string().email().empty().required().messages({
     "string.email": "Please enter a valid email address.",
     "string.empty": "Email is required.",
     "any.required": "Email is required.",
   }),
-  password: Joi.string().required().messages({
+  password: Joi.string().empty().required().messages({
     "string.empty": "Password is required.",
     "any.required": "Password is required.",
   }),
