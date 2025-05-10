@@ -7,6 +7,7 @@ import {
 import HandleEror from "../utils/handleError.js";
 import JoiValidation from "../utils/joivalidation.js";
 import bcrypt from "bcrypt";
+import { sendToken } from "../utils/jwtToken.js";
 
 export const userRegister = handleAsyncError(async (req, res, next) => {
   try {
@@ -26,15 +27,8 @@ export const userRegister = handleAsyncError(async (req, res, next) => {
               url: "https://example.com/temp-avatar.jpg",
             },
           });
-          let token = user.getJWTToken();
-          if (user) {
-            res.status(201).json({
-              success: true,
-              message: `${user.name} you are registered successfully`,
-              user,
-              token,
-            });
-          }
+
+          sendToken(user, 200, res);
         }
       });
     });
@@ -54,15 +48,9 @@ export const userLogin = handleAsyncError(async (req, res, next) => {
       .select("+password");
     if (!user) return next(new HandleEror("invalid email or password", 400));
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return next(new HandleEror("invalid email or password", 400));
+    if (!isMatch) return next(new HandleEror("invalid email or password", 401));
 
-    const token = user.getJWTToken();
-
-    res.status(200).json({
-      success: true,
-      message: `${user.email} logged in successfully`,
-      token,
-    });
+    sendToken(user, 200, res);
   } catch (error) {
     return next(new HandleEror(error.message, 500));
   }
