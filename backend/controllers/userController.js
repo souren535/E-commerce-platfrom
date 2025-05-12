@@ -47,11 +47,36 @@ export const userLogin = handleAsyncError(async (req, res, next) => {
       })
       .select("+password");
     if (!user) return next(new HandleEror("invalid email or password", 400));
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.verifyPassword(password);
     if (!isMatch) return next(new HandleEror("invalid email or password", 401));
 
     sendToken(user, 200, res);
   } catch (error) {
     return next(new HandleEror(error.message, 500));
+  }
+});
+
+export const userLogout = handleAsyncError(async (req, res, next) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    success: true,
+    message: "Logout successfully",
+  });
+});
+
+// Reset Password :-
+export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
+  try {
+    const user = await userModel.findOne({ email: req.body.email });
+    if (!user) return next(new HandleEror("User does't exist", 400));
+    let resetToken = user.generatePasswordToken();
+    await user.save();
+  } catch (error) {
+    return next(
+      new HandleEror("Could save reset token, Please try again later", 500)
+    );
   }
 });

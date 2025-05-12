@@ -9,12 +9,18 @@ export const createProducts = handleAsyncError(async (req, res, next) => {
   try {
     new JoiValidation(req.body, productValidationSchema).validator();
 
+    req.body.user = req.user.id;
+
     const result = await Product.findOne({ name: req.body.name });
     if (result) return next(new HandleEror("Product already exists", 400));
 
     const newProduct = await Product.create(req.body);
 
-    next(new HandleEror("Product created successfully", 201));
+    res.status(201).json({
+      seccess: true,
+      message: "Product created successfully",
+      newProduct,
+    });
   } catch (error) {
     next(new HandleEror(error.message, 500));
   }

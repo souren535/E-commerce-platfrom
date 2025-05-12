@@ -66,6 +66,11 @@ const productSchema = new mongoose.Schema({
       },
     },
   ],
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "user",
+    required: true,
+  },
   is_deleted: {
     type: Boolean,
     default: false,
@@ -173,6 +178,15 @@ const productValidationSchema = Joi.object({
       })
     )
     .optional(),
+  user: Joi.string()
+    .custom((value, helpers) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        return helpers.message("Invalid user ObjectId");
+      }
+      return value;
+    })
+    .optional(),
+  is_deleted: Joi.boolean().default(false),
 
   createdAt: Joi.date().optional(),
 });

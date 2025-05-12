@@ -5,6 +5,7 @@ import errorHandlerMiddleware from "./middleware/error.js";
 import cookieParser from "cookie-parser";
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

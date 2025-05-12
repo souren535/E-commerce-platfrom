@@ -21,6 +21,7 @@
     "connect-flash": "^0.1.1",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "flash": "^1.1.0",
