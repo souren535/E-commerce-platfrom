@@ -8,6 +8,7 @@ import HandleEror from "../utils/handleError.js";
 import JoiValidation from "../utils/joivalidation.js";
 import bcrypt from "bcrypt";
 import { sendToken } from "../utils/jwtToken.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 export const userRegister = handleAsyncError(async (req, res, next) => {
   try {
@@ -69,12 +70,38 @@ export const userLogout = handleAsyncError(async (req, res, next) => {
 
 // Reset Password :-
 export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
+  let resetToken;
+  let user;
   try {
-    const user = await userModel.findOne({ email: req.body.email });
+    user = await userModel.findOne({ email: req.body.email });
     if (!user) return next(new HandleEror("User does't exist", 400));
-    let resetToken = user.generatePasswordToken();
-    await user.save();
+    resetToken = user.generatePasswordResetToken();
+    await user.save({ validateBeforeSave: false });
   } catch (error) {
+    return next(
+      new HandleEror("Could save reset token, Please try again later", 500)
+    );
+  }
+
+  const resetPasswordURL = `http://localhost/user/Reset${resetToken}`;
+  const message = `Use the following link to reset your password: ${resetPasswordURL}- \n\n This link will expire in 5 minutes.\n\n
+                   if  you didn't request a password reset, Please ignore this message.`;
+
+  // send Email
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "password Reset Request",
+      message,
+    });
+    res.status(200).json({
+      success: true,
+      message: `Email is sent to ${user.email} successfully`,
+    });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
     return next(
       new HandleEror("Could save reset token, Please try again later", 500)
     );

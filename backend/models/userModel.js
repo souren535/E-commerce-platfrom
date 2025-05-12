@@ -54,7 +54,7 @@ userSchema.methods.verifyPassword = async function (userEnteredPassword) {
 };
 
 // generating reset password token :-
-userSchema.methods.generatePasswordToken = function () {
+userSchema.methods.generatePasswordResetToken = function () {
   const resetToken = crypto.randomBytes(20).toString("hex");
   this.resetPasswordToken = crypto
     .createHash("sha256")
