@@ -9,7 +9,9 @@ import JoiValidation from "../utils/joivalidation.js";
 import bcrypt from "bcrypt";
 import { sendToken } from "../utils/jwtToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import crypto from "crypto";
 
+// user registration
 export const userRegister = handleAsyncError(async (req, res, next) => {
   try {
     new JoiValidation(req.body, registerValidation).validator();
@@ -38,6 +40,7 @@ export const userRegister = handleAsyncError(async (req, res, next) => {
   }
 });
 
+// user Login
 export const userLogin = handleAsyncError(async (req, res, next) => {
   try {
     new JoiValidation(req.body, loginValidation).validator();
@@ -57,6 +60,23 @@ export const userLogin = handleAsyncError(async (req, res, next) => {
   }
 });
 
+// user Details -
+
+export const userDetails = handleAsyncError(async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    if (!user) {
+      return next(new HandleEror("User Not Found", 404));
+    }
+    res.status(200).json({
+      success: true,
+      message: "User Found Successfully",
+      user,
+    });
+  } catch (error) {}
+});
+
+// user logout
 export const userLogout = handleAsyncError(async (req, res, next) => {
   res.cookie("token", null, {
     expires: new Date(Date.now()),
@@ -68,7 +88,7 @@ export const userLogout = handleAsyncError(async (req, res, next) => {
   });
 });
 
-// Reset Password :-
+// Forgot Password :-
 export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
   let resetToken;
   let user;
@@ -83,8 +103,8 @@ export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
     );
   }
 
-  const resetPasswordURL = `http://localhost/user/Reset${resetToken}`;
-  const message = `Use the following link to reset your password: ${resetPasswordURL}- \n\n This link will expire in 5 minutes.\n\n
+  const resetPasswordURL = `http://localhost/user/reset/${resetToken}`;
+  const message = `Use the following link to reset your password: ${resetPasswordURL} - \n\n This link will expire in 5 minutes.\n\n
                    if  you didn't request a password reset, Please ignore this message.`;
 
   // send Email
@@ -102,6 +122,45 @@ export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
+    return next(
+      new HandleEror("Could save reset token, Please try again later", 500)
+    );
+  }
+});
+
+// Reset password -
+
+export const resetPassword = handleAsyncError(async (req, res, next) => {
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await userModel.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(
+      new HandleEror("Reset password token is invalid or has been expired", 400)
+    );
+  }
+  let { newPassword, confirmPassword } = req.body;
+  if (newPassword !== confirmPassword) {
+    return next(new HandleEror("password doesn't match", 400));
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    sendToken(user, 200, res);
+  } catch (error) {
     return next(
       new HandleEror("Could save reset token, Please try again later", 500)
     );

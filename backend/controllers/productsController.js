@@ -71,7 +71,7 @@ export const GetSingleProduct = handleAsyncError(async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "product fetched successfully",
-      product: product,
+      product,
     });
   } catch (error) {
     next(new HandleEror(error.message, 500));

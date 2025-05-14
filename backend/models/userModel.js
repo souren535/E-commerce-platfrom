@@ -43,12 +43,14 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// generate JWT token
 userSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
+// password verifycation
 userSchema.methods.verifyPassword = async function (userEnteredPassword) {
   return await bcrypt.compare(userEnteredPassword, this.password);
 };
