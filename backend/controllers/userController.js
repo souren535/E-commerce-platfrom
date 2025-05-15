@@ -64,7 +64,7 @@ export const userLogin = handleAsyncError(async (req, res, next) => {
 
 export const userDetails = handleAsyncError(async (req, res, next) => {
   try {
-    const user = await userModel.findById(req.params.id);
+    const user = await userModel.findById(req.user.id);
     if (!user) {
       return next(new HandleEror("User Not Found", 404));
     }
@@ -165,4 +165,54 @@ export const resetPassword = handleAsyncError(async (req, res, next) => {
       new HandleEror("Could save reset token, Please try again later", 500)
     );
   }
+});
+
+// update password -
+
+export const updatePassword = handleAsyncError(async (req, res, next) => {
+  try {
+    let { oldPassword, newPassword, confirmPassword } = req.body;
+    const user = await userModel.findById(req.user.id).select("+password");
+    if (!user) return next(new HandleEror("User not found", 404));
+
+    if (!user.password) {
+      console.log("Password not fetched from DB");
+      return next(new HandleEror("User password not found", 500));
+    }
+    const isMatch = await user.verifyPassword(oldPassword);
+    if (!isMatch) return next(new HandleEror("oldPassword is incorrect", 400));
+
+    if (newPassword !== confirmPassword) {
+      return next(new HandleEror("password does't match", 400));
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashPass = await bcrypt.hash(newPassword, salt);
+    user.password = hashPass;
+    await user.save();
+    sendToken(user, 200, res);
+  } catch (error) {
+    return next(new HandleEror("internal server error", 500));
+  }
+});
+
+// update profile -
+
+export const updateProfile = handleAsyncError(async (req, res, next) => {
+  try {
+    let { name, email } = req.body;
+    const updateDetails = {
+      name,
+      email,
+    };
+    const user = await userModel.findByIdAndUpdate(req.user.id, updateDetails, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      success: true,
+      message: "profile update successfully",
+      user,
+    });
+  } catch (error) {}
 });

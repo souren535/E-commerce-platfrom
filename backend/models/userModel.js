@@ -52,6 +52,9 @@ userSchema.methods.getJWTToken = function () {
 
 // password verifycation
 userSchema.methods.verifyPassword = async function (userEnteredPassword) {
+  if (!this.password) {
+    throw new Error("Password is not defined on the user object");
+  }
   return await bcrypt.compare(userEnteredPassword, this.password);
 };
 
@@ -62,7 +65,7 @@ userSchema.methods.generatePasswordResetToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  this.resetPasswordExpire = Date.now() + 5 * 60 * 1000;  //5min
+  this.resetPasswordExpire = Date.now() + 5 * 60 * 1000; //5min
   return resetToken;
 };
 
