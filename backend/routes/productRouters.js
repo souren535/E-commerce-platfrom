@@ -4,6 +4,7 @@ import { roleBaseAccess, verifyUserAuth } from "../middleware/userAuth.js";
 import {
   createProducts,
   deleteProduct,
+  getAdminProduct,
   getAllProducts,
   GetSingleProduct,
   restoreProduct,
@@ -11,19 +12,27 @@ import {
 } from "../controllers/productsController.js";
 const router = express.Router();
 
-router
-  .route("/create")
-  .post(verifyUserAuth, roleBaseAccess("admin"), createProducts);
+// user product
+
 router.route("/list").post(verifyUserAuth, getAllProducts);
 router.route("/list/:id").post(verifyUserAuth, GetSingleProduct);
+
+// admin products
+
 router
-  .route("/update/:id")
+  .route("/admin/create")
+  .post(verifyUserAuth, roleBaseAccess("admin"), createProducts);
+router
+  .route("/admin/update/:id")
   .put(verifyUserAuth, roleBaseAccess("admin"), updateProducts);
 router
-  .route("/delete/:id")
+  .route("/admin/delete/:id")
   .delete(verifyUserAuth, roleBaseAccess("admin"), deleteProduct);
 router
-  .route("/restore/:id")
+  .route("/admin/restore/:id")
   .post(verifyUserAuth, roleBaseAccess("admin"), restoreProduct);
 
+router
+  .route("/admin/list")
+  .post(verifyUserAuth, roleBaseAccess("admin"), getAdminProduct);
 export default router;

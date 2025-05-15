@@ -53,7 +53,7 @@ export const getAllProducts = handleAsyncError(async (req, res, next) => {
       totalProducts,
       totalPages,
       currentPage: page,
-      products: products,
+      products,
     });
   } catch (error) {
     next(new HandleEror(error.message, 500));
@@ -132,5 +132,38 @@ export const restoreProduct = handleAsyncError(async (req, res) => {
     });
   } catch (error) {
     next(new HandleEror(error.message, 500));
+  }
+});
+
+export const getAdminProduct = handleAsyncError(async (req, res, next) => {
+  try {
+    const resultPerPage = parseInt(req.query.limit) || 10;
+    const apiFeture = new APIFunctionality(Product.find(), req.query)
+      .seacrh()
+      .filter();
+
+    const filteredQuery = apiFeture.query.clone();
+    const totalProducts = await filteredQuery.countDocuments();
+
+    const totalPages = Math.ceil(totalProducts / resultPerPage);
+    const page = parseInt(req.query.page) || 1;
+
+    if (page > totalPages && totalProducts > 0)
+      return next(new HandleEror("This Page doesn't exist", 404));
+
+    apiFeture.pagination(resultPerPage);
+    const products = await apiFeture.query;
+    if (!products || products.length === 0)
+      return next(new HandleEror("No products found", 404));
+    res.status(200).json({
+      success: true,
+      message: "products fetched successfully",
+      totalProducts,
+      totalPages,
+      currentPage: page,
+      products: products,
+    });
+  } catch (error) {
+    return next(new HandleEror(error.message, 500));
   }
 });

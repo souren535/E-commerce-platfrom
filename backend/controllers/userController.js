@@ -10,6 +10,7 @@ import bcrypt from "bcrypt";
 import { sendToken } from "../utils/jwtToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
+import APIFunctionality from "../utils/apiFunctionality.js";
 
 // user registration
 export const userRegister = handleAsyncError(async (req, res, next) => {
@@ -215,4 +216,98 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
       user,
     });
   } catch (error) {}
+});
+
+// admin getting user information -
+
+export const getUserList = handleAsyncError(async (req, res, next) => {
+  try {
+    const resultPerPage = parseInt(req.query.limit) || 10;
+    const apiFeture = new APIFunctionality(userModel.find(), req.query)
+      .seacrh()
+      .filter();
+
+    const filteredQuery = apiFeture.query.clone();
+    const totalProducts = await filteredQuery.countDocuments();
+
+    const totalPages = Math.ceil(totalProducts / resultPerPage);
+    const page = parseInt(req.query.page) || 1;
+
+    if (page > totalPages && totalProducts > 0)
+      return next(new HandleEror("This Page doesn't exist", 404));
+
+    apiFeture.pagination(resultPerPage);
+    const users = await apiFeture.query;
+    if (!users || users.length === 0) {
+      return next(new HandleEror("No User Found", 400));
+    }
+    res.status(200).json({
+      success: true,
+      message: "products fetched successfully",
+      totalProducts,
+      totalPages,
+      currentPage: page,
+      users,
+    });
+  } catch (error) {
+    return next(new HandleEror(error.message, 500));
+  }
+});
+
+export const getSingleUser = handleAsyncError(async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    if (!user) {
+      return next(new HandleEror("User doesn't exist, with this id", 404));
+    }
+    res.status(200).json({
+      seccess: true,
+      user,
+    });
+  } catch (error) {
+    return next(new HandleEror(error.message, 500));
+  }
+});
+
+// admin update user role -
+
+export const updateRole = handleAsyncError(async (req, res, next) => {
+  try {
+    let { role } = req.body;
+    const updateDetails = {
+      role,
+    };
+    const user = await userModel.findByIdAndUpdate(req.user.id, updateDetails, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return next(new HandleEror("User doesn't exist, with this id", 404));
+    }
+    res.status(200).json({
+      success: true,
+      message: "profile update successfully",
+      user,
+    });
+  } catch (error) {
+    return next(new HandleEror(error.message, 500));
+  }
+});
+
+// admin - delete user -
+
+export const deleteUser = handleAsyncError(async (re, res, next) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    if (!user) {
+      return next(new HandleEror("user doesn't exist", 400));
+    }
+    await userModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      seccess: true,
+      message: "User Deleted Successfully",
+    });
+  } catch (error) {
+    return next(new HandleEror("Internal Server Error", 500));
+  }
 });
