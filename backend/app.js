@@ -1,6 +1,7 @@
 import express from "express";
 import product from "./routes/productRouters.js";
 import user from "./routes/userRouter.js";
+import order from "./routes/orderRouters.js";
 import errorHandlerMiddleware from "./middleware/error.js";
 import cookieParser from "cookie-parser";
 const app = express();
@@ -13,6 +14,7 @@ app.use(cookieParser());
 // Importing routes
 app.use("/product", product);
 app.use("/user", user);
+app.use("/order", order);
 
 // Error handling middleware
 app.use(errorHandlerMiddleware);

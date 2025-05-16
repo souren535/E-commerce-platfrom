@@ -4,6 +4,7 @@ import handleAsyncError from "../middleware/handleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import JoiValidation from "../utils/joivalidation.js";
 
+
 //  CreateProduct
 export const createProducts = handleAsyncError(async (req, res, next) => {
   try {
@@ -135,6 +136,7 @@ export const restoreProduct = handleAsyncError(async (req, res) => {
   }
 });
 
+//  admin - get all products
 export const getAdminProduct = handleAsyncError(async (req, res, next) => {
   try {
     const resultPerPage = parseInt(req.query.limit) || 10;
@@ -167,3 +169,100 @@ export const getAdminProduct = handleAsyncError(async (req, res, next) => {
     return next(new HandleEror(error.message, 500));
   }
 });
+
+//  create reviews
+export const createProductReview = handleAsyncError(async (req, res, next) => {
+  try {
+    let { rating, comment, productId } = req.body;
+    const review = {
+      user: req.user.id,
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+    };
+    const product = await Product.findById(productId);
+    const reviewExist = product.reviews.find(
+      (review) => review.user.toString() === req.user.id.toString()
+    );
+    if (reviewExist) {
+      product.reviews.forEach((review) => {
+        if (review.user.toString() === req.user.id.toString()) {
+          (review.rating = rating), (review.comment = comment);
+        }
+      });
+    } else {
+      product.reviews.push(review);
+    }
+    product.numOfReviews = product.reviews.length;
+    let sum = 0;
+    product.reviews.forEach((review) => {
+      sum += review.rating;
+    });
+    product.ratings =
+      product.reviews.length > 0 ? sum / product.reviews.length : 0;
+    await product.save({ validateBeforeSave: false });
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    return next(new HandleEror("Internal Server Error", 500));
+  }
+});
+
+// get all reviews
+export const getAllReviews = handleAsyncError(async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.query.productId);
+    if (!product) return next(new HandleEror("Product Not Found", 400));
+    res.status(200).json({
+      seccess: true,
+      name: product.name,
+      reviews: product.reviews,
+    });
+  } catch (error) {
+    return next(new HandleEror("Internal Server Error", 500));
+  }
+});
+
+// delete product review
+
+export const deleteReview = handleAsyncError(async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.query.productId);
+    if (!product) {
+      return next(new HandleEror("Product not found", 400));
+    }
+    const reviews = product.reviews.filter(
+      (review) => review._id.toString() !== req.query.id.toString()
+    );
+    let sum = 0;
+    reviews.forEach((review) => {
+      sum += review.rating;
+    });
+
+    const ratings = reviews.length > 0 ? sum / reviews.length : 0;
+    const numOfReviews = reviews.length;
+    await Product.findByIdAndUpdate(
+      req.query.productId,
+      {
+        reviews,
+        ratings,
+        numOfReviews,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json({
+      success: true,
+      message: "delete product review successfully",
+      reviews:
+        product.reviews.length > 0 ? product.reviews : "No reviews found",
+    });
+  } catch (error) {
+    return next(new HandleEror("Internal Server Error", 500));
+  }
+});
+

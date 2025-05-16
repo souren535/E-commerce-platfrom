@@ -2,10 +2,13 @@ import express from "express";
 import { roleBaseAccess, verifyUserAuth } from "../middleware/userAuth.js";
 
 import {
+  createProductReview,
   createProducts,
   deleteProduct,
+  deleteReview,
   getAdminProduct,
   getAllProducts,
+  getAllReviews,
   GetSingleProduct,
   restoreProduct,
   updateProducts,
@@ -35,4 +38,13 @@ router
 router
   .route("/admin/list")
   .post(verifyUserAuth, roleBaseAccess("admin"), getAdminProduct);
+
+// product Review -
+router.route("/review").put(verifyUserAuth, createProductReview);
 export default router;
+
+// get all product reviews -
+router.route("/getall/reviews").post(verifyUserAuth, getAllReviews);
+
+// delete product review
+router.route("/delete/reviews").delete(verifyUserAuth, deleteReview);

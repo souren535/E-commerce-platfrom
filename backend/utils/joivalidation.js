@@ -9,7 +9,7 @@ class JoiValidation {
     const { error } = this.schema.validate(this.request);
     if (error) {
       const message = error.details.map((err) => err.message);
-      throw new HandleEror(message, 400);
+      return new HandleEror(message, 400);
     }
   }
 }
