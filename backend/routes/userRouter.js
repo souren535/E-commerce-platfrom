@@ -22,8 +22,8 @@ router.route("/profile").post(verifyUserAuth, userDetails);
 router.route("/logout").post(verifyUserAuth, userLogout);
 router.route("/password/forgot").post(requestPasswordReset);
 router.route("/reset/:token").post(resetPassword);
-router.route("/password/update").post(verifyUserAuth, updatePassword);
-router.route("/profile/update").post(verifyUserAuth, updateProfile);
+router.route("/password/update").put(verifyUserAuth, updatePassword);
+router.route("/profile/update").put(verifyUserAuth, updateProfile);
 
 // admin - getting user information
 router

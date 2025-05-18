@@ -1,8 +1,31 @@
 import express from "express";
-import { createNewOrder } from "../controllers/orderController.js";
-import { verifyUserAuth } from "../middleware/userAuth.js";
+import {
+  createNewOrder,
+  deleteDeliveredOrder,
+  getAllOrder,
+  getAllOrders,
+  getSingleOrder,
+  updateOrderStatus,
+} from "../controllers/orderController.js";
+import { roleBaseAccess, verifyUserAuth } from "../middleware/userAuth.js";
 const router = express.Router();
 
 router.route("/create").post(verifyUserAuth, createNewOrder);
+router
+  .route("/get/:id")
+  .post(verifyUserAuth, roleBaseAccess("admin"), getSingleOrder);
+
+router.route("/get").post(verifyUserAuth, getAllOrder);
+router
+  .route("/getAll")
+  .post(verifyUserAuth, roleBaseAccess("admin"), getAllOrders);
+
+router
+  .route("/orderStatus/:id")
+  .put(verifyUserAuth, roleBaseAccess("admin"), updateOrderStatus);
+
+router
+  .route("/deleteOrder/:id")
+  .delete(verifyUserAuth, deleteDeliveredOrder);
 
 export default router;
