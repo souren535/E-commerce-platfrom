@@ -21,7 +21,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-zinc-500 w-full px-6 py-3 fixed top-0 z-50 shadow-md">
+    <nav className="bg-zinc-500 w-full px-6 py-3 fixed top-0 z-50  shadow-md">
       <div className="flex flex-wrap justify-between items-center gap-2">
         {/* Logo */}
         <div className="text-zinc-300 text-2xl font-semibold">
