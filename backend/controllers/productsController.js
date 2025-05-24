@@ -4,7 +4,6 @@ import handleAsyncError from "../middleware/handleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import JoiValidation from "../utils/joivalidation.js";
 
-
 //  CreateProduct
 export const createProducts = handleAsyncError(async (req, res, next) => {
   try {
@@ -30,18 +29,18 @@ export const createProducts = handleAsyncError(async (req, res, next) => {
 // GetAllProducts
 export const getAllProducts = handleAsyncError(async (req, res, next) => {
   try {
-    const resultPerPage = parseInt(req.query.limit) || 3;
+    const resultPerPage = parseInt(req.query.limit) || 4;
     const apiFeture = new APIFunctionality(Product.find(), req.query)
       .seacrh()
       .filter();
 
     const filteredQuery = apiFeture.query.clone();
-    const totalProducts = await filteredQuery.countDocuments();
+    const productCounts = await filteredQuery.countDocuments();
 
-    const totalPages = Math.ceil(totalProducts / resultPerPage);
+    const totalPages = Math.ceil(productCounts / resultPerPage);
     const page = parseInt(req.query.page) || 1;
 
-    if (page > totalPages && totalProducts > 0)
+    if (page > totalPages && productCounts > 0)
       return next(new HandleEror("This Page doesn't exist", 404));
 
     apiFeture.pagination(resultPerPage);
@@ -51,8 +50,9 @@ export const getAllProducts = handleAsyncError(async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "products fetched successfully",
-      totalProducts,
+      productCounts,
       totalPages,
+      resultPerPage,
       currentPage: page,
       products,
     });
@@ -265,4 +265,3 @@ export const deleteReview = handleAsyncError(async (req, res, next) => {
     return next(new HandleEror("Internal Server Error", 500));
   }
 });
-

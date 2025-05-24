@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Importing routes
-app.use("/product", product);
+app.use("/api/product", product);
 app.use("/user", user);
 app.use("/order", order);
 
