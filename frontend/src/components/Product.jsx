@@ -38,12 +38,12 @@ const Product = ({ product }) => {
             disabled={true}
           />
         </div>
-        <span>
-          ({product.numOfReviews}
-          {product.numOfReviews === 1 ? "Reviews" : "Review"} )
+        <span className="bg-zinc-400 shadow-md p-1 text-white rounded-md text-base">
+          {product.numOfReviews}
+          {product.numOfReviews === 1 ? "Reviews" : "Review"}
         </span>
         <button className="w-full bg-yellow-300 rounded-lg shadow-sm hover:bg-yellow-400 transition mt-2 ">
-          <Link to={product._id}>Check Out</Link>
+          <Link to={`/list/${product._id}`}>Check Out</Link>
         </button>
       </div>
     </motion.div>

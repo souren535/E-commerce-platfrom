@@ -18,7 +18,7 @@ const router = express.Router();
 // user product
 
 router.route("/list").post(getAllProducts);
-router.route("/list/:id").post(verifyUserAuth, GetSingleProduct);
+router.route("/list/:id").post(GetSingleProduct);
 
 // admin products
 

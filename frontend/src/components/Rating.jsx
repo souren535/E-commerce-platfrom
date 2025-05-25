@@ -34,7 +34,7 @@ const Rating = ({ value, onChangeRating, disabled }) => {
           className={` text-gray-500 hover:text-yellow-500 text-[1.5rem] cursor-pointer transtition-colors transition-transform duration-300 hover:scale-[1.2] ease-in-out ${
             isFilled ? "text-yellow-500" : "text-gray-500"
           } `}
-          onMouseEnter={handelMouseEnter}
+          onMouseEnter={() => handelMouseEnter(i)}
           onMouseLeave={handelMouseLeave}
           onClick={() => handelClick(i)}
           style={{ pointerEvents: disabled ? "none" : "auto" }}
