@@ -63,9 +63,9 @@ const ProductDetails = () => {
     <>
       <PageTitle title={`${product.name} - details`} />
       <Navbar />
-      <div className="product-details p-[100px]">
-        <div className="product-detail max-w-[1200px] m-auto flex justify-around items-center">
-          <div className=" sticky t-[40px] z-10 mb-[20px] w-[500px] ">
+      <div className="product-details p-[100px] max-sm:w-[80%] max-sm:mx-auto">
+        <div className="product-detail max-w-[1200px] mx-auto flex md:flex-row flex-col justify-around items-center">
+          <div className=" sticky t-[40px] z-10 mb-[20px] w-[500px] max-md:static ">
             <img
               src={product.image[0].url}
               className=" w-[100%] max-h-[ 500px] object-contain rounded-b-[8px] bg-[#fff] "

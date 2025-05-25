@@ -10,56 +10,72 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="footer  w-full bg-zinc-800  py-7">
-      <div className="footer-container max-w-screen-lg mx-auto flex flex-col md:flex-row gap-20 px-6">
-        {/* section 1 */}
-        <div className="w-full md:w-1/3">
-          <h3 className="mb-3 text-white text-3xl font-[Merienda]">
+    <footer className="bg-zinc-800 text-sm md:text-base text-white shadow-[0_-4px_10px_rgba(0,0,0,0.1)] mt-8 py-8">
+      {/* Main container */}
+      <div className="max-w-[1200px] mx-auto px-4 flex flex-col md:flex-row justify-between items-start gap-6 text-zinc-300 text-base">
+        {/* Section 1: Contact Us */}
+        <div className="flex-1 min-w-[250px]">
+          <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">
             Contact Us
           </h3>
-          <p className="mb-3 flex text-zinc-300 items-center gap-2">
-            <Phone className="cursor-pointer hover:text-blue-400" />
+          <p className="mb-3 flex items-center gap-2">
+            <Phone className="cursor-pointer text-xl hover:text-blue-400" />
             Phone: +91 7585013193
           </p>
-          <p className="small flex text-zinc-300 items-center gap-2 ">
-            <Mail className="cursor-pointer hover:text-blue-400" />
+          <p className="flex items-center gap-2">
+            <Mail className="cursor-pointer text-xl hover:text-blue-400" />
             Email: khan.sourentalpur@gmail.com
           </p>
         </div>
 
-        {/* section 2 */}
-        <div className="w-full md:w-1/3">
-          <h3 className="mb-3 text-white text-3xl">Follow me</h3>
-          <div className="flex text-zinc-300 gap-3">
-            {[<GitHub />, <LinkedIn />, <YouTube />, <Instagram />].map(
-              (item, index) => (
-                <a
-                  key={index}
-                  className={`"text-lg cursor-pointer hover:text-blue-400" ${
-                    index === 4 && "ml-10"
-                  }`}
-                >
-                  {item}
-                </a>
-              )
-            )}
+        {/* Section 2: Follow me */}
+        <div className="flex-1 min-w-[250px]">
+          <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">
+            Follow me
+          </h3>
+          <div className="flex gap-4 justify-start md:justify-start text-2xl">
+            <a
+              href="#"
+              className="hover:text-blue-400 transition-transform duration-300 transform hover:scale-110"
+            >
+              <GitHub />
+            </a>
+            <a
+              href="#"
+              className="hover:text-blue-400 transition-transform duration-300 transform hover:scale-110"
+            >
+              <LinkedIn />
+            </a>
+            <a
+              href="#"
+              className="hover:text-blue-400 transition-transform duration-300 transform hover:scale-110"
+            >
+              <YouTube />
+            </a>
+            <a
+              href="#"
+              className="hover:text-blue-400 transition-transform duration-300 transform hover:scale-110"
+            >
+              <Instagram />
+            </a>
           </div>
         </div>
 
-        {/* section 3 */}
-        <div className="w-full md:w-1/3">
-          <h3 className="mb-3 text-3xl text-white ">About</h3>
-          <p className="text-zinc-300">
-            Providing web development tutorial and courses to help you grow your
-            skills.
+        {/* Section 3: About */}
+        <div className="flex-1 min-w-[250px]">
+          <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">
+            About
+          </h3>
+          <p className="leading-relaxed">
+            Providing web development tutorials and courses to help you grow
+            your skills.
           </p>
         </div>
       </div>
-      <div className="inline-block w-full text-center justify-center mt-8">
-        <div className=" border-1  h-0.2 border-zinc-500"></div>
-        <p className="text-zinc-300 mt-2">
-          &copy; 2025 sourentalpur . All right reserved
-        </p>
+
+      {/* Bottom section */}
+      <div className="w-full text-center mt-10 pt-6 border-t border-zinc-600 text-zinc-400 text-sm">
+        &copy; 2025 sourentalpur. All rights reserved.
       </div>
     </footer>
   );

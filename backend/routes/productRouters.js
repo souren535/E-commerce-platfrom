@@ -41,10 +41,11 @@ router
 
 // product Review -
 router.route("/review").put(verifyUserAuth, createProductReview);
-export default router;
 
 // get all product reviews -
 router.route("/getall/reviews").post(verifyUserAuth, getAllReviews);
 
 // delete product review
 router.route("/delete/reviews").delete(verifyUserAuth, deleteReview);
+
+export default router;

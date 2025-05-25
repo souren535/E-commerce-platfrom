@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 // Importing routes
 app.use("/api/product", product);
-app.use("/user", user);
+app.use("/api/user", user);
 app.use("/order", order);
 
 // Error handling middleware
