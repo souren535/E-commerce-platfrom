@@ -4,9 +4,11 @@ import axios from "axios";
 // get allProduct
 export const getProduct = createAsyncThunk(
   "product/getProduct",
-  async (_, { rejectWithValue }) => {
+  async ({ keyword }, { rejectWithValue }) => {
     try {
-      const link = "/api/product/list";
+      const link = keyword
+        ? `/api/product/list?keyword=${keyword}`
+        : `/api/product/list`;
       const { data } = await axios.post(link);
       return data;
     } catch (error) {
@@ -18,6 +20,30 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
+
+// // get product suggestions
+// export const getProductSuggestion = createAsyncThunk(
+//   "product/getProductSuggestion",
+//   async ({ keyword }, { rejectWithValue }) => {
+//     if (!keyword?.trim()) {
+//       return {
+//         suggestions: [],
+//         message: "No keyword provided",
+//       };
+//     }
+//     try {
+//       const link = `/api/product/suggestions?keyword=${keyword}`;
+//       const { data } = await axios.get(link);
+//       return data;
+//     } catch (error) {
+//       return rejectWithValue({
+//         message:
+//           error.response?.data?.message ||
+//           "An error occurred while fetching product suggestions",
+//       });
+//     }
+//   }
+// );
 
 // Product Details
 export const getProductdetails = createAsyncThunk(
@@ -45,11 +71,15 @@ const productSlice = createSlice({
     loading: false,
     error: null,
     product: null,
+    // ProductSuggestions: [],
   },
   reducers: {
     removeErrors: (state) => {
       state.error = null;
     },
+    // clearSuggestions: (state) => {
+    //   state.ProductSuggestions = [];
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -83,6 +113,21 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload || { message: "Something went wrong" };
       });
+
+    // builder
+    //   .addCase(getProductSuggestion.pending, (state) => {
+    //     (state.loading = true), (state.error = null);
+    //   })
+    //   .addCase(getProductSuggestion.fulfilled, (state, action) => {
+    //     console.log("Fuillfilled action payload", action.payload);
+    //     state.loading = false;
+    //     state.error = null;
+    //     state.ProductSuggestions = action.payload.suggestions;
+    //   })
+    //   .addCase(getProductSuggestion.rejected, (state, action) => {
+    //     state.loading = false;
+    //     state.error = action.payload || { message: "Something went wrong" };
+    //   });
   },
 });
 

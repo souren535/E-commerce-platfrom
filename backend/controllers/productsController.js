@@ -29,9 +29,9 @@ export const createProducts = handleAsyncError(async (req, res, next) => {
 // GetAllProducts
 export const getAllProducts = handleAsyncError(async (req, res, next) => {
   try {
-    const resultPerPage = parseInt(req.query.limit) || 4;
+    const resultPerPage = parseInt(req.query.limit) || 5;
     const apiFeture = new APIFunctionality(Product.find(), req.query)
-      .seacrh()
+      .search()
       .filter();
 
     const filteredQuery = apiFeture.query.clone();
@@ -60,6 +60,26 @@ export const getAllProducts = handleAsyncError(async (req, res, next) => {
     next(new HandleEror(error.message, 500));
   }
 });
+
+// controller/productController.js
+export const getProductSuggestions = handleAsyncError(
+  async (req, res, next) => {
+    const keyword = req.query.keyword?.trim();
+
+    // Return early if no keyword
+    if (!keyword) {
+      return res.status(200).json({ success: true, suggestions: [] });
+    }
+
+    const suggestions = await Product.find({
+      name: { $regex: keyword, $options: "i" },
+    })
+      .select("name _id")
+      .limit(5);
+
+    res.status(200).json({ success: true, suggestions });
+  }
+);
 
 // GetSingleProductbyId
 export const GetSingleProduct = handleAsyncError(async (req, res, next) => {

@@ -31,19 +31,23 @@ const Home = () => {
       ) : (
         <>
           <PageTitle title={"Home - My Website"} />
-          <Navbar />
-          <ImageSlider />
-          <div className=" flex items-center w-full p-[2rem] flex-col mt-3 justify-around">
-            <h2 className="text-[2.5rem] font-semibold mb-3 text-shadow-2xs text-center">
-              Trending Now
-            </h2>
-            <div className="grid gap-12 mt-8 pb-12 px-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-              {products.map((product, index) => (
-                <Product key={index} product={product} />
-              ))}
-            </div>
+          <div className="home min-h-screen flex flex-col">
+            <main className="flex-grow">
+              <Navbar />
+              <ImageSlider />
+              <div className=" flex items-center w-full p-[2rem] flex-col mt-3 justify-around">
+                <h2 className="text-[2.5rem] font-semibold mb-3 text-shadow-2xs text-center">
+                  Trending Now
+                </h2>
+                <div className="grid gap-12 mt-8 pb-12 px-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+                  {products.map((product, index) => (
+                    <Product key={index} product={product} />
+                  ))}
+                </div>
+              </div>
+            </main>
+            <Footer />
           </div>
-          <Footer />
         </>
       )}
     </>

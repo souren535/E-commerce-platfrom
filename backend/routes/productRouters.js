@@ -9,6 +9,7 @@ import {
   getAdminProduct,
   getAllProducts,
   getAllReviews,
+  getProductSuggestions,
   GetSingleProduct,
   restoreProduct,
   updateProducts,
@@ -18,6 +19,7 @@ const router = express.Router();
 // user product
 
 router.route("/list").post(getAllProducts);
+router.route("/suggestions").get(getProductSuggestions);
 router.route("/list/:id").post(GetSingleProduct);
 
 // admin products

@@ -4,7 +4,7 @@ class APIFunctionality {
     this.queryString = queryString;
   }
 
-  seacrh() {
+  search() {
     const keyword = this.queryString.keyword
       ? {
           name: {
