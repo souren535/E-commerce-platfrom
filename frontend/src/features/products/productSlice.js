@@ -4,11 +4,24 @@ import axios from "axios";
 // get allProduct
 export const getProduct = createAsyncThunk(
   "product/getProduct",
-  async ({ keyword }, { rejectWithValue }) => {
+  async ({ keyword, page = 1, category }, { rejectWithValue }) => {
     try {
-      const link = keyword
-        ? `/api/product/list?keyword=${keyword}`
-        : `/api/product/list`;
+      let link = "/api/product/list?page=" + page;
+
+      if (category) {
+        link += `&category=${encodeURIComponent(category)}`;
+      }
+
+      if (keyword) {
+        link += `&keyword=${encodeURIComponent(keyword)}`;
+      }
+
+      // keyword
+      //   ? `/api/product/list?keyword=${encodeURIComponent(
+      //       keyword
+      //     )}&page=${page}`
+      //   : `/api/product/list?page=${page}`;
+
       const { data } = await axios.post(link);
       return data;
     } catch (error) {
@@ -71,6 +84,8 @@ const productSlice = createSlice({
     loading: false,
     error: null,
     product: null,
+    totalPages: 0,
+    resultPerPage: 5,
     // ProductSuggestions: [],
   },
   reducers: {
@@ -93,10 +108,13 @@ const productSlice = createSlice({
         state.error = null;
         state.products = action.payload.products;
         state.productCount = action.payload.productCount;
+        state.totalPages = action.payload.totalPages;
+        state.resultPerPage = action.payload.resultPerPage;
       })
       .addCase(getProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "somthing went wrong";
+        state.products = [];
       });
 
     builder

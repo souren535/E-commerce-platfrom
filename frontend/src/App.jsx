@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ProductDetails from "./components/ProductDetails";
 import Products from "./pages/Products";
+import Auth from "./Users/Auth";
 const App = () => {
   return (
     <Router>
@@ -11,6 +12,7 @@ const App = () => {
         <Route path="/products" element={<Products />} />
         <Route path="/list/:id" element={<ProductDetails />} />
         <Route path="/products/:keyword" element={<Products />} />
+        <Route path="/register" element={<Auth />} />
       </Routes>
     </Router>
   );

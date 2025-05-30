@@ -29,7 +29,7 @@ export const createProducts = handleAsyncError(async (req, res, next) => {
 // GetAllProducts
 export const getAllProducts = handleAsyncError(async (req, res, next) => {
   try {
-    const resultPerPage = parseInt(req.query.limit) || 5;
+    const resultPerPage = parseInt(req.query.limit) || 10;
     const apiFeture = new APIFunctionality(Product.find(), req.query)
       .search()
       .filter();

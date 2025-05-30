@@ -5,7 +5,7 @@ class APIFunctionality {
   }
 
   search() {
-    const keyword = this.queryString.keyword
+    const keywordFilter = this.queryString.keyword
       ? {
           name: {
             $regex: this.queryString.keyword,
@@ -13,7 +13,16 @@ class APIFunctionality {
           },
         }
       : {};
-    this.query = this.query.find({ ...keyword });
+
+    const categoryFilter = this.queryString.category
+      ? {
+          category: this.queryString.category,
+        }
+      : {};
+
+    const finalFilter = { ...keywordFilter, ...categoryFilter };
+
+    this.query = this.query.find(finalFilter);
     return this;
   }
 
