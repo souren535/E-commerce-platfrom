@@ -27,10 +27,12 @@ const userSchema = new mongoose.Schema(
       public_id: {
         type: String,
         required: true,
+        default: "deafult_avatar_public_id",
       },
       url: {
         type: String,
         required: true,
+        default: "./images/default_avatar.png",
       },
     },
     role: {

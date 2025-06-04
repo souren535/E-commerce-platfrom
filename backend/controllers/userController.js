@@ -18,7 +18,7 @@ export const userRegister = handleAsyncError(async (req, res, next) => {
     new JoiValidation(req.body, registerValidation).validator();
     let { name, email, password } = req.body;
     const result = await userModel.findOne({ email: email });
-    if (result) return next(new HandleEror("user already exists", 409));
+    if (result) return next(new HandleEror("User Already Exists", 409));
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(password, salt, async function (err, hash) {
         if (hash) {
