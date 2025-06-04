@@ -4,6 +4,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import {
   login,
   removeErrors,
@@ -14,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const Auth = () => {
+  motion;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -235,6 +237,30 @@ const Auth = () => {
                     Welcome to the{" "}
                     <span className="text-blue-500 font-['COMIC_SANS_MS'] ">
                       ShopEazy
+                    </span>
+                    <span>
+                      {" "}
+                      <motion.img
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          rotate: [0, -5, 5, -5, 5, 0],
+                        }}
+                        transition={{
+                          opacity: { duration: 1 },
+                          rotate: {
+                            duration: 1,
+                            ease: "easeInOut",
+                            repeat: Infinity,
+                            repeatType: "loop",
+                          },
+                        }}
+                        whileHover={{ scale: 1.2 }}
+                        src="/images/shopping-bag-icon-by-Vexels.svg"
+                        alt="icon"
+                        className="inline-block w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 ml-2"
+                      />
                     </span>
                   </span>
                 </h1>
