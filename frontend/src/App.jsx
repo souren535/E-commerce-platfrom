@@ -28,7 +28,7 @@ const App = () => {
         <Route path="/products" element={<Products />} />
         <Route path="/list/:id" element={<ProductDetails />} />
         <Route path="/products/:keyword" element={<Products />} />
-        <Route path="/register" element={<Auth />} />
+        <Route path="/auth" element={<Auth />} />
       </Routes>
       {isAuthenticated && <Navbar user = {user} />}
     </Router>

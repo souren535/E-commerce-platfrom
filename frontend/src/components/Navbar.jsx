@@ -8,9 +8,11 @@ import {
   ShoppingCart,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser } from "../features/User/userSlice";
+import { loadUser, logOut } from "@/features/User/userSlice";
 import { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
+import { removeSuccess } from "../features/User/userSlice";
 // import { getProductSuggestion } from "../features/products/productSlice";
 
 const Navbar = ({ user }) => {
@@ -86,11 +88,43 @@ const Navbar = ({ user }) => {
   const popupLinks = [
     {
       lable: "Profile",
-      to: "/profile",
+      funcName: profile,
     },
-    { lable: "Orders", to: "/orders" },
-    { lable: "Logout", to: "/logout" },
+    { lable: "Orders", funcName: orders },
+    { lable: "Logout", funcName: logoutUser },
   ];
+
+  if (user?.role === "admin") {
+    popupLinks.unshift({
+      lable: "Admin Profile",
+      funcName: dashboard,
+    });
+  }
+
+  function profile() {
+    navigate("/profile");
+  }
+
+  function orders() {
+    navigate("/orders");
+  }
+
+  function logoutUser() {
+    dispatch(logOut())
+      .unwrap()
+      .then(() => {
+        toast.success("logout successfull");
+        dispatch(removeSuccess);
+        navigate("/auth");
+      })
+      .catch((error) => {
+        toast.error(error.message || "Logout Failed");
+      });
+  }
+
+  function dashboard() {
+    navigate("/dashboard");
+  }
 
   return (
     <nav className="bg-zinc-500 w-full px-6 py-3 fixed top-0 z-50  shadow-md">
@@ -161,7 +195,7 @@ const Navbar = ({ user }) => {
           )}
 
           {!loading && !isAuthenticated ? (
-            <Link to="/register">
+            <Link to="/auth">
               <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
             </Link>
           ) : (
@@ -209,10 +243,11 @@ const Navbar = ({ user }) => {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.08 * index }}
+                          onClick={() => item.funcName()}
                           key={index}
                           className="block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-500 hover:bg-zinc-700 text-sm"
                         >
-                          <Link to={item.to}>{item.lable}</Link>
+                          {item.lable}
                         </motion.button>
                       ))}
                     </motion.div>
@@ -306,7 +341,7 @@ const Navbar = ({ user }) => {
                   6
                 </span>
               </Link>
-              <Link to="/register">
+              <Link to="/auth">
                 <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
               </Link>
             </div>

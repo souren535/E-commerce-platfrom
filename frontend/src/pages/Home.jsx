@@ -8,7 +8,7 @@ import PageTitle from "../components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, removeErrors } from "../features/products/productSlice";
 import Loader from "../components/Loader";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const Home = () => {
   const { loading, error, products, productCount } = useSelector(

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { data } from "react-router-dom";
 
 // Signup api call
 
@@ -48,7 +49,7 @@ export const loadUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const link = "/api/user/profile";
-      const { data } = await axios.post(link);
+      const { data } = await axios.post(link, { withCredentials: true });
       console.log("Load user data", data);
       return data;
     } catch (error) {
@@ -59,6 +60,25 @@ export const loadUser = createAsyncThunk(
       });
     }
   }
+);
+
+// logout api call
+
+export const logOut = createAsyncThunk(
+  "user/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const link = "api/user/logout";
+      const { data } = axios.post(link, { withCredentials: true });
+      return data;
+    } catch (error) {
+      error.rejectWithValue({
+        message:
+          error.response?.data?.message ||
+          "Logout faild. lease try again later. ",
+      });
+    }
+  } 
 );
 
 const userSlice = createSlice({
@@ -135,6 +155,22 @@ const userSlice = createSlice({
           action.payload?.message || "Login Failed. Please try again later.";
         state.user = null;
         state.isAuthenticated = false;
+      });
+
+    builder
+      .addCase(logOut.pending, (state) => {
+        (state.loading = true), (state.error = null);
+      })
+      .addCase(logOut.fulfilled, (state, action) => {
+        console.log("loaduser data fulfilled action payload", action.payload);
+        (state.loading = false), (state.error = null);
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(logOut.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Logout Failed. Please try again later.";
       });
   },
 });

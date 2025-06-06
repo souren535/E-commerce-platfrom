@@ -16,7 +16,6 @@ createRoot(document.getElementById("root")).render(
       position="top-right"
       richColors="true"
       toastOptions={{ style: { background: "black" } }}
-      duration="9000"
     />
     <ToastContainer />
   </Provider>
