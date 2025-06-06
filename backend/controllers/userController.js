@@ -11,6 +11,8 @@ import { sendToken } from "../utils/jwtToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import APIFunctionality from "../utils/apiFunctionality.js";
+import { v2 as cloudinary } from "cloudinary";
+import { url } from "inspector";
 
 // user registration
 export const userRegister = handleAsyncError(async (req, res, next) => {
@@ -201,10 +203,19 @@ export const updatePassword = handleAsyncError(async (req, res, next) => {
 
 export const updateProfile = handleAsyncError(async (req, res, next) => {
   try {
-    let { name, email } = req.body;
+    let { name, email, avatar } = req.body;
+    const myCloud = await cloudinary.uploader.upload(avatar, {
+      folder: "Avatars",
+      width: 150,
+      crop: "scale",
+    });
     const updateDetails = {
       name,
       email,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
     };
     const user = await userModel.findByIdAndUpdate(req.user.id, updateDetails, {
       new: true,

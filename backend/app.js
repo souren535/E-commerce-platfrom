@@ -4,12 +4,14 @@ import user from "./routes/userRouter.js";
 import order from "./routes/orderRouters.js";
 import errorHandlerMiddleware from "./middleware/error.js";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 const app = express();
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(fileUpload());
 
 // Importing routes
 app.use("/api/product", product);

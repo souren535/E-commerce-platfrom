@@ -16,7 +16,10 @@ class APIFunctionality {
 
     const categoryFilter = this.queryString.category
       ? {
-          category: this.queryString.category,
+          category: {
+            $regex: this.queryString.category,
+            $options: "i",
+          },
         }
       : {};
 

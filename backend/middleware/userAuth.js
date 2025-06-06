@@ -17,7 +17,9 @@ export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
     let decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = await userModel.findById(decoded.id);
     next();
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 export const roleBaseAccess = (...roles) => {

@@ -41,6 +41,26 @@ export const login = createAsyncThunk(
   }
 );
 
+// load user api call
+
+export const loadUser = createAsyncThunk(
+  "user/loaduser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const link = "/api/user/profile";
+      const { data } = await axios.post(link);
+      console.log("Load user data", data);
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message ||
+          "Failed to load user. Please try again later.",
+      });
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -64,7 +84,6 @@ const userSlice = createSlice({
         (state.loading = true), (state.error = null);
       })
       .addCase(signup.fulfilled, (state, action) => {
-        console.log("Signup fulfilled action payload", action.payload);
         (state.loading = false), (state.error = null);
         state.success = action.payload.success;
         state.user = action.payload?.user || null;
@@ -84,14 +103,33 @@ const userSlice = createSlice({
         (state.loading = true), (state.error = null);
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log("Signup fulfilled action payload", action.payload);
+        (state.loading = false), (state.error = null);
+        state.success = action.payload.success;
+        state.user = action.payload?.user || null;
+        state.isAuthenticated = Boolean(action.payload?.user);
+        console.log("User after login", state.user);
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Login Failed. Please try again later.";
+        state.user = null;
+        state.isAuthenticated = false;
+      });
+
+    builder
+      .addCase(loadUser.pending, (state) => {
+        (state.loading = true), (state.error = null);
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        console.log("loaduser data fulfilled action payload", action.payload);
         (state.loading = false), (state.error = null);
         state.success = action.payload.success;
         state.user = action.payload?.user || null;
         state.isAuthenticated = Boolean(action.payload?.user);
         console.log("User after signup", state.user);
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(loadUser.rejected, (state, action) => {
         state.loading = false;
         state.error =
           action.payload?.message || "Login Failed. Please try again later.";

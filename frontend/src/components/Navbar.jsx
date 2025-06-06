@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Close,
@@ -7,18 +7,46 @@ import {
   Search,
   ShoppingCart,
 } from "@mui/icons-material";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser } from "../features/User/userSlice";
+import { useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 // import { getProductSuggestion } from "../features/products/productSlice";
 
-const Navbar = () => {
+const Navbar = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const manuref = useRef(null);
   // const [showSuggestions, setShowSuggestions] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const { isAuthenticated, loading } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(loadUser());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  // close toggle manu click outside
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (manuref.current && !manuref.current.cotains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  console.log("isAuthenticated in App component", isAuthenticated);
+  console.log("navbar use object", user);
   const location = useLocation();
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
 
   // const { ProductSuggestions } = useSelector((state) => state.product);
 
@@ -53,6 +81,15 @@ const Navbar = () => {
     { label: "Products", to: "/products" },
     { label: "About Us", to: "/about-us" },
     { label: "Contact us", to: "/contact-us" },
+  ];
+
+  const popupLinks = [
+    {
+      lable: "Profile",
+      to: "/profile",
+    },
+    { lable: "Orders", to: "/orders" },
+    { lable: "Logout", to: "/logout" },
   ];
 
   return (
@@ -114,16 +151,76 @@ const Navbar = () => {
             </form>
           </div>
 
-          <Link to="#" className="relative inline-block">
-            <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
-            <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-              6
-            </span>
-          </Link>
+          {!loading && isAuthenticated && (
+            <Link to="#" className="relative inline-block">
+              <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
+              <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                6
+              </span>
+            </Link>
+          )}
 
-          <Link to="/register">
-            <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
-          </Link>
+          {!loading && !isAuthenticated ? (
+            <Link to="/register">
+              <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
+            </Link>
+          ) : (
+            <>
+              <div className="relative" ref={manuref}>
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => setOpen(!open)}
+                >
+                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
+                    <img
+                      src={
+                        user?.avatar?.url
+                          ? user?.avatar?.url
+                          : "/images/default-avatar.png"
+                      }
+                      alt="profile image"
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/default-avatar.png";
+                      }}
+                    />
+                  </div>
+                  {user?.name && (
+                    <span className="text-white text-sm font-semibold tracking-wide">
+                      {user.name.split(" ")[0]}
+                    </span>
+                  )}
+                </div>
+
+                {/* Pop up manu */}
+
+                <AnimatePresence>
+                  {open && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className=" absolute top-14 right-0 w-40 py-2 z-50"
+                    >
+                      {popupLinks.map((item, index) => (
+                        <motion.button
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.08 * index }}
+                          key={index}
+                          className="block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-500 hover:bg-zinc-700 text-sm"
+                        >
+                          <Link to={item.to}>{item.lable}</Link>
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}

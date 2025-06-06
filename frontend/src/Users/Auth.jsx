@@ -36,7 +36,7 @@ const Auth = () => {
       toast.error(
         authType === "signup"
           ? `${errorMessage}`
-          : `Login Failed - ${errorMessage}`
+          : `Login Failed - ${errorMessage},`
       );
       dispatch(removeErrors());
       setAuthType("");

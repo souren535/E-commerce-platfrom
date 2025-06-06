@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
       url: {
         type: String,
         required: true,
-        default: "./images/default_avatar.png",
+        default: "/images/default-avatar.png",
       },
     },
     role: {
