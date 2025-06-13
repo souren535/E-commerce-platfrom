@@ -12,15 +12,32 @@ import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import { v2 as cloudinary } from "cloudinary";
-import { url } from "inspector";
 
 // user registration
 export const userRegister = handleAsyncError(async (req, res, next) => {
   try {
     new JoiValidation(req.body, registerValidation).validator();
-    let { name, email, password } = req.body;
+    let { name, email, password, avatar } = req.body;
     const result = await userModel.findOne({ email: email });
     if (result) return next(new HandleEror("User Already Exists", 409));
+
+    let avatarData = {
+      public_id: null,
+      url: null,
+    };
+
+    if (avatar && avatar.startsWith("data:image")) {
+      const myCloud = await cloudinary.uploader.upload(avatar, {
+        folder: "Avatars",
+        width: 150,
+        crop: "scale",
+      });
+
+      avatarData = {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      };
+    }
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(password, salt, async function (err, hash) {
         if (hash) {
@@ -28,12 +45,8 @@ export const userRegister = handleAsyncError(async (req, res, next) => {
             name,
             email,
             password: hash,
-            avatar: {
-              public_id: "This is testing id",
-              url: "https://example.com/temp-avatar.jpg",
-            },
+            avatar: avatarData,
           });
-
           sendToken(user, 200, res);
         }
       });
@@ -64,7 +77,6 @@ export const userLogin = handleAsyncError(async (req, res, next) => {
 });
 
 // user Details -
-
 export const userDetails = handleAsyncError(async (req, res, next) => {
   try {
     const user = await userModel.findById(req.user.id);
@@ -186,7 +198,7 @@ export const updatePassword = handleAsyncError(async (req, res, next) => {
     if (!isMatch) return next(new HandleEror("oldPassword is incorrect", 400));
 
     if (newPassword !== confirmPassword) {
-      return next(new HandleEror("password does't match", 400));
+      return next(new HandleEror("Confirm password does't match", 400));
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -203,20 +215,30 @@ export const updatePassword = handleAsyncError(async (req, res, next) => {
 
 export const updateProfile = handleAsyncError(async (req, res, next) => {
   try {
-    let { name, email, avatar } = req.body;
-    const myCloud = await cloudinary.uploader.upload(avatar, {
-      folder: "Avatars",
-      width: 150,
-      crop: "scale",
-    });
+    let { name, email, color, avatar } = req.body;
+
     const updateDetails = {
       name,
       email,
-      avatar: {
+      color,
+    };
+    if (avatar && avatar !== "") {
+      const user = await userModel.findById(req.user.id);
+      const imageId = user.avatar.public_id;
+      if (user.avatar && imageId) {
+        await cloudinary.uploader.destroy(imageId);
+      }
+      const myCloud = await cloudinary.uploader.upload(avatar, {
+        folder: "Avatars",
+        width: 150,
+        crop: "scale",
+      });
+
+      updateDetails.avatar = {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
-      },
-    };
+      };
+    }
     const user = await userModel.findByIdAndUpdate(req.user.id, updateDetails, {
       new: true,
       runValidators: true,
@@ -226,7 +248,12 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
       message: "profile update successfully",
       user,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
 });
 
 // admin getting user information -

@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { data } from "react-router-dom";
 
 // Signup api call
 
@@ -9,8 +8,12 @@ export const signup = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       let link = "/api/user/add";
-      const { data } = await axios.post(link, userData);
-      console.log("Signup data", data);
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const { data } = await axios.post(link, userData, config);
       return data;
     } catch (error) {
       return rejectWithValue({
@@ -30,7 +33,7 @@ export const login = createAsyncThunk(
     try {
       const link = "/api/user/login";
       const { data } = await axios.post(link, userData);
-      console.log("Login data", data);
+
       return data;
     } catch (error) {
       return rejectWithValue({
@@ -50,14 +53,13 @@ export const loadUser = createAsyncThunk(
     try {
       const link = "/api/user/profile";
       const { data } = await axios.post(link, { withCredentials: true });
-      console.log("Load user data", data);
       return data;
     } catch (error) {
-      return rejectWithValue({
-        message:
-          error.response?.data?.message ||
-          "Failed to load user. Please try again later.",
-      });
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Failed to load user. Please try again later.",
+        }
+      );
     }
   }
 );
@@ -68,17 +70,61 @@ export const logOut = createAsyncThunk(
   "user/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const link = "api/user/logout";
-      const { data } = axios.post(link, { withCredentials: true });
+      const link = "/api/user/logout";
+      const { data } = await axios.post(link, { withCredentials: true });
       return data;
     } catch (error) {
-      error.rejectWithValue({
-        message:
-          error.response?.data?.message ||
-          "Logout faild. lease try again later. ",
-      });
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Logout faild. lease try again later. ",
+        }
+      );
     }
-  } 
+  }
+);
+
+//  update profile api call
+
+export const updateProfile = createAsyncThunk(
+  "user/updateProfile",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const link = "/api/user/profile/update";
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const { data } = await axios.put(link, userData, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || {
+          message: "profile update failed, please try again later",
+        }
+      );
+    }
+  }
+);
+
+// update password api call
+
+export const updatePassword = createAsyncThunk(
+  "user/passwordUpdate",
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const link = "/api/user/password/update";
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.put(link, passwordData, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Update Password failed.");
+    }
+  }
 );
 
 const userSlice = createSlice({
@@ -89,13 +135,22 @@ const userSlice = createSlice({
     error: null,
     success: false,
     isAuthenticated: false,
+    message: null,
   },
   reducers: {
     removeErrors: (state) => {
       state.error = null;
     },
     removeSuccess: (state) => {
-      state.success = null;
+      state.success = false;
+    },
+    resetUserState: (state) => {
+      state.user = null;
+      state.loading = false;
+      state.error = null;
+      state.success = false;
+      state.message = null;
+      state.isAuthenticated = false;
     },
   },
   extraReducers: (builder) => {
@@ -108,7 +163,6 @@ const userSlice = createSlice({
         state.success = action.payload.success;
         state.user = action.payload?.user || null;
         state.isAuthenticated = Boolean(action.payload?.user);
-        console.log("User after signup", state.user);
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
@@ -127,7 +181,6 @@ const userSlice = createSlice({
         state.success = action.payload.success;
         state.user = action.payload?.user || null;
         state.isAuthenticated = Boolean(action.payload?.user);
-        console.log("User after login", state.user);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -142,12 +195,10 @@ const userSlice = createSlice({
         (state.loading = true), (state.error = null);
       })
       .addCase(loadUser.fulfilled, (state, action) => {
-        console.log("loaduser data fulfilled action payload", action.payload);
         (state.loading = false), (state.error = null);
         state.success = action.payload.success;
         state.user = action.payload?.user || null;
         state.isAuthenticated = Boolean(action.payload?.user);
-        console.log("User after signup", state.user);
       })
       .addCase(loadUser.rejected, (state, action) => {
         state.loading = false;
@@ -161,8 +212,7 @@ const userSlice = createSlice({
       .addCase(logOut.pending, (state) => {
         (state.loading = true), (state.error = null);
       })
-      .addCase(logOut.fulfilled, (state, action) => {
-        console.log("loaduser data fulfilled action payload", action.payload);
+      .addCase(logOut.fulfilled, (state) => {
         (state.loading = false), (state.error = null);
         state.user = null;
         state.isAuthenticated = false;
@@ -172,9 +222,41 @@ const userSlice = createSlice({
         state.error =
           action.payload?.message || "Logout Failed. Please try again later.";
       });
+
+    builder
+      .addCase(updateProfile.pending, (state) => {
+        (state.loading = true), (state.error = null);
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        (state.loading = false), (state.error = null);
+        state.user = action.payload?.user || null;
+        state.success = action.payload?.success;
+        state.message = action.payload?.message;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message ||
+          " Profile update failed. Please try again later.";
+      });
+
+    builder
+      .addCase(updatePassword.pending, (state) => {
+        (state.loading = true), (state.error = null);
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        (state.loading = false), (state.success = action.payload?.success);
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message ||
+          "Update Password failed. Please try again later.";
+      });
   },
 });
 
-export const { removeErrors, removeSuccess } = userSlice.actions;
+export const { removeErrors, removeSuccess, resetUserState } =
+  userSlice.actions;
 
 export default userSlice.reducer;

@@ -15,7 +15,7 @@ router
   .route("/get/:id")
   .post(verifyUserAuth, roleBaseAccess("admin"), getSingleOrder);
 
-router.route("/get").post(verifyUserAuth, getAllOrder);
+router.route("/orders/user").post(verifyUserAuth, getAllOrder);
 router
   .route("/getAll")
   .post(verifyUserAuth, roleBaseAccess("admin"), getAllOrders);

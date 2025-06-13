@@ -8,8 +8,9 @@ import {
   ShoppingCart,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser, logOut } from "@/features/User/userSlice";
+import { logOut } from "@/features/User/userSlice";
 import { useRef } from "react";
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { removeSuccess } from "../features/User/userSlice";
@@ -21,22 +22,31 @@ const Navbar = ({ user }) => {
   const [open, setOpen] = useState(false);
   const manuref = useRef(null);
   // const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const popupLinks = [
+    {
+      lable: "Account",
+      funcName: userAccount,
+    },
+    { lable: "Orders", funcName: userOrders },
+    { lable: "Logout", funcName: logoutUser },
+  ];
+
+  if (user && user.role === "admin") {
+    popupLinks.unshift({
+      lable: "Admin Profile",
+      funcName: userDashboard,
+    });
+  }
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const { isAuthenticated, loading } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(loadUser());
-    }
-  }, [dispatch, isAuthenticated]);
-
   // close toggle manu click outside
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (manuref.current && !manuref.current.cotains(event.target)) {
+      if (manuref.current && !manuref.current.contains(event.target)) {
         setOpen(false);
       }
     };
@@ -85,28 +95,12 @@ const Navbar = ({ user }) => {
     { label: "Contact us", to: "/contact-us" },
   ];
 
-  const popupLinks = [
-    {
-      lable: "Profile",
-      funcName: profile,
-    },
-    { lable: "Orders", funcName: orders },
-    { lable: "Logout", funcName: logoutUser },
-  ];
-
-  if (user?.role === "admin") {
-    popupLinks.unshift({
-      lable: "Admin Profile",
-      funcName: dashboard,
-    });
-  }
-
-  function profile() {
+  function userAccount() {
     navigate("/profile");
   }
 
-  function orders() {
-    navigate("/orders");
+  function userOrders() {
+    navigate("/orders/user");
   }
 
   function logoutUser() {
@@ -114,7 +108,7 @@ const Navbar = ({ user }) => {
       .unwrap()
       .then(() => {
         toast.success("logout successfull");
-        dispatch(removeSuccess);
+        dispatch(removeSuccess());
         navigate("/auth");
       })
       .catch((error) => {
@@ -122,8 +116,8 @@ const Navbar = ({ user }) => {
       });
   }
 
-  function dashboard() {
-    navigate("/dashboard");
+  function userDashboard() {
+    navigate("/admin/dashboard");
   }
 
   return (
@@ -185,7 +179,7 @@ const Navbar = ({ user }) => {
             </form>
           </div>
 
-          {!loading && isAuthenticated && (
+          {isAuthenticated && (
             <Link to="#" className="relative inline-block">
               <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
               <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
@@ -194,7 +188,7 @@ const Navbar = ({ user }) => {
             </Link>
           )}
 
-          {!loading && !isAuthenticated ? (
+          {!isAuthenticated ? (
             <Link to="/auth">
               <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
             </Link>
@@ -209,15 +203,15 @@ const Navbar = ({ user }) => {
                     <img
                       src={
                         user?.avatar?.url
-                          ? user?.avatar?.url
-                          : "/images/default-avatar.png"
+                          ? user.avatar.url
+                          : "/images/profile_avatar.png"
                       }
                       alt="profile image"
                       className="object-cover w-full h-full"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/images/default-avatar.png";
-                      }}
+                      // onError={(e) => {
+                      //   e.target.onerror = null;
+                      //   e.target.src = "/images/profile_avatar.png";
+                      // }}
                     />
                   </div>
                   {user?.name && (
@@ -243,8 +237,8 @@ const Navbar = ({ user }) => {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.08 * index }}
-                          onClick={() => item.funcName()}
-                          key={index}
+                          onClick={item.funcName}
+                          key={item.lable}
                           className="block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-500 hover:bg-zinc-700 text-sm"
                         >
                           {item.lable}

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
+import { Avatar, AvatarImage } from "../components/ui/avatar";
 import {
   login,
   removeErrors,
@@ -13,6 +14,7 @@ import {
 } from "../features/User/userSlice";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import { Add } from "@mui/icons-material";
 
 const Auth = () => {
   motion;
@@ -20,6 +22,12 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [avatar, setAvatar] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(
+    "./images/profile_avatar.png"
+  );
+  const [hovered, setHovered] = useState(false);
+  const fileRef = useRef(null);
   const { success, loading, error, isAuthenticated } = useSelector(
     (state) => state.user
   );
@@ -44,7 +52,7 @@ const Auth = () => {
   }, [authType, dispatch, error]);
 
   useEffect(() => {
-    if (success) {
+    if (success && authType) {
       toast.success(
         authType === "signup"
           ? "Signup successful! You can now login."
@@ -60,6 +68,27 @@ const Auth = () => {
       navigate("/");
     }
   }, [authType, isAuthenticated, navigate]);
+
+  const handleFileInputClick = () => {
+    fileRef.current?.click();
+  };
+
+  const handleImageChange = (event) => {
+    try {
+      const file = event.target.files[0];
+      if (file) {
+        setAvatar(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setAvatarPreview(reader.result);
+          setAvatar(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const validateLogin = () => {
     if (!email.length) {
@@ -110,14 +139,14 @@ const Auth = () => {
       // myForm.set("name", name);
       // myForm.set("email", email);
       // myForm.set("password", password);
-      // console.log(myForm.entries());
-      // for (let pair of myForm.entries()) {
-      //   console.log(pair[0] + "-" + pair[1]);
+      // if (avatar instanceof File) {
+      //   myForm.append("avatar", avatar);
       // }
       const userData = {
         name,
         email,
         password,
+        avatar, 
       };
       setAuthType("signup");
       dispatch(signup(userData));
@@ -125,6 +154,8 @@ const Auth = () => {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      setAvatar(null);
+      setAvatarPreview("./images/profile_avatar.png");
     }
   };
   return (
@@ -134,7 +165,7 @@ const Auth = () => {
       ) : (
         <>
           <div className="flex items-center justify-center w-[100vw] h-[100vh] ">
-            <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh]   bg-gradient-to-r from-blue-500 to-purple-300 border-t-white border-2 border-white rounded-3xl overflow-hidden">
+            <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh] bg-gradient-to-r from-blue-500 to-purple-300 border-2 border-white rounded-3xl overflow-hidden">
               <div className=" h-full left-full backdrop:blur-xl shadow-lg w-full md:w-1/2 lg:w-1/2 xl:w-1/2 rounded-3xl md:p-3 lg:p-3 xl:p-5 items-center justify-center p-6 flex">
                 <div className="login signup tabs flex flex-col items-center justify-center w-full min-h-full">
                   <h1 className="text-white font-bold text-2xl md:text-3xl lg:text-4xl tracking-wider">
@@ -189,9 +220,47 @@ const Auth = () => {
                       className="flex mt-10 flex-col gap-5"
                       value="Signup"
                     >
+                      <div className="relative flex justify-center items-center ">
+                        {/* Avatar */}
+                        <div
+                          className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-1 border-white shadow-lg"
+                          onMouseEnter={() => setHovered(true)}
+                          onMouseLeave={() => setHovered(false)}
+                        >
+                          <Avatar className="w-full h-full rounded-full overflow-hidden">
+                            <AvatarImage
+                              src={avatarPreview}
+                              alt="Profile"
+                              className="object-cover w-full h-full"
+                            />
+                          </Avatar>
+
+                          {/* Hover Overlay */}
+                          {hovered && (
+                            <div
+                              className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full cursor-pointer"
+                              onClick={handleFileInputClick}
+                            >
+                              <Add className="text-white text-3xl" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Hidden File Input */}
+                        <input
+                          type="file"
+                          name="avatar"
+                          accept=".png, .jpg, .jpeg, .svg, .webp"
+                          ref={fileRef}
+                          className="hidden"
+                          onChange={handleImageChange}
+                        />
+                      </div>
+
                       <Input
                         type="text"
                         placeholder="Name"
+                        name="name"
                         className="rounded-full p-6 placeholder:text-white "
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -200,6 +269,7 @@ const Auth = () => {
                       <Input
                         type="email"
                         placeholder="email"
+                        name="email"
                         className="rounded-full p-6 placeholder:text-white"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -207,6 +277,7 @@ const Auth = () => {
                       <Input
                         type="password"
                         placeholder="password"
+                        name="password"
                         className="rounded-full p-6 placeholder:text-white"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -224,7 +295,7 @@ const Auth = () => {
                         className="w-full font-bold rounded-full"
                         onClick={handleSignup}
                       >
-                        Signup
+                        {loading ? "Signin Up" : "Signup"}
                       </Button>
                     </TabsContent>
                   </Tabs>
