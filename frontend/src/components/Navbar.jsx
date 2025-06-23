@@ -14,14 +14,12 @@ import { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { removeSuccess } from "../features/User/userSlice";
-// import { getProductSuggestion } from "../features/products/productSlice";
 
 const Navbar = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
   const manuref = useRef(null);
-  // const [showSuggestions, setShowSuggestions] = useState(false);
 
   const popupLinks = [
     {
@@ -60,17 +58,6 @@ const Navbar = ({ user }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // const { ProductSuggestions } = useSelector((state) => state.product);
-
-  // useEffect(() => {
-  //   const trimmedQuery = searchQuery.trim();
-  //   if (trimmedQuery) {
-  //     dispatch(getProductSuggestion({ keyword: trimmedQuery }));
-  //   } else {
-  //     dispatch({ type: "product/clearSuggestions" }); // Optional: clear suggestions
-  //   }
-  // }, [dispatch, searchQuery]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -78,15 +65,8 @@ const Navbar = ({ user }) => {
     } else {
       navigate(`/products`);
     }
-    // setShowSuggestions(false);
-    setSearchQuery(""); // Optional: clear input
+    setSearchQuery("");
   };
-
-  // const handleSelectSuggestion = (suggestion) => {
-  //   setSearchQuery(suggestion);
-  //   navigate(`/products?keyword=${encodeURIComponent(suggestion)}`);
-  //   setShowSuggestions(false);
-  // };
 
   const navLinks = [
     { label: "Home", to: "/" },
@@ -155,27 +135,11 @@ const Navbar = ({ user }) => {
                 placeholder="Search for products"
                 type="text"
                 value={searchQuery}
-                // onFocus={() => setShowSuggestions(true)}
-                // onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black">
                 <Search />
               </button>
-
-              {/* {showSuggestions && ProductSuggestions.length > 0 && (
-                <ul className="absolute z-50 bg-white w-full mt-1 rounded shadow-md max-h-60 overflow-y-auto">
-                  {ProductSuggestions.map((item) => (
-                    <li
-                      key={item._id}
-                      onMouseDown={() => handleSelectSuggestion(item.name)} // Use onMouseDown instead of onClick
-                      className="cursor-pointer px-4 py-2 hover:bg-zinc-200"
-                    >
-                      {item.name}
-                    </li>
-                  ))}
-                </ul>
-              )} */}
             </form>
           </div>
 
@@ -303,29 +267,11 @@ const Navbar = ({ user }) => {
                   placeholder="Search for products"
                   type="text"
                   value={searchQuery}
-                  // onFocus={() => setShowSuggestions(true)}
-                  // onBlur={() =>
-                  //   setTimeout(() => setShowSuggestions(false), 200)
-                  // }
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <button className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black">
                   <Search />
                 </button>
-
-                {/* {showSuggestions && ProductSuggestions.length > 0 && (
-                  <ul className="absolute z-50 bg-white w-full mt-1 rounded shadow-md max-h-60 overflow-y-auto">
-                    {ProductSuggestions.map((item) => (
-                      <li
-                        key={item._id}
-                        onMouseDown={() => handleSelectSuggestion(item.name)} // Use onMouseDown instead of onClick
-                        className="cursor-pointer px-4 py-2 hover:bg-zinc-200"
-                      >
-                        {item.name}
-                      </li>
-                    ))}
-                  </ul>
-                )} */}
               </form>
             </div>
             <div className="flex gap-4">

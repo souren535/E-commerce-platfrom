@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import ProductDetails from "./components/ProductDetails";
 import Products from "./pages/Products";
@@ -16,10 +20,8 @@ const App = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(loadUser());
-    }
-  }, [dispatch, isAuthenticated]);
+    dispatch(loadUser());
+  }, [dispatch]);
   console.log(isAuthenticated, user);
   return (
     <Router>

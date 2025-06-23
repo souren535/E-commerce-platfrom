@@ -18,7 +18,7 @@ const router = expresss.Router();
 
 router.route("/add").post(userRegister);
 router.route("/login").post(userLogin);
-router.route("/profile").post(verifyUserAuth, userDetails);
+router.route("/profile").get(verifyUserAuth, userDetails);
 router.route("/logout").post(verifyUserAuth, userLogout);
 router.route("/password/forgot").post(requestPasswordReset);
 router.route("/reset/:token").post(resetPassword);

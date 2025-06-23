@@ -52,7 +52,7 @@ export const loadUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const link = "/api/user/profile";
-      const { data } = await axios.post(link, { withCredentials: true });
+      const { data } = await axios.get(link, { withCredentials: true });
       return data;
     } catch (error) {
       return rejectWithValue(
@@ -71,7 +71,7 @@ export const logOut = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const link = "/api/user/logout";
-      const { data } = await axios.post(link, { withCredentials: true });
+      const { data } = await axios.post(link, {}, { withCredentials: true });
       return data;
     } catch (error) {
       return rejectWithValue(
@@ -89,13 +89,12 @@ export const updateProfile = createAsyncThunk(
   "user/updateProfile",
   async (userData, { rejectWithValue }) => {
     try {
-      const link = "/api/user/profile/update";
-      const config = {
+      const { data } = await axios.put("/api/user/profile/update", userData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
-      };
-      const { data } = await axios.put(link, userData, config);
+        withCredentials: true,
+      });
       return data;
     } catch (error) {
       return rejectWithValue(

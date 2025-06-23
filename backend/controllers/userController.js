@@ -215,16 +215,16 @@ export const updatePassword = handleAsyncError(async (req, res, next) => {
 
 export const updateProfile = handleAsyncError(async (req, res, next) => {
   try {
-    let { name, email, color, avatar } = req.body;
+    const { name, email, color, avatar } = req.body;
 
     const updateDetails = {
       name,
       email,
       color,
     };
-    if (avatar && avatar !== "") {
-      const user = await userModel.findById(req.user.id);
-      const imageId = user.avatar.public_id;
+    const user = await userModel.findById(req.user.id);
+    if (avatar && avatar.startsWith("data:image")) {
+      const imageId = user.avatar?.public_id;
       if (user.avatar && imageId) {
         await cloudinary.uploader.destroy(imageId);
       }
@@ -238,18 +238,25 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
       };
+
+      console.log("Avatar length:", avatar?.length);
+      console.log("Avatar starts with:", avatar?.substring(0, 30));
     }
-    const user = await userModel.findByIdAndUpdate(req.user.id, updateDetails, {
-      new: true,
-      runValidators: true,
-    });
+    const userData = await userModel.findByIdAndUpdate(
+      req.user.id,
+      updateDetails,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     res.status(200).json({
       success: true,
       message: "profile update successfully",
-      user,
+      user: userData,
     });
   } catch (error) {
-    console.log(error);
+    console.log("Cloudinary Upload Error",error);
     res.status(500).json({
       message: "Internal Server Error",
     });

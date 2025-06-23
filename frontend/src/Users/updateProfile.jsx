@@ -30,6 +30,11 @@ const UpdateProfile = () => {
   const fileRef = useRef(null);
 
   useEffect(() => {
+    dispatch(removeSuccess());
+    dispatch(removeErrors());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
@@ -46,8 +51,8 @@ const UpdateProfile = () => {
   }, [error, dispatch]);
 
   useEffect(() => {
-    if (success) {
-      toast.success(message);
+    if (success && message) {
+      toast.success(message || "Profile update successfully");
       dispatch(removeSuccess());
       navigate("/profile");
     }
@@ -70,12 +75,13 @@ const UpdateProfile = () => {
 
   const updateSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.set("name", name);
-    formData.set("email", email);
-    formData.set("avatar", avatar);
-    formData.set("color", colorOptions[selectedColor].bg);
-    dispatch(updateProfile(formData));
+    const payload = {
+      name,
+      email,
+      color: colorOptions[selectedColor].bg,
+      avatar,
+    };
+    dispatch(updateProfile(payload));
   };
 
   return (

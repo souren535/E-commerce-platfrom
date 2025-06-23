@@ -14,8 +14,8 @@ createRoot(document.getElementById("root")).render(
     <Toaster
       closeButton
       position="top-right"
-      richColors="true"
-      toastOptions={{ style: { background: "black" } }}
+      // richColors="true"
+      // toastOptions={{ style: { background: "white" } }}
     />
     <ToastContainer />
   </Provider>

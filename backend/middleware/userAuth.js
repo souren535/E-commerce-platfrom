@@ -5,20 +5,18 @@ import jwt from "jsonwebtoken";
 
 export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
   const { token } = req.cookies;
-  if (!token)
-    return next(
-      new HandleEror(
-        "Authnetication is missing!please login to access resource",
-        401
-      )
-    );
+  if (!token) return next(new HandleEror("please login first", 401));
 
   try {
     let decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = await userModel.findById(decoded.id);
+    if (!req.user) {
+      return next(new HandleEror("User not found", 404));
+    }
     next();
   } catch (error) {
     console.log(error);
+    return next(new HandleEror("Invalid or expired token", 401));
   }
 });
 
