@@ -118,7 +118,7 @@ export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
     );
   }
 
-  const resetPasswordURL = `http://localhost/user/reset/${resetToken}`;
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/reset/${resetToken}`;
   const message = `Use the following link to reset your password: ${resetPasswordURL} - \n\n This link will expire in 5 minutes.\n\n
                    if  you didn't request a password reset, Please ignore this message.`;
 
@@ -161,10 +161,7 @@ export const resetPassword = handleAsyncError(async (req, res, next) => {
       new HandleEror("Reset password token is invalid or has been expired", 400)
     );
   }
-  let { newPassword, confirmPassword } = req.body;
-  if (newPassword !== confirmPassword) {
-    return next(new HandleEror("password doesn't match", 400));
-  }
+  let { newPassword } = req.body;
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -176,6 +173,7 @@ export const resetPassword = handleAsyncError(async (req, res, next) => {
 
     sendToken(user, 200, res);
   } catch (error) {
+    console.log(error);
     return next(
       new HandleEror("Could save reset token, Please try again later", 500)
     );
@@ -256,7 +254,7 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
       user: userData,
     });
   } catch (error) {
-    console.log("Cloudinary Upload Error",error);
+    console.log("Cloudinary Upload Error", error);
     res.status(500).json({
       message: "Internal Server Error",
     });

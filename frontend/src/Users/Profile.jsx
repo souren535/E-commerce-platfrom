@@ -32,7 +32,8 @@ const Profile = () => {
   }
 
   const avatarUrl = user?.avatar?.url;
-  const isValidAvatar = avatarUrl && avatarUrl !== "null" && avatarUrl.trim() !== "";
+  const isValidAvatar =
+    avatarUrl && avatarUrl !== "null" && avatarUrl.trim() !== "";
 
   return (
     <>
@@ -69,19 +70,31 @@ const Profile = () => {
 
           <div className="profile-details p-5 bg-[#f8fafc] rounded-xl mx-0 my-8">
             <div className="flex items-center p-5 mb-4 bg-zinc-300 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
-              <h2 className="text-[1.1rem] text-[#64748b] min-w-[130px] font-semibold">Username:</h2>
-              <p className="text-[1.1rem] text-zinc-100 pl-4 font-semibold">{user?.name || "N/A"}</p>
-            </div>
-
-            <div className="flex items-center p-5 mb-4 bg-zinc-300 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
-              <h2 className="text-[1.1rem] text-[#64748b] min-w-[130px] font-semibold">Email:</h2>
-              <p className="text-[1.1rem] text-zinc-100 pl-4 font-semibold">{user?.email || "N/A"}</p>
-            </div>
-
-            <div className="flex items-center p-5 mb-4 bg-zinc-300 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
-              <h2 className="text-[1.1rem] text-[#64748b] min-w-[130px] font-semibold">Joined On:</h2>
+              <h2 className="text-[1.1rem] text-[#64748b] min-w-[130px] font-semibold">
+                Username:
+              </h2>
               <p className="text-[1.1rem] text-zinc-100 pl-4 font-semibold">
-                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
+                {user?.name || "N/A"}
+              </p>
+            </div>
+
+            <div className="flex items-center p-5 mb-4 bg-zinc-300 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
+              <h2 className="text-[1.1rem] text-[#64748b] min-w-[130px] font-semibold">
+                Email:
+              </h2>
+              <p className="text-[1.1rem] text-zinc-100 pl-4 font-semibold">
+                {user?.email || "N/A"}
+              </p>
+            </div>
+
+            <div className="flex items-center p-5 mb-4 bg-zinc-300 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
+              <h2 className="text-[1.1rem] text-[#64748b] min-w-[130px] font-semibold">
+                Joined On:
+              </h2>
+              <p className="text-[1.1rem] text-zinc-100 pl-4 font-semibold">
+                {user?.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString()
+                  : "N/A"}
               </p>
             </div>
           </div>
@@ -96,7 +109,7 @@ const Profile = () => {
             >
               Change Password
             </button>
-            {isOpen && <Modal onClose={closeModal} />}
+            {isOpen && <Modal onClose={closeModal} modalType={"update"} />}
           </div>
         </div>
       </div>

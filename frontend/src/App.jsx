@@ -1,9 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ProductDetails from "./components/ProductDetails";
 import Products from "./pages/Products";
@@ -14,6 +10,7 @@ import { loadUser } from "./features/User/userSlice";
 import Profile from "./Users/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UpdateProfile from "./Users/updateProfile";
+import ResetPassword from "./Users/ResetPassword";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -32,6 +29,7 @@ const App = () => {
         <Route path="/list/:id" element={<ProductDetails />} />
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/reset/:token" element={<ResetPassword />} />
         <Route
           path="/profile"
           element={<ProtectedRoute element={<Profile />} />}

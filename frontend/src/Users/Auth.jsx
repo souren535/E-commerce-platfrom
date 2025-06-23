@@ -4,6 +4,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Avatar, AvatarImage } from "../components/ui/avatar";
 import {
@@ -12,12 +13,12 @@ import {
   removeSuccess,
   signup,
 } from "../features/User/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { Add } from "@mui/icons-material";
+import Modal from "../components/Modal";
 
 const Auth = () => {
-  motion;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +28,7 @@ const Auth = () => {
     "./images/profile_avatar.png"
   );
   const [hovered, setHovered] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const fileRef = useRef(null);
   const { success, loading, error, isAuthenticated } = useSelector(
     (state) => state.user
@@ -36,7 +38,7 @@ const Auth = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (error) {
+    if (error && !openModal) {
       const errorMessage =
         typeof error === "string"
           ? error
@@ -49,7 +51,7 @@ const Auth = () => {
       dispatch(removeErrors());
       setAuthType("");
     }
-  }, [authType, dispatch, error]);
+  }, [authType, dispatch, error, openModal]);
 
   useEffect(() => {
     if (success && authType) {
@@ -63,6 +65,12 @@ const Auth = () => {
     }
   }, [success, authType, dispatch]);
 
+  const handleOpenModal = () => {
+    dispatch(removeErrors());
+    dispatch(removeSuccess());
+    setOpenModal(true);
+  };
+  const closeModal = () => setOpenModal(false);
   useEffect(() => {
     if (authType === "login" && isAuthenticated) {
       navigate("/");
@@ -146,7 +154,7 @@ const Auth = () => {
         name,
         email,
         password,
-        avatar, 
+        avatar,
       };
       setAuthType("signup");
       dispatch(signup(userData));
@@ -164,11 +172,11 @@ const Auth = () => {
         <Loader />
       ) : (
         <>
-          <div className="flex items-center justify-center w-[100vw] h-[100vh] ">
-            <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh] bg-gradient-to-r from-blue-500 to-purple-300 border-2 border-white rounded-3xl overflow-hidden">
+          <div className="flex items-center justify-center w-[100vw] h-[100vh]">
+            <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh] bg-white border-2 border-white rounded-3xl overflow-hidden">
               <div className=" h-full left-full backdrop:blur-xl shadow-lg w-full md:w-1/2 lg:w-1/2 xl:w-1/2 rounded-3xl md:p-3 lg:p-3 xl:p-5 items-center justify-center p-6 flex">
                 <div className="login signup tabs flex flex-col items-center justify-center w-full min-h-full">
-                  <h1 className="text-white font-bold text-2xl md:text-3xl lg:text-4xl tracking-wider">
+                  <h1 className="text-zinc-700 font-bold text-2xl md:text-3xl lg:text-4xl tracking-wider">
                     Login/Signup
                   </h1>
                   <Tabs className="w-3/4 mt-10" defaultValue="Login">
@@ -195,14 +203,14 @@ const Auth = () => {
                       <Input
                         type="email"
                         placeholder="email"
-                        className="rounded-full p-6 placeholder:text-white"
+                        className="rounded-full p-6 placeholder:text-zinc-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                       <Input
                         type="password"
                         placeholder="password"
-                        className="rounded-full p-6 placeholder:text-white"
+                        className="rounded-full p-6 placeholder:text-zinc-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -213,6 +221,18 @@ const Auth = () => {
                       >
                         Login
                       </Button>
+                      <p className="font-light text-center md:text-sm ">
+                        <span>Forget your Password? </span>
+                        <span
+                          onClick={handleOpenModal}
+                          className="text-blue-500 cursor-pointer"
+                        >
+                          Reset Here
+                        </span>
+                      </p>
+                      {openModal && (
+                        <Modal onClose={closeModal} modalType={"forgot"} />
+                      )}
                     </TabsContent>
 
                     {/* signup content */}
@@ -261,7 +281,7 @@ const Auth = () => {
                         type="text"
                         placeholder="Name"
                         name="name"
-                        className="rounded-full p-6 placeholder:text-white "
+                        className="rounded-full p-6 placeholder:text-zinc-700 "
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -270,7 +290,7 @@ const Auth = () => {
                         type="email"
                         placeholder="email"
                         name="email"
-                        className="rounded-full p-6 placeholder:text-white"
+                        className="rounded-full p-6 placeholder:text-zinc-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -278,7 +298,7 @@ const Auth = () => {
                         type="password"
                         placeholder="password"
                         name="password"
-                        className="rounded-full p-6 placeholder:text-white"
+                        className="rounded-full p-6 placeholder:text-zinc-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -286,7 +306,7 @@ const Auth = () => {
                       <Input
                         type="password"
                         placeholder="Confirm password"
-                        className="rounded-full p-6 placeholder:text-white"
+                        className="rounded-full p-6 placeholder:text-zinc-700"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                       />
@@ -304,7 +324,7 @@ const Auth = () => {
 
               <div className=" items-center justify-center w-full h-full p-3">
                 <h1 className="flex items-center md:text-4xl lg:text-5xl xl:text-6xl text-3xl justify-center w-full h-full text-white rounded-3xl ">
-                  <span className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-center">
+                  <span className="text-3xl text-zinc-700 md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-center">
                     Welcome to the{" "}
                     <span className="text-blue-500 font-['COMIC_SANS_MS'] ">
                       ShopEazy

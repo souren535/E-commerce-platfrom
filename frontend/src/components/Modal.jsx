@@ -13,12 +13,13 @@ import { Close } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  forgotPassword,
   removeErrors,
   removeSuccess,
   updatePassword,
 } from "../features/User/userSlice";
 
-const Modal = ({ onClose }) => {
+const Modal = ({ onClose, modalType }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,10 +27,12 @@ const Modal = ({ onClose }) => {
     oldMatch: "",
     confirmMatch: "",
   });
+  const [email, setEmail] = useState("");
 
   const dispatch = useDispatch();
-  // eslint-disable-next-line no-unused-vars
-  const { success, error, loading } = useSelector((state) => state.user);
+  const { success, error, message, loading } = useSelector(
+    (state) => state.user
+  );
 
   // Clear any stale success/error on mount
   useEffect(() => {
@@ -77,8 +80,15 @@ const Modal = ({ onClose }) => {
     }
   };
 
+  const handleForgotEmailSubmit = (e) => {
+    e.preventDefault();
+    const myForm = new FormData();
+    myForm.set("email", email);
+    dispatch(forgotPassword(myForm));
+  };
+
   useEffect(() => {
-    if (success) {
+    if (modalType === "update" && success) {
       setTimeout(() => {
         dispatch(removeSuccess());
         setOldPassword("");
@@ -87,17 +97,38 @@ const Modal = ({ onClose }) => {
         onClose();
       }, 3000);
     }
-  }, [success, dispatch, onClose]);
+  }, [success, dispatch, onClose, modalType]);
 
   useEffect(() => {
-    if (error) {
+    if (modalType === "forgot" && success) {
+      const timer = setTimeout(() => {
+        dispatch(removeSuccess());
+        setEmail("");
+        onClose();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, dispatch, onClose, modalType]);
+
+  useEffect(() => {
+    if (modalType === "update" && error) {
       const timeout = setTimeout(() => {
         dispatch(removeErrors());
-      }, 3000); 
+      }, 3000);
 
       return () => clearTimeout(timeout);
     }
-  }, [error, dispatch]);
+  }, [error, dispatch, modalType]);
+
+  useEffect(() => {
+    if (modalType === "forgot" && error) {
+      const timeout = setTimeout(() => {
+        dispatch(removeErrors());
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [error, dispatch, modalType]);
 
   const backDrop = {
     hidden: { opacity: 0 },
@@ -128,104 +159,168 @@ const Modal = ({ onClose }) => {
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        variants={backDrop}
-        initial="hidden"
-        animate="visible"
-        exit="hidden"
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      >
-        <motion.div
-          variants={modal}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          className="bg-white rounded-xl w-[90%] max-w-md absolute top-1/2 left-1/2"
-        >
-          <button
-            onClick={onClose}
-            className="absolute top-2 right-3 text-zinc-600 p-1 hover:text-black rounded-full hover:bg-zinc-300 transition-colors"
+    <>
+      <AnimatePresence>
+        {modalType === "update" && (
+          <motion.div
+            variants={backDrop}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
           >
-            <Close />
-          </button>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center text-2xl">
-                Update Password
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <Input
-                  className="py-6 mb-6"
-                  type="password"
-                  placeholder="Old Password"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                />
-                <Input
-                  className="py-6 mb-6"
-                  type="password"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                {validationMsg.oldMatch && (
-                  <p className="mb-2 text-sm text-red-400">
-                    {validationMsg.oldMatch}
-                  </p>
-                )}
-                <Input
-                  className="py-6 mb-6"
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                {validationMsg.confirmMatch && (
-                  <p
-                    className={`mb-2 text-sm ${
-                      validationMsg.confirmMatch.includes("should")
-                        ? "text-red-400"
-                        : "text-green-400"
-                    }`}
-                  >
-                    {validationMsg.confirmMatch}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-center items-center">
-              {error && (
-                <p className="text-red-500 text-sm text-center mt-2">
-                  {error.message}
-                </p>
-              )}
-
-              {success && (
-                <p className="text-green-500 text-sm text-center mt-2">
-                  Password updated successfully!
-                </p>
-              )}
-              <Button
-                disabled={
-                  !oldPassword ||
-                  !newPassword ||
-                  !confirmPassword ||
-                  validationMsg.oldMatch ||
-                  newPassword !== confirmPassword
-                }
-                onClick={updateSubmit}
-                className="mt-3 text-center w-full p-7 rounded-lg text-lg bg-zinc-600 hover:bg-zinc-900"
+            <motion.div
+              variants={modal}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="bg-white rounded-xl w-[90%] max-w-md absolute top-1/2 left-1/2"
+            >
+              <button
+                onClick={onClose}
+                className="absolute top-2 right-3 text-zinc-600 p-1 hover:text-black rounded-full hover:bg-zinc-300 transition-colors"
               >
-                Update Password
-              </Button>
-            </CardFooter>
-          </Card>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+                <Close />
+              </button>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-center text-2xl">
+                    Update Password
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div>
+                    <Input
+                      className="py-6 mb-6"
+                      type="password"
+                      placeholder="Old Password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                    />
+                    <Input
+                      className="py-6 mb-6"
+                      type="password"
+                      placeholder="New Password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    {validationMsg.oldMatch && (
+                      <p className="mb-2 text-sm text-red-400">
+                        {validationMsg.oldMatch}
+                      </p>
+                    )}
+                    <Input
+                      className="py-6 mb-6"
+                      type="password"
+                      placeholder="Confirm Password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    {validationMsg.confirmMatch && (
+                      <p
+                        className={`mb-2 text-sm ${
+                          validationMsg.confirmMatch.includes("should")
+                            ? "text-red-400"
+                            : "text-green-400"
+                        }`}
+                      >
+                        {validationMsg.confirmMatch}
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-col justify-center items-center">
+                  {error && (
+                    <p className="text-red-500 text-sm text-center mb-2">
+                      {error.message || "Something went wrong."}
+                    </p>
+                  )}
+                  {success && (
+                    <p className="text-green-500 text-sm text-center mb-2">
+                      Password updated successfully!
+                    </p>
+                  )}
+                  <Button
+                    disabled={
+                      !oldPassword ||
+                      !newPassword ||
+                      !confirmPassword ||
+                      validationMsg.oldMatch ||
+                      newPassword !== confirmPassword
+                    }
+                    onClick={updateSubmit}
+                    className="mt-3 text-center w-full p-7 rounded-lg text-lg bg-zinc-600 hover:bg-zinc-900"
+                  >
+                    Update Password
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </motion.div>
+        )}
+        {modalType === "forgot" && (
+          <motion.div
+            variants={backDrop}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          >
+            <motion.div
+              variants={modal}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="bg-white rounded-xl w-[90%] max-w-md absolute top-1/2 left-1/2"
+            >
+              <button
+                onClick={onClose}
+                className="absolute top-2 right-3 text-zinc-600 p-1 hover:text-black rounded-full hover:bg-zinc-300 transition-colors"
+              >
+                <Close />
+              </button>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-center text-2xl">
+                    Forget Password
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div>
+                    <Input
+                      className="py-6 mb-6"
+                      type="email"
+                      name="email"
+                      placeholder="Enter your ragistration Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-col justify-center items-center">
+                  {error && (
+                    <p className="text-red-500 text-sm text-center mb-2">
+                      {error.message || "Something went wrong."}
+                    </p>
+                  )}
+                  {success && (
+                    <p className="text-green-500 text-sm text-center mb-2">
+                      {message || `Email sent to ${email} successfully!`}
+                    </p>
+                  )}
+                  <Button
+                    onClick={handleForgotEmailSubmit}
+                    className="mt-3 text-center w-full p-7 rounded-lg text-lg bg-zinc-600 hover:bg-zinc-900"
+                  >
+                    {loading ? "Sending..." : "Send"}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
