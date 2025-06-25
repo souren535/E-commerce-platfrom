@@ -9,14 +9,23 @@ import {
   getProductdetails,
   removeErrors,
 } from "../features/products/productSlice";
-
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import Loader from "./Loader";
+import { addItemsToCart, removeMessage } from "../features/Cart/cartSlice";
 
 const ProductDetails = () => {
   // eslint-disable-next-line no-unused-vars
-  const [userrating, setUserRating] = useState(0);
-  let { loading, error, product } = useSelector((state) => state.product);
+  const [userRating, setUserRating] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const { loading, error, product } = useSelector((state) => state.product);
+  const {
+    loading: cartLoading,
+    error: cartError,
+    success,
+    message,
+    cartItems
+  } = useSelector((state) => state.cart);
+  console.log(cartItems)
   const dispatch = useDispatch();
   const { id } = useParams();
   useEffect(() => {
@@ -27,13 +36,17 @@ const ProductDetails = () => {
   }, [dispatch, id]);
 
   useEffect(() => {
-    if (error)
-      toast.error(error.message || "Somthing Went Wrong", {
-        position: "top-left",
-        autoClose: 5000,
-      });
+    if (error) toast.error(error.message || "Somthing Went Wrong!");
     dispatch(removeErrors());
-  }, [dispatch, error]);
+    if (cartError) toast.error(cartError || "Somthing Went Wrong!");
+  }, [dispatch, error, cartError]);
+
+  useEffect(() => {
+    if (success) {
+      toast.success(message);
+      dispatch(removeMessage());
+    }
+  }, [success, dispatch, message]);
 
   if (loading) {
     return (
@@ -55,6 +68,10 @@ const ProductDetails = () => {
       </>
     );
   }
+
+  const handleAddToCart = () => {
+    dispatch(addItemsToCart({ id, quantity }));
+  };
 
   const handelRatingChange = (newRating) => {
     setUserRating(newRating);
@@ -103,21 +120,39 @@ const ProductDetails = () => {
               <>
                 <div className=" quentity-container flex items-center m-[20-px] gap-[10px]">
                   <span className="font-semibold mr-[10px]">Quentity:</span>
-                  <button className="w-[35px] h-[35px] border-[1px] border-solid border-[#D5D9D9] cursor-pointer text-[18px] rounded-b-[4px] bg-gradient-to-b from-[#F7F8FA] t0-[#E7E9EC]">
+                  <button
+                    disabled={quantity <= 1}
+                    onClick={() => setQuantity(quantity - 1)}
+                    className="w-[35px] h-[35px] border-[1px] border-solid border-[#D5D9D9] cursor-pointer text-[18px] hover:border-1 hover:border-zinc-700 rounded-b-[4px] bg-gradient-to-b from-[#F7F8FA] t0-[#E7E9EC]"
+                  >
                     -
                   </button>
                   <input
                     type="text"
-                    value={1}
+                    value={quantity}
                     className="w-[50px] h-[35px] text-center border border-[#D5D9D9] mx-[5px] text-[16px]"
                     readOnly
                   />
-                  <button className="w-[35px] h-[35px] border-[1px] border-solid border-[#D5D9D9] cursor-pointer text-[18px] rounded-b-[4px] bg-gradient-to-b from-[#F7F8FA] t0-[#E7E9EC]">
+                  <button
+                    onClick={() => {
+                      if (product.stock <= quantity) {
+                        toast.error("cannot exceed available stock!");
+                        dispatch(removeErrors());
+                        return;
+                      }
+                      setQuantity((prev) => prev + 1);
+                    }}
+                    className="w-[35px] h-[35px] border-[1px] border-solid border-[#D5D9D9] cursor-pointer text-[18px] hover:border-1 hover:border-zinc-700 rounded-b-[4px] bg-gradient-to-b from-[#F7F8FA] t0-[#E7E9EC]"
+                  >
                     +
                   </button>
                 </div>
-                <button className="w-full px-[20px] py-[12px] border rounded-[8px] text-[16px] cursor-pointer my-[20px] text-zinc-100 bg-zinc-500 border-[var(--bg-primary)] hover:bg-zinc-700">
-                  Add to Cart
+                <button
+                  disabled={cartLoading}
+                  onClick={handleAddToCart}
+                  className="w-full px-[20px] py-[12px] border rounded-[8px] text-[16px] cursor-pointer my-[20px] text-zinc-100 bg-zinc-500 border-[var(--bg-primary)] hover:bg-zinc-700"
+                >
+                  {cartLoading ? "Adding to cart..." : "Add to Cart"}
                 </button>
               </>
             )}

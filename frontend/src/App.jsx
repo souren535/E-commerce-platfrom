@@ -11,14 +11,17 @@ import Profile from "./Users/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UpdateProfile from "./Users/updateProfile";
 import ResetPassword from "./Users/ResetPassword";
+import CartPage from "./Cart/CartPage";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
+    if (!isAuthenticated) {
+      dispatch(loadUser());
+    }
+  }, [dispatch, isAuthenticated]);
   console.log(isAuthenticated, user);
   return (
     <Router>
@@ -30,6 +33,7 @@ const App = () => {
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route
           path="/profile"
           element={<ProtectedRoute element={<Profile />} />}

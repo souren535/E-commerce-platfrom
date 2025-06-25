@@ -64,7 +64,7 @@ export const getProductdetails = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const link = `/api/product/list/${id}`;
-      const { data } = await axios.post(link);
+      const { data } = await axios.get(link);
       return data;
     } catch (error) {
       return rejectWithValue({

@@ -20,7 +20,7 @@ const router = express.Router();
 
 router.route("/list").post(getAllProducts);
 router.route("/suggestions").get(getProductSuggestions);
-router.route("/list/:id").post(GetSingleProduct);
+router.route("/list/:id").get(GetSingleProduct);
 
 // admin products
 

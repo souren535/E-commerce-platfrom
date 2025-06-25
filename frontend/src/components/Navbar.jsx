@@ -15,11 +15,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { removeSuccess } from "../features/User/userSlice";
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
   const manuref = useRef(null);
+
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
   const popupLinks = [
     {
@@ -37,10 +41,6 @@ const Navbar = ({ user }) => {
     });
   }
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  const { isAuthenticated } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  // close toggle manu click outside
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -144,11 +144,15 @@ const Navbar = ({ user }) => {
           </div>
 
           {isAuthenticated && (
-            <Link to="#" className="relative inline-block">
+            <Link to="/cart" className="relative inline-block">
               <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
-              <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                6
-              </span>
+              {cartItems.length === 0 ? (
+                ""
+              ) : (
+                <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {cartItems.length}
+                </span>
+              )}
             </Link>
           )}
 
@@ -166,8 +170,8 @@ const Navbar = ({ user }) => {
                   <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
                     <img
                       src={
-                        user?.avatar?.url
-                          ? user.avatar.url
+                        user?.avatar.url
+                          ? user.avatar?.url
                           : "/images/profile_avatar.png"
                       }
                       alt="profile image"
