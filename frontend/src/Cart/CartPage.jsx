@@ -2,7 +2,7 @@ import React from "react";
 import PageTitle from "../components/PageTitle";
 import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import CartItem from "./components/CartItem";
 import Lottie from "lottie-react";
@@ -15,7 +15,7 @@ const CartPage = () => {
     0
   );
   const tax = subTotal * 0.18;
-  console.log(subTotal);
+  const navigate = useNavigate();
   const item_headers = ["Product", "Quantity", "Item Total", "Actions"];
   return (
     <>
@@ -98,11 +98,13 @@ const CartPage = () => {
                 <div className="text-white font-semibold text-xl flex justify-between mt-3">
                   <span>Total :</span>
                   <span>
-                    {subTotal + tax} <strong>/-</strong>
+                    {(subTotal + tax + (subTotal > 500 ? 0 : 500)).toFixed(2)}{" "}
+                    <strong>/-</strong>
                   </span>
                 </div>
                 <Button
                   className={`text-md mt-10 bg-zinc-500 cursor-pointer text-center w-full hover:bg-zinc-600`}
+                  onClick={() => navigate("/shipping")}
                 >
                   Proceed to Checkout
                 </Button>

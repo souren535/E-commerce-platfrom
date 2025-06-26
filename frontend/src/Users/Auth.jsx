@@ -13,7 +13,7 @@ import {
   removeSuccess,
   signup,
 } from "../features/User/userSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { Add } from "@mui/icons-material";
 import Modal from "../components/Modal";
@@ -34,6 +34,8 @@ const Auth = () => {
     (state) => state.user
   );
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
   const [authType, setAuthType] = useState("");
 
   const dispatch = useDispatch();
@@ -73,9 +75,9 @@ const Auth = () => {
   const closeModal = () => setOpenModal(false);
   useEffect(() => {
     if (authType === "login" && isAuthenticated) {
-      navigate("/");
+      navigate(redirect);
     }
-  }, [authType, isAuthenticated, navigate]);
+  }, [authType, isAuthenticated, navigate, redirect]);
 
   const handleFileInputClick = () => {
     fileRef.current?.click();

@@ -8,10 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import { loadUser } from "./features/User/userSlice";
 import Profile from "./Users/Profile";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./Security/ProtectedRoute";
 import UpdateProfile from "./Users/updateProfile";
 import ResetPassword from "./Users/ResetPassword";
 import CartPage from "./Cart/CartPage";
+import ShippingPage from "./features/shipping_page/ShippingPage";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -33,7 +34,14 @@ const App = () => {
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
-        <Route path="/cart" element={<CartPage />} />
+        <Route
+          path="/cart"
+          element={<ProtectedRoute element={<CartPage />} />}
+        />
+        <Route
+          path="/shipping"
+          element={<ProtectedRoute element={<ShippingPage />} />}
+        />
         <Route
           path="/profile"
           element={<ProtectedRoute element={<Profile />} />}

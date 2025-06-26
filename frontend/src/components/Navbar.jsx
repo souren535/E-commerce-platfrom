@@ -30,6 +30,11 @@ const Navbar = () => {
       lable: "Account",
       funcName: userAccount,
     },
+    {
+      lable: cartItems.length > 0 ? `Cart${" "}(${cartItems.length})` : "Cart",
+      funcName: cart,
+      isCart: cartItems.length > 0 ? true : false,
+    },
     { lable: "Orders", funcName: userOrders },
     { lable: "Logout", funcName: logoutUser },
   ];
@@ -40,6 +45,7 @@ const Navbar = () => {
       funcName: userDashboard,
     });
   }
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
@@ -98,6 +104,9 @@ const Navbar = () => {
 
   function userDashboard() {
     navigate("/admin/dashboard");
+  }
+  function cart() {
+    navigate("/cart");
   }
 
   return (
@@ -207,7 +216,9 @@ const Navbar = () => {
                           transition={{ delay: 0.08 * index }}
                           onClick={item.funcName}
                           key={item.lable}
-                          className="block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-500 hover:bg-zinc-700 text-sm"
+                          className={`block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-500 hover:bg-zinc-700 text-sm ${
+                            item.isCart && "bg-zinc-700"
+                          }`}
                         >
                           {item.lable}
                         </motion.button>
