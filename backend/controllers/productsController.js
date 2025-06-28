@@ -61,23 +61,23 @@ export const getAllProducts = handleAsyncError(async (req, res, next) => {
   }
 });
 
-// controller/productController.js
+// getProductSuggestions
 export const getProductSuggestions = handleAsyncError(
   async (req, res, next) => {
     const keyword = req.query.keyword?.trim();
 
     // Return early if no keyword
     if (!keyword) {
-      return res.status(200).json({ success: true, suggestions: [] });
+      return res
+        .status(200)
+        .json({ success: true, suggestions: [], message: "No result found" });
     }
 
     const suggestions = await Product.find({
       name: { $regex: keyword, $options: "i" },
-    })
-      .select("name _id")
-      .limit(5);
+    }).select("name _id price description image stock ratings");
 
-    res.status(200).json({ success: true, suggestions });
+    res.status(200).json({ suggestions });
   }
 );
 

@@ -16,12 +16,6 @@ export const getProduct = createAsyncThunk(
         link += `&keyword=${encodeURIComponent(keyword)}`;
       }
 
-      // keyword
-      //   ? `/api/product/list?keyword=${encodeURIComponent(
-      //       keyword
-      //     )}&page=${page}`
-      //   : `/api/product/list?page=${page}`;
-
       const { data } = await axios.post(link);
       return data;
     } catch (error) {
@@ -34,29 +28,24 @@ export const getProduct = createAsyncThunk(
   }
 );
 
-// // get product suggestions
-// export const getProductSuggestion = createAsyncThunk(
-//   "product/getProductSuggestion",
-//   async ({ keyword }, { rejectWithValue }) => {
-//     if (!keyword?.trim()) {
-//       return {
-//         suggestions: [],
-//         message: "No keyword provided",
-//       };
-//     }
-//     try {
-//       const link = `/api/product/suggestions?keyword=${keyword}`;
-//       const { data } = await axios.get(link);
-//       return data;
-//     } catch (error) {
-//       return rejectWithValue({
-//         message:
-//           error.response?.data?.message ||
-//           "An error occurred while fetching product suggestions",
-//       });
-//     }
-//   }
-// );
+export const getProductSuggestions = createAsyncThunk(
+  "product/getProductSuggestions",
+  async (keyword, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `/api/product/suggestions?keyword=${keyword}`
+      );
+      console.log("get suggesstion data", data.suggestions);
+      return data.suggestions;
+    } catch (error) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message ||
+          "An error occurred while fetching product suggetions",
+      });
+    }
+  }
+);
 
 // Product Details
 export const getProductdetails = createAsyncThunk(
@@ -82,19 +71,17 @@ const productSlice = createSlice({
     products: [],
     productCount: 0,
     loading: false,
+    suggestionLoading: false,
     error: null,
     product: null,
     totalPages: 0,
     resultPerPage: 5,
-    // ProductSuggestions: [],
+    suggestions: [],
   },
   reducers: {
     removeErrors: (state) => {
       state.error = null;
     },
-    // clearSuggestions: (state) => {
-    //   state.ProductSuggestions = [];
-    // },
   },
   extraReducers: (builder) => {
     builder
@@ -118,6 +105,21 @@ const productSlice = createSlice({
       });
 
     builder
+      .addCase(getProductSuggestions.pending, (state) => {
+        state.suggestionLoading = true;
+        state.error = null;
+      })
+      .addCase(getProductSuggestions.fulfilled, (state, action) => {
+        state.suggestionLoading = false;
+        state.suggestions = action.payload || [];
+      })
+      .addCase(getProductSuggestions.rejected, (state, action) => {
+        state.suggestionLoading = false;
+        state.suggestions = [];
+        state.error = action.payload || "Something went wrong";
+      });
+
+    builder
       .addCase(getProductdetails.pending, (state) => {
         (state.loading = true), (state.error = null);
       })
@@ -131,21 +133,6 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload || { message: "Something went wrong" };
       });
-
-    // builder
-    //   .addCase(getProductSuggestion.pending, (state) => {
-    //     (state.loading = true), (state.error = null);
-    //   })
-    //   .addCase(getProductSuggestion.fulfilled, (state, action) => {
-    //     console.log("Fuillfilled action payload", action.payload);
-    //     state.loading = false;
-    //     state.error = null;
-    //     state.ProductSuggestions = action.payload.suggestions;
-    //   })
-    //   .addCase(getProductSuggestion.rejected, (state, action) => {
-    //     state.loading = false;
-    //     state.error = action.payload || { message: "Something went wrong" };
-    //   });
   },
 });
 

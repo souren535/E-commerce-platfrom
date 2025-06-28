@@ -22,7 +22,7 @@ const CartPage = () => {
       <PageTitle title="Your cart page" />
       <>
         {cartItems.length === 0 ? (
-          <div className="flex flex-col bg-zinc-800 items-center justify-center w-full h-screen">
+          <div className="flex flex-col bg-zinc-900 items-center justify-center w-full h-screen">
             <AnimatePresence>
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -39,15 +39,15 @@ const CartPage = () => {
             </Button>
           </div>
         ) : (
-          <div className="bg-zinc-800 min-h-screen w-full flex justify-center pt-28 pb-10 px-4">
-            <div className="flex flex-col xl:flex-row gap-6 items-start max-w-[1400px] w-full">
+          <div className="bg-zinc-900 min-h-screen w-full flex justify-center pt-28 pb-10 px-4">
+            <div className="flex flex-col xl:flex-row gap-7 items-start max-w-[1500px] w-full">
               {/* left side */}
-              <div className="flex-1 min-h-[auto]  bg-zinc-700 rounded-2xl shadow-lg p-6">
-                <h1 className="text-2xl text-white pb-2 border-b-1">
+              <div className="flex-1 min-h-[auto]  bg-zinc-800 rounded-2xl shadow-lg p-6">
+                <h1 className="text-2xl text-white pb-2 border-b-1 border-zinc-500">
                   Your Cart
                 </h1>
                 {/* Header */}
-                <div className="bg-zinc-600 text-lg text-white p-4 grid grid-cols-4 gap-4 mt-5 rounded-2xl mb-3">
+                <div className="bg-zinc-700 text-lg text-white p-4 grid grid-cols-4 gap-4 mt-5 rounded-2xl mb-3">
                   {item_headers.map((item, i) => (
                     <div key={i} className="font-semibold">
                       {item}
@@ -67,11 +67,11 @@ const CartPage = () => {
               </div>
               {/* right side */}
 
-              <div className="w-[300px] min-h-[auto] bg-zinc-700 rounded-2xl shadow-lg p-6">
-                <h3 className="text-2xl text-white pb-2 border-b-1">
+              <div className="w-[300px] min-h-[auto] bg-zinc-800 rounded-2xl shadow-lg p-6">
+                <h3 className="text-2xl text-white pb-2 border-b-1 border-zinc-500">
                   Price Summary
                 </h3>
-                <div className=" border-b-1 mt-4 pb-4">
+                <div className=" border-b-1 mt-4 pb-4 border-zinc-500">
                   <ul>
                     {[
                       { label: "Subtotal", value: subTotal.toFixed(2) },
@@ -103,7 +103,7 @@ const CartPage = () => {
                   </span>
                 </div>
                 <Button
-                  className={`text-md mt-10 bg-zinc-500 cursor-pointer text-center w-full hover:bg-zinc-600`}
+                  className={`text-md mt-10 py-5 border-2 border-zinc-700 hover:text-md hover:font-semibold hover:tracking-wide cursor-pointer text-center w-full bg-zinc-700 hover:border-1 hover:border-zinc-600 hover:bg-zinc-800`}
                   onClick={() => navigate("/shipping")}
                 >
                   Proceed to Checkout

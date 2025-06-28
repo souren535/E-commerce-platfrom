@@ -31,12 +31,11 @@ const Home = () => {
       ) : (
         <>
           <PageTitle title={"Home - My Website"} />
-          <div className="home min-h-screen flex flex-col">
+          <div className="home min-h-screen bg-zinc-900 flex flex-col">
             <main className="flex-grow">
-              <Navbar />
               <ImageSlider />
               <div className=" flex items-center w-full p-[2rem] flex-col mt-3 justify-around">
-                <h2 className="text-[2.5rem] font-semibold mb-3 text-shadow-2xs text-center">
+                <h2 className="text-[2.5rem] text-zinc-50 font-semibold mb-3 text-shadow-2xs text-center">
                   Trending Now
                 </h2>
                 <div className="grid gap-12 mt-8 pb-12 px-4 grid-cols-5 md:grid-cols-2 xl:grid-cols-5">

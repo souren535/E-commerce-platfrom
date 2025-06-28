@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Close,
@@ -14,28 +14,52 @@ import { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { removeSuccess } from "../features/User/userSlice";
+import { getProductSuggestions } from "../features/products/productSlice";
+import { debounce } from "lodash";
+import SearchSuggestion from "./SearchSuggestion";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const manuref = useRef(null);
+  const dropDownRef = useRef(null);
 
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const { cartItems } = useSelector((state) => state.cart);
+  const { suggestions, suggestionLoading } = useSelector(
+    (state) => state.product
+  );
   const dispatch = useDispatch();
 
+  const fetchSuggestions = useMemo(() => {
+    const debounced = debounce((query) => {
+      dispatch(getProductSuggestions(query));
+    }, 300);
+
+    return debounced;
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      dispatch(getProductSuggestions(""));
+      return;
+    }
+    fetchSuggestions(searchQuery);
+    return () => {
+      fetchSuggestions.cancel();
+    };
+  }, [searchQuery, fetchSuggestions, dispatch]);
+
   const popupLinks = [
-    {
-      lable: "Account",
-      funcName: userAccount,
-    },
+    { lable: "Profile", funcName: userAccount },
+    { lable: "Orders", funcName: userOrders },
     {
       lable: cartItems.length > 0 ? `Cart${" "}(${cartItems.length})` : "Cart",
       funcName: cart,
       isCart: cartItems.length > 0 ? true : false,
     },
-    { lable: "Orders", funcName: userOrders },
     { lable: "Logout", funcName: logoutUser },
   ];
 
@@ -53,6 +77,9 @@ const Navbar = () => {
       if (manuref.current && !manuref.current.contains(event.target)) {
         setOpen(false);
       }
+      if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -63,6 +90,20 @@ const Navbar = () => {
   console.log("navbar use object", user);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleSelectSuggestion = (productId) => {
+    navigate(`/list/${productId}`);
+    setSearchQuery("");
+    setShowDropdown(false);
+  };
+
+  const handleViewAll = () => {
+    if (searchQuery.trim()) {
+      navigate(`/products?keyword=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      setShowDropdown(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -110,7 +151,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-zinc-500 w-full px-6 py-3 fixed top-0 z-50  shadow-md">
+    <nav className="bg-zinc-900 w-full px-6 py-3 fixed top-0 z-50">
       <div className="flex flex-wrap justify-between items-center gap-2">
         {/* Logo */}
         <div className="text-zinc-300 text-2xl font-semibold">
@@ -120,14 +161,16 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex gap-6 text-white text-lg items-center">
+        <div className="hidden md:flex gap-6 text-white text-sm items-center">
           {navLinks.map((item, index) => (
             <Link
               key={index}
               to={item.to}
               onClick={() => setIsMenuOpen(false)}
-              className={`hover:text-black transition-colors duration-300 ${
-                location.pathname === item.to ? "text-black font-bold" : ""
+              className={`hover:bg-zinc-700 hover:p-2 hover:rounded-md transition-all duration-400 ${
+                location.pathname === item.to
+                  ? "text-white text-lg font-bold"
+                  : ""
               }`}
             >
               {item.label}
@@ -140,21 +183,40 @@ const Navbar = () => {
           <div className="relative w-full">
             <form className="relative w-full" onSubmit={handleSubmit}>
               <input
-                className="bg-zinc-300 text-black rounded-full w-full px-3 py-2 pr-10"
+                className={`bg-zinc-800 text-white ${
+                  !showDropdown ? "rounded-full":"rounded-t-lg"
+                } w-full px-3 py-2 pr-10 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600`}
                 placeholder="Search for products"
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowDropdown(true)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowDropdown(true);
+                }}
               />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black">
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-800"
+              >
                 <Search />
               </button>
             </form>
+            <div className=" absolute w-full z-50" ref={dropDownRef}>
+              <SearchSuggestion
+                suggestions={suggestions}
+                loading={suggestionLoading}
+                open={showDropdown && searchQuery.length > 0}
+                searchQuery={searchQuery}
+                onSelect={handleSelectSuggestion}
+                viewAllHandler={handleViewAll}
+              />
+            </div>
           </div>
 
           {isAuthenticated && (
             <Link to="/cart" className="relative inline-block">
-              <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
+              <ShoppingCart className="text-white hover:text-zinc-500 text-3xl" />
               {cartItems.length === 0 ? (
                 ""
               ) : (
@@ -176,7 +238,7 @@ const Navbar = () => {
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => setOpen(!open)}
                 >
-                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
+                  <div className="w-14 h-14 border-2 border-zinc-400 rounded-full overflow-hidden shrink-0 ">
                     <img
                       src={
                         user?.avatar.url
@@ -185,14 +247,10 @@ const Navbar = () => {
                       }
                       alt="profile image"
                       className="object-cover w-full h-full"
-                      // onError={(e) => {
-                      //   e.target.onerror = null;
-                      //   e.target.src = "/images/profile_avatar.png";
-                      // }}
                     />
                   </div>
                   {user?.name && (
-                    <span className="text-white text-sm font-semibold tracking-wide">
+                    <span className="text-white uppercase text-sm font-semibold tracking-wide">
                       {user.name.split(" ")[0]}
                     </span>
                   )}
@@ -214,10 +272,11 @@ const Navbar = () => {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.08 * index }}
+                          whileHover={{ scale: 1.2 }}
                           onClick={item.funcName}
                           key={item.lable}
-                          className={`block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-500 hover:bg-zinc-700 text-sm ${
-                            item.isCart && "bg-zinc-700"
+                          className={`block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-700 hover:bg-zinc-800 text-sm ${
+                            item.isCart && "bg-zinc-800"
                           }`}
                         >
                           {item.lable}
@@ -284,7 +343,10 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black">
+                <button
+                  type="submit"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black"
+                >
                   <Search />
                 </button>
               </form>

@@ -25,7 +25,14 @@ const Products = () => {
   const pageFromURL = parseInt(searchparams.get("page"), 10) || 1;
 
   const [currentPage, setCurrentPage] = useState(pageFromURL);
-  const categories = ["Laptop", "Mobile", "Tablet", "Watches", "Monitor", "TV"];
+  const categories = [
+    "Laptop",
+    "Mobile",
+    "Tablate",
+    "Watches",
+    "Monitor",
+    "TV",
+  ];
 
   const handleCategoryClick = (cat) => {
     const newSearchparams = new URLSearchParams(location.search);
@@ -69,19 +76,21 @@ const Products = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="product min-h-screen flex flex-col">
+        <div className="product min-h-screen bg-zinc-900 flex flex-col">
           <main className="flex-grow">
             <Navbar />
             <div className="product-layout flex items-start gap-5 p-5 mt-[100PX]">
-              <div className="filter-section w-[250px] flex-none  bg-zinc-100 p-5 rounded-lg shadow-md">
-                <h3 className="filter-heading text-lg font-semibold mb-2 text-primary-800">
+              <div className="filter-section w-[250px] flex-none borde-1 border-zinc-600 bg-zinc-800 p-5 rounded-lg shadow-md">
+                <h3 className="filter-heading text-lg font-semibold mb-2 text-white text-primary-800">
                   CATEGORIES
                 </h3>
                 <ul className="list-style-none p-0 m-0">
                   {categories.map((cat) => {
                     return (
                       <li
-                        className=" my-[10px] rounded p-[8px] text-base cursor-pointer capitalize font-normal transition-colors duration-300 hover:bg-zinc-300"
+                        className={`my-[10px] rounded p-[8px] text-white text-base cursor-pointer capitalize transition-colors duration-300 hover:bg-zinc-600 hover:rounded-md ${
+                          category === cat ? "font-bold text-xl" : "font-normal"
+                        }`}
                         key={cat}
                         onClick={() => {
                           handleCategoryClick(cat);
@@ -94,9 +103,9 @@ const Products = () => {
                 </ul>
               </div>
 
-              <div className="products section flex-1 flex flex-col gap-6  ">
+              <div className="products section w-full flex flex-col items-stretch ">
                 {products.length > 0 ? (
-                  <div className="products-product-container grid grid-cols-5 gap-5 ">
+                  <div className="products-product-container grid grid-cols-5 gap-x-2 gap-y-3 ">
                     {products.map((product) => (
                       <Product key={product._id} product={product} />
                     ))}

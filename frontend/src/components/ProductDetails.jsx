@@ -23,9 +23,9 @@ const ProductDetails = () => {
     error: cartError,
     success,
     message,
-    cartItems
+    cartItems,
   } = useSelector((state) => state.cart);
-  console.log(cartItems)
+  console.log(cartItems);
   const dispatch = useDispatch();
   const { id } = useParams();
   useEffect(() => {
@@ -79,32 +79,35 @@ const ProductDetails = () => {
   return (
     <>
       <PageTitle title={`${product.name} - details`} />
-      <Navbar />
-      <div className="product-details p-[100px] max-sm:w-[80%] max-sm:mx-auto">
-        <div className="product-detail max-w-[1200px] mx-auto flex md:flex-row flex-col justify-around items-center">
-          <div className=" sticky t-[40px] z-10 mb-[20px] w-[500px] max-md:static ">
+      <div className="product-details p-[100px] max-sm:w-[80%] bg-zinc-900 max-sm:mx-auto">
+        <div className="product-detail max-w-[1200px] mx-auto flex md:flex-row text-white flex-col justify-around items-stretch min-h-[600px]">
+          <div className="flex items-center justify-center z-10 mb-[20px] w-[500px] max-md:static flex-1 pt-[20px]">
             <img
               src={product.image[0].url}
-              className=" w-[100%] max-h-[ 500px] object-contain rounded-b-[8px] bg-[#fff] "
+              className=" w-[100%] max-h-[ 500px] object-contain rounded-b-[8px] "
               alt="Product Title"
             />
           </div>
 
-          <div className="p-[20px] w-[500px] ">
-            <h2 className="text-[24px] mb-[15px] text-[#0F1111]">
-              {product.name}
-            </h2>
-            <p className="text-left">{product.description}</p>
-            <p className="text-left">{product.price} /-</p>
+          <div className="p-[20px] w-[500px] flex-1">
+            <h2 className="text-5xl mb-[15px]">{product.name}</h2>
+            <p className="text-left text-xl">{product.description}</p>
+            <p className="text-left text-xl font-semibold">
+              {product.price} /-
+            </p>
             <div className="justify-center items-center">
               <Rating value={product.ratings} disabled={true} />
-              <span className="bg-zinc-400 shadow-md p-1 text-white rounded-md text-base">
+              <span
+                className={`shadow-md p-1 text-white rounded-md ${
+                  product.numOfReview > 0 && "font-semibold"
+                } text-base`}
+              >
                 {product.numOfReview}
                 {product.numOfReviews === 0 ? "No Review" : "Reviews"}
               </span>
             </div>
 
-            <div className="text-[16px] m-[10px] text-[#007600]">
+            <div className="text-[16px] m-[10px] text-[#007600] text-lg">
               <span
                 className={
                   product.stock > 1 ? `text-green-500` : "text-red-500"
@@ -123,14 +126,14 @@ const ProductDetails = () => {
                   <button
                     disabled={quantity <= 1}
                     onClick={() => setQuantity(quantity - 1)}
-                    className="w-[35px] h-[35px] border-[1px] border-solid border-[#D5D9D9] cursor-pointer text-[18px] hover:border-1 hover:border-zinc-700 rounded-b-[4px] bg-gradient-to-b from-[#F7F8FA] t0-[#E7E9EC]"
+                    className="w-[35px] h-[35px] border-2 border-zinc-700 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-500 rounded-lg bg-zinc-700"
                   >
                     -
                   </button>
                   <input
                     type="text"
                     value={quantity}
-                    className="w-[50px] h-[35px] text-center border border-[#D5D9D9] mx-[5px] text-[16px]"
+                    className="w-[50px] h-[40px] text-center rounded-md border-2 border-zinc-700 mx-[5px] text-[16px]"
                     readOnly
                   />
                   <button
@@ -142,7 +145,7 @@ const ProductDetails = () => {
                       }
                       setQuantity((prev) => prev + 1);
                     }}
-                    className="w-[35px] h-[35px] border-[1px] border-solid border-[#D5D9D9] cursor-pointer text-[18px] hover:border-1 hover:border-zinc-700 rounded-b-[4px] bg-gradient-to-b from-[#F7F8FA] t0-[#E7E9EC]"
+                    className="w-[35px] h-[35px] border-2 border-zinc-700 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-500 rounded-lg bg-zinc-700"
                   >
                     +
                   </button>
@@ -150,13 +153,13 @@ const ProductDetails = () => {
                 <button
                   disabled={cartLoading}
                   onClick={handleAddToCart}
-                  className="w-full px-[20px] py-[12px] border rounded-[8px] text-[16px] cursor-pointer my-[20px] text-zinc-100 bg-zinc-500 border-[var(--bg-primary)] hover:bg-zinc-700"
+                  className="w-full px-[20px] py-[12px] border-2 rounded-[8px] text-[16px] cursor-pointer my-[20px] text-white bg-zinc-800 border-zinc-700 transition-all duration-300 ease-in-out hover:translate-y-1"
                 >
                   {cartLoading ? "Adding to cart..." : "Add to Cart"}
                 </button>
               </>
             )}
-            <form className="bg-[#F8F8F8] p-[20px] rounded-b-[8px] mb-[30px]">
+            <form className="p-[20px] rounded-b-[8px] mb-[30px]">
               <h3>Write a Review:</h3>
               <Rating
                 value={0}
@@ -165,38 +168,38 @@ const ProductDetails = () => {
               />
               <textarea
                 placeholder="Write your review here...."
-                className="w-[100%] min-h-[100px] p-[10px] border-[1px] border-solid border-[#D5D9D9] rounded-b-[4px] mx-0 my-[10px] resize-y"
+                className=" min-h-[100px] p-[10px] border-1 border-zinc-700 rounded-md bg-zinc-800 w-full mx-0 my-[10px] resize-y"
               />
-              <button className="bg-zinc-500 text-white px-[20px] py-[10px] border-none rounded-[4px] cursor-pointer hover:bg-[#374759]">
+              <button className="bg-zinc-800 text-white px-[20px] py-[10px] border-1 border-zinc-600 rounded-lg cursor-pointer">
                 Submit Review
               </button>
             </form>
           </div>
         </div>
 
-        <div className=" reviews-container grid-cols-1/-1 mt-[40px] pt-[20px] border-t-[1px] border-solid border-[#E7E7E7]">
-          <h3 className="text-2xl font-medium">Coustomer reviews</h3>
+        <div className=" reviews-container grid-cols-1/-1 mt-[40px] pt-[20px] border-t-[1px] border-solid border-zinc-600">
+          <h3 className="text-2xl text-white font-medium">Coustomer reviews</h3>
           {product.reviews && product.reviews.length > 0 ? (
-            <div className="mt-[20px]">
+            <div className="mt-[20px] text-white">
               {product.reviews.map((review, index) => (
                 <div
-                  className="px-0 py-[20px] border-b-[1px] border-solid border-[#E7E7E7]"
+                  className="px-0 py-[20px] border-b-[1px] border-solid border-zinc-600 text-white"
                   key={index}
                 >
-                  <div className="review header">
+                  <div className="review header text-white">
                     <Rating value={review.rating} disabled={true} />
                   </div>
-                  <p className="review-comment mx-0 my-[10px] text-[#333] text-left">
+                  <p className="review-comment mx-0 my-[10px] text-left">
                     {review.comment}
                   </p>
-                  <p className="mx-0 my-[10px] text-[#333] text-left font-sans">
+                  <p className="mx-0 my-[10px] text-left font-sans">
                     By {review.name}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="font-sans tracking-wider">
+            <p className="font-sans tracking-wider text-white">
               No review yet. Be the first review this Product!
             </p>
           )}

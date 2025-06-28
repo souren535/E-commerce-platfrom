@@ -90,8 +90,8 @@ const UpdateProfile = () => {
         <Loader />
       ) : (
         <>
-          <div className="flex items-center justify-center w-full min-h-screen bg-zinc-100 px-4 py-10">
-            <div className="shadow-xl border border-zinc-100 text-black/90 flex justify-center items-center w-[50vw] min-h-[50vh] bg-zinc-100 rounded-3xl p-6 sm:p-8 md:p-10 ">
+          <div className="flex items-center bg-zinc-900 justify-center w-full min-h-screen px-4 py-10">
+            <div className="shadow-xl bg-zinc-800 text-white flex justify-center items-center w-[50vw] min-h-[50vh] border-2 border-zinc-700 rounded-3xl p-6 sm:p-8 md:p-10 ">
               <form onSubmit={updateSubmit} encType="multipart/form-data">
                 <h1 className="text-2xl md:text-3xl font-bold text-center mb-10">
                   Update Profile
@@ -99,7 +99,7 @@ const UpdateProfile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
                   <div className="flex flex-col items-center justify-center gap-6">
                     <div
-                      className="relative h-32 w-32 flex items-center justify-center rounded-full overflow-hidden group cursor-pointer"
+                      className="relative h-32 w-32 flex items-center border-2 border-zinc-500 justify-center rounded-full overflow-hidden group cursor-pointer"
                       onClick={() => fileRef.current.click()}
                     >
                       {avatarPreview ? (
@@ -150,7 +150,7 @@ const UpdateProfile = () => {
 
                   <div className="flex flex-col gap-6 w-full">
                     <div>
-                      <Label className="block mb-1 text-sm font-medium text-gray-700">
+                      <Label className="block mb-1 text-sm font-medium tracking-wide">
                         Name
                       </Label>
                       <input
@@ -158,12 +158,12 @@ const UpdateProfile = () => {
                         name="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full px-4 py-2 border-1 border-zinc-500 rounded-md focus:outline-none "
                       />
                     </div>
 
                     <div>
-                      <Label className="block mb-1 text-sm font-medium text-gray-700">
+                      <Label className="block mb-1 text-sm font-medium tracking-wide">
                         Email
                       </Label>
                       <input
@@ -172,12 +172,12 @@ const UpdateProfile = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@example.com"
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full px-4 py-2 border-1 border-zinc-500 rounded-md focus:outline-none "
                       />
                     </div>
                   </div>
                 </div>
-                <button className="mt-15 bg-zinc-600 hover:bg-zinc-900 text-white px-6 py-2 rounded-xl w-full">
+                <button className="mt-15 bg-zinc-700 text-white hover:font-semibold px-6 py-2 rounded-xl w-full transition-transform duration-300 ease-in-out hover:translate-y-1">
                   Save Changes
                 </button>
               </form>

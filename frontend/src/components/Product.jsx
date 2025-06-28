@@ -16,7 +16,7 @@ const Product = ({ product }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       whileHover={{ scale: 1.08 }}
-      className="flex flex-col text-center w-full bg-white md:w-[250px] lg:w-[280px] sm:w-[200px] shadow-md rounded-b-md"
+      className="flex flex-col text-center w-full bg-zinc-800 md:w-[250px] text-white border-2 border-zinc-700 lg:w-[280px] sm:w-[200px] shadow-md p-5 rounded-xl"
     >
       <img
         src={product.image[0].url}
@@ -38,11 +38,11 @@ const Product = ({ product }) => {
             disabled={true}
           />
         </div>
-        <span className="bg-zinc-400 shadow-md p-1 text-white rounded-md text-base">
+        <span className={`p-1 text-white rounded-md text-base ${product.numOfReviews > 0 && "font-semibold"}`}>
           {product.numOfReviews}{" "}
           {product.numOfReviews === 1 ? "Reviews" : "Review"}
         </span>
-        <button className="w-full bg-yellow-300 rounded-lg shadow-sm hover:bg-yellow-400 transition mt-2 ">
+        <button className="w-full bg-zinc-500 rounded-lg shadow-sm hover:bg-zinc-600 py-1 transition mt-2 ">
           <Link to={`/list/${product._id}`}>Check Out</Link>
         </button>
       </div>
