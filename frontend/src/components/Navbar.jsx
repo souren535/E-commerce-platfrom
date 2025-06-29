@@ -151,7 +151,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-zinc-900 w-full px-6 py-3 fixed top-0 z-50">
+    <nav className="bg-zinc-950 w-full px-6 py-3 fixed top-0 z-50">
       <div className="flex flex-wrap justify-between items-center gap-2">
         {/* Logo */}
         <div className="text-zinc-300 text-2xl font-semibold">
@@ -183,9 +183,9 @@ const Navbar = () => {
           <div className="relative w-full">
             <form className="relative w-full" onSubmit={handleSubmit}>
               <input
-                className={`bg-zinc-800 text-white ${
+                className={`bg-zinc-900 text-white ${
                   !showDropdown ? "rounded-full":"rounded-t-lg"
-                } w-full px-3 py-2 pr-10 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600`}
+                } w-full px-3 py-2 pr-10 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-800 focus:border-zinc-800`}
                 placeholder="Search for products"
                 type="text"
                 value={searchQuery}

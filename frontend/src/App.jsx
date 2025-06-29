@@ -13,6 +13,9 @@ import UpdateProfile from "./Users/updateProfile";
 import ResetPassword from "./Users/ResetPassword";
 import CartPage from "./Cart/CartPage";
 import ShippingPage from "./features/shipping_page/ShippingPage";
+import OrderConfirmPage from "./Cart/orderConfirmPage";
+import Payment from "./Cart/Payment";
+import Footer from "./components/Footer";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -35,6 +38,14 @@ const App = () => {
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
         <Route
+          path="/order/confirm"
+          element={<ProtectedRoute element={<OrderConfirmPage />} />}
+        />
+        <Route
+          path="/process/payment"
+          element={<ProtectedRoute element={<Payment />} />}
+        />
+        <Route
           path="/cart"
           element={<ProtectedRoute element={<CartPage />} />}
         />
@@ -51,6 +62,7 @@ const App = () => {
           element={<ProtectedRoute element={<UpdateProfile />} />}
         />
       </Routes>
+      {isAuthenticated && <Footer />}
     </Router>
   );
 };

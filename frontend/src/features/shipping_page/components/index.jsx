@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
+import { Country, State, City } from "country-state-city";
 import {
   Select,
   SelectContent,
@@ -8,19 +9,18 @@ import {
   SelectGroup,
   SelectValue,
 } from "@/components/ui/select";
-import axios from "axios";
 
-const CountrySelector = () => {
-  const [countries] = useState(["India"]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-
-  const [loading, setLoading] = useState(false);
-
+const CountrySelector = ({
+  selectedCountry,
+  setSelectedCountry,
+  selectedState,
+  setSelectedState,
+  selectedCity,
+  setSelectedCity,
+}) => {
+  // const [countries] = useState(["India"]);
+  // const [states, setStates] = useState([]);
+  // const [cities, setCities] = useState([]);
   // fetch country data
   // useEffect(() => {
   //   setLoading(true);
@@ -44,69 +44,103 @@ const CountrySelector = () => {
   // }, []);
 
   // fetch state when country is selected
+  // useEffect(() => {
+  //   if (selectedCountry) {
+  //     setLoading(true);
+  //     axios
+  //       .post("https://countriesnow.space/api/v0.1/countries/states", {
+  //         country: selectedCountry,
+  //       })
+  //       .then((res) => {
+  //         if (res.data && res.data.data && res.data.data.states) {
+  //           const stateNames = res.data.data.states.map((s) => s.name);
+  //           setStates(stateNames);
+  //           setSelectedState("");
+  //           setCities([]);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.error("state fetch error", err);
+  //       })
+  //       .finally(() => {
+  //         setLoading(false);
+  //       });
+  //   } else {
+  //     setStates([]);
+  //   }
+  // }, [selectedCountry]);
+
+  // useEffect(() => {
+  //   if (selectedCountry && selectedState) {
+  //     setLoading(true);
+  //     axios
+  //       .post("https://countriesnow.space/api/v0.1/countries/state/cities", {
+  //         country: selectedCountry,
+  //         state: selectedState,
+  //       })
+  //       .then((res) => {
+  //         if (res.data && res.data.data) {
+  //           setCities(res.data.data);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.error("city fetch error", err);
+  //       })
+  //       .finally(() => {
+  //         setLoading(false);
+  //       });
+  //   } else {
+  //     setCities([]);
+  //   }
+  // }, [selectedCountry, selectedState]);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (Country.getAllCountries()) {
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   useEffect(() => {
     if (selectedCountry) {
       setLoading(true);
-      axios
-        .post("https://countriesnow.space/api/v0.1/countries/states", {
-          country: selectedCountry,
-        })
-        .then((res) => {
-          if (res.data && res.data.data && res.data.data.states) {
-            const stateNames = res.data.data.states.map((s) => s.name);
-            setStates(stateNames);
-            setSelectedState("");
-            setCities([]);
-          }
-        })
-        .catch((err) => {
-          console.error("state fetch error", err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      setStates([]);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
   }, [selectedCountry]);
 
   useEffect(() => {
-    if (selectedCountry && selectedState) {
+    if (selectedState) {
       setLoading(true);
-      axios
-        .post("https://countriesnow.space/api/v0.1/countries/state/cities", {
-          country: selectedCountry,
-          state: selectedState,
-        })
-        .then((res) => {
-          if (res.data && res.data.data) {
-            setCities(res.data.data);
-          }
-        })
-        .catch((err) => {
-          console.error("city fetch error", err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      setCities([]);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [selectedCountry, selectedState]);
+  }, [selectedState]);
 
   const handleCountryChange = (value) => {
-    setSelectedCountry(value);
+    setSelectedCountry(value === "none" ? "" : value);
     setSelectedState("");
     setSelectedCity("");
+    setLoading(true);
   };
 
   const handleStateChange = (value) => {
-    setSelectedState(value);
+    setSelectedState(value === "none" ? "" : value);
     setSelectedCity("");
+    setLoading(true);
   };
 
   const handleCityChange = (value) => {
-    setSelectedCity(value);
+    setSelectedCity(value === "none" ? "" : value);
   };
 
   return (
@@ -133,18 +167,18 @@ const CountrySelector = () => {
             <SelectContent className="bg-zinc-800 border-1 border-zinc-700 max-h-[400px]">
               <SelectGroup>
                 <SelectItem
-                  value={" "}
-                  className="text-white hover:bg-zinc-700 focus:bg-zinc-700"
+                  value="none"
+                  className="text-white hover:bg-zinc-700 hover:text-zinc-400 focus:text-zinc-400 focus:bg-zinc-700"
                 >
                   Select a Country
                 </SelectItem>
-                {countries.map((country) => (
+                {Country.getAllCountries().map((country) => (
                   <SelectItem
-                    className="text-white hover:bg-zinc-700 focus:bg-zinc-700"
-                    key={country}
-                    value={country}
+                    className="text-white hover:bg-zinc-700 hover:text-zinc-400 focus:text-zinc-400 focus:bg-zinc-700"
+                    key={country.isoCode}
+                    value={country.isoCode}
                   >
-                    {country}
+                    {country.name}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -178,18 +212,18 @@ const CountrySelector = () => {
               <SelectContent className="bg-zinc-800 border-1 border-zinc-700 max-h-[400px]">
                 <SelectGroup>
                   <SelectItem
-                    value={" "}
-                    className="text-white hover:bg-zinc-700 focus:bg-zinc-700"
+                    value="none"
+                    className="text-white hover:bg-zinc-700 hover:text-zinc-400 focus:text-zinc-400 focus:bg-zinc-700"
                   >
                     Select a State
                   </SelectItem>
-                  {states.map((state) => (
+                  {State.getStatesOfCountry(selectedCountry).map((state) => (
                     <SelectItem
-                      className="text-white hover:bg-zinc-700 focus:bg-zinc-700"
-                      key={state}
-                      value={state}
+                      className="text-white hover:bg-zinc-700 focus:bg-zinc-700 hover:text-zinc-400 focus:text-zinc-400"
+                      key={state.isoCode}
+                      value={state.isoCode}
                     >
-                      {state}
+                      {state.name}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -224,20 +258,22 @@ const CountrySelector = () => {
               <SelectContent className="bg-zinc-800 border-1 border-zinc-700">
                 <SelectGroup>
                   <SelectItem
-                    value={" "}
-                    className="text-white hover:bg-zinc-700 focus:bg-zinc-700"
+                    value="none"
+                    className="text-white hover:bg-zinc-700 hover:text-zinc-400 focus:text-zinc-400 focus:bg-zinc-700"
                   >
                     Select a City
                   </SelectItem>
-                  {cities.map((city) => (
-                    <SelectItem
-                      className="text-white hover:bg-zinc-700 focus:bg-zinc-700"
-                      key={city}
-                      value={city}
-                    >
-                      {city}
-                    </SelectItem>
-                  ))}
+                  {City.getCitiesOfState(selectedCountry, selectedState).map(
+                    (city) => (
+                      <SelectItem
+                        className="text-white hover:bg-zinc-700 hover:text-zinc-400 focus:text-zinc-400 focus:bg-zinc-700"
+                        key={city.name}
+                        value={city.name}
+                      >
+                        {city.name}
+                      </SelectItem>
+                    )
+                  )}
                 </SelectGroup>
               </SelectContent>
             </Select>

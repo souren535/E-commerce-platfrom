@@ -40,7 +40,7 @@ const SearchSuggestion = ({
             stiffness: 300,
             damping: 25,
           }}
-          className="absolute z-[9999] w-full max-h-[500px] border-1 border-zinc-600 bg-zinc-800 rounded-b-lg overflow-hidden flex flex-col"
+          className="absolute z-[9999] w-full max-h-[500px] border-1 border-zinc-800 bg-zinc-900 rounded-b-lg overflow-hidden flex flex-col"
         >
           <motion.div
             className="overflow-y-auto scrollbar-hide max-h-[500px]"
@@ -61,7 +61,7 @@ const SearchSuggestion = ({
                   }}
                   whileHover={{ scaleY: 1.1 }}
                   onMouseDown={() => onSelect(item._id)}
-                  className="flex items-center px-3 py-2 bg-zinc-800 text-white cursor-pointer hover:bg-zinc-700  border-b-1 border-zinc-600"
+                  className="flex items-center px-3 py-2 bg-zinc-900 text-white cursor-pointer hover:bg-zinc-800  border-b-1 border-zinc-800"
                 >
                   <img
                     src={item.image?.[0]?.url || "/images/placeholder.png"}
@@ -120,9 +120,9 @@ const SearchSuggestion = ({
                 e.preventDefault();
                 viewAllHandler();
               }}
-              className="text-center text-lg px-4 py-3 bg-zinc-700 text-white font-semibold cursor-pointer hover:bg-zinc-800"
+              className="text-center text-md hover:text-lg px-4 py-4.5 bg-zinc-900 text-white font-semibold cursor-pointer hover:bg-zinc-800"
             >
-              View All Result <span className="font-bold text-lg">{`>`}</span>
+              View All Result <span className={`font-bold `}>{`>`}</span>
             </motion.div>
           )}
         </motion.div>

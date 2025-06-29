@@ -79,7 +79,7 @@ const ProductDetails = () => {
   return (
     <>
       <PageTitle title={`${product.name} - details`} />
-      <div className="product-details p-[100px] max-sm:w-[80%] bg-zinc-900 max-sm:mx-auto">
+      <div className="product-details p-[100px] max-sm:w-[80%] bg-zinc-950 max-sm:mx-auto">
         <div className="product-detail max-w-[1200px] mx-auto flex md:flex-row text-white flex-col justify-around items-stretch min-h-[600px]">
           <div className="flex items-center justify-center z-10 mb-[20px] w-[500px] max-md:static flex-1 pt-[20px]">
             <img
@@ -89,7 +89,7 @@ const ProductDetails = () => {
             />
           </div>
 
-          <div className="p-[20px] w-[500px] flex-1">
+          <div className="p-[20px] w-[500px] flex-1 left-4">
             <h2 className="text-5xl mb-[15px]">{product.name}</h2>
             <p className="text-left text-xl">{product.description}</p>
             <p className="text-left text-xl font-semibold">
@@ -126,14 +126,14 @@ const ProductDetails = () => {
                   <button
                     disabled={quantity <= 1}
                     onClick={() => setQuantity(quantity - 1)}
-                    className="w-[35px] h-[35px] border-2 border-zinc-700 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-500 rounded-lg bg-zinc-700"
+                    className="w-[35px] h-[35px] border-2 border-zinc-800 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-600 rounded-lg bg-zinc-900"
                   >
                     -
                   </button>
                   <input
                     type="text"
                     value={quantity}
-                    className="w-[50px] h-[40px] text-center rounded-md border-2 border-zinc-700 mx-[5px] text-[16px]"
+                    className="w-[50px] h-[40px] text-center rounded-md border-2 border-zinc-800 mx-[5px] text-[16px]"
                     readOnly
                   />
                   <button
@@ -145,7 +145,7 @@ const ProductDetails = () => {
                       }
                       setQuantity((prev) => prev + 1);
                     }}
-                    className="w-[35px] h-[35px] border-2 border-zinc-700 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-500 rounded-lg bg-zinc-700"
+                    className="w-[35px] h-[35px] border-2 border-zinc-800 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-600 rounded-lg bg-zinc-900"
                   >
                     +
                   </button>
@@ -153,13 +153,13 @@ const ProductDetails = () => {
                 <button
                   disabled={cartLoading}
                   onClick={handleAddToCart}
-                  className="w-full px-[20px] py-[12px] border-2 rounded-[8px] text-[16px] cursor-pointer my-[20px] text-white bg-zinc-800 border-zinc-700 transition-all duration-300 ease-in-out hover:translate-y-1"
+                  className="w-full px-[20px] py-[12px] border-2 rounded-[8px] text-[16px] cursor-pointer my-[20px] text-white bg-zinc-900 border-zinc-800 transition-all duration-300 ease-in-out hover:translate-y-1"
                 >
                   {cartLoading ? "Adding to cart..." : "Add to Cart"}
                 </button>
               </>
             )}
-            <form className="p-[20px] rounded-b-[8px] mb-[30px]">
+            <form className="rounded-b-[8px] mb-[30px]">
               <h3>Write a Review:</h3>
               <Rating
                 value={0}
@@ -168,16 +168,16 @@ const ProductDetails = () => {
               />
               <textarea
                 placeholder="Write your review here...."
-                className=" min-h-[100px] p-[10px] border-1 border-zinc-700 rounded-md bg-zinc-800 w-full mx-0 my-[10px] resize-y"
+                className=" min-h-[100px] p-[10px] border-1 border-zinc-800 rounded-md bg-zinc-900 w-full mx-0 my-[10px] resize-y"
               />
-              <button className="bg-zinc-800 text-white px-[20px] py-[10px] border-1 border-zinc-600 rounded-lg cursor-pointer">
+              <button className="bg-zinc-900 text-white px-[20px] py-[10px] border-1 border-zinc-800 hover:text-zinc-500 rounded-lg cursor-pointer">
                 Submit Review
               </button>
             </form>
           </div>
         </div>
 
-        <div className=" reviews-container grid-cols-1/-1 mt-[40px] pt-[20px] border-t-[1px] border-solid border-zinc-600">
+        <div className=" reviews-container grid-cols-1/-1 mt-[40px] pt-[20px] border-t-[1px] border-solid border-zinc-800">
           <h3 className="text-2xl text-white font-medium">Coustomer reviews</h3>
           {product.reviews && product.reviews.length > 0 ? (
             <div className="mt-[20px] text-white">
@@ -199,7 +199,7 @@ const ProductDetails = () => {
               ))}
             </div>
           ) : (
-            <p className="font-sans tracking-wider text-white">
+            <p className="font-sans tracking-wider text-zinc-600">
               No review yet. Be the first review this Product!
             </p>
           )}

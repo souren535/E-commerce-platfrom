@@ -10,7 +10,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="footer w-full bg-zinc-900 text-white py-8 mt-auto">
+    <footer className="footer w-full bg-zinc-950 text-white py-8 mt-auto">
       {/* Main container */}
       <div className="footer container max-w-[1200px] mx-auto px-4 flex flex-col md:flex-row md:text-left md:p-6 justify-between items-start gap-[1.5rem] text-zinc-300 text-base">
         {/* Section 1: Contact Us */}
