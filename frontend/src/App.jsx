@@ -16,6 +16,7 @@ import ShippingPage from "./features/shipping_page/ShippingPage";
 import OrderConfirmPage from "./Cart/orderConfirmPage";
 import Payment from "./Cart/Payment";
 import Footer from "./components/Footer";
+import PaymentSuccess from "./Cart/paymentSuccess";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -37,6 +38,10 @@ const App = () => {
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
+        <Route
+          path="/paymentSuccess"
+          element={<ProtectedRoute element={<PaymentSuccess />} />}
+        />
         <Route
           path="/order/confirm"
           element={<ProtectedRoute element={<OrderConfirmPage />} />}

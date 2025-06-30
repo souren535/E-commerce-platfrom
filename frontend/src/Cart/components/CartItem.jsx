@@ -30,7 +30,7 @@ const CartItem = ({ cart, item_headers }) => {
   return (
     <>
       <div
-        className={`cart_item grid grid-cols-${item_headers} gap-4 items-center text-white bg-zinc-800 p-4 mt-4 border-b-1 border-zinc-500 mb-3`}
+        className={`cart_item grid grid-cols-${item_headers} gap-4 items-center text-white bg-zinc-900 p-4 mt-4 border-b-1 border-zinc-500 mb-3`}
       >
         {/* Product Info */}
         <div className="text-start tracking-wider">
@@ -102,14 +102,14 @@ const CartItem = ({ cart, item_headers }) => {
           <button
             disabled={loading || quantity === cart.quantity}
             onClick={handleUpdate}
-            className="flex items-center justify-center gap-2 px-3 py-2 bg-zinc-700 hover:bg-zinc-800 border-1 border-zinc-700 hover:border hover:border-zinc-600 hover:text-lg hover:font-semibold hover:tracking-wide   text-white rounded-xl text-sm font-medium"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-zinc-800 hover:bg-zinc-800 border-1 border-zinc-700 hover:border hover:border-zinc-600 hover:text-lg hover:font-semibold hover:tracking-wide   text-white rounded-xl text-sm font-medium"
           >
             {loading ? "Updating..." : "Update"}
             <Update style={{ fontSize: "24px" }} />
           </button>
           <button
             onClick={handleRemove}
-            className="flex items-center justify-center gap-2 px-3 py-2 bg-zinc-700 text-red-400 hover:bg-red-300 hover:border hover:border-red-300 hover:text-lg hover:font-semibold hover:tracking-wide  rounded-xl text-sm font-medium"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-zinc-800 border-1 border-zinc-700 text-red-400 hover:bg-red-300 hover:border hover:border-red-300 hover:text-lg hover:font-semibold hover:tracking-wide  rounded-xl text-sm font-medium"
           >
             Remove
             <Remove style={{ fontSize: "24px" }} />

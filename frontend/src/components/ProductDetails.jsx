@@ -205,7 +205,6 @@ const ProductDetails = () => {
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

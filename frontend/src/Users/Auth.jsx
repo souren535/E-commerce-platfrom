@@ -17,6 +17,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { Add } from "@mui/icons-material";
 import Modal from "../components/Modal";
+import PageTitle from "../components/PageTitle";
 
 const Auth = () => {
   const [name, setName] = useState("");
@@ -174,60 +175,61 @@ const Auth = () => {
         <Loader />
       ) : (
         <>
-          <div className="flex items-center justify-center w-[100vw] h-[100vh]">
-            <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh] bg-white border-2 border-white rounded-3xl overflow-hidden">
+          <PageTitle title={`Auth Page`} />
+          <div className="flex bg-zinc-950 items-center justify-center w-[100vw] h-[100vh]">
+            <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh] bg-zinc-900 border-2 border-zinc-800 rounded-3xl overflow-hidden">
               <div className=" h-full left-full backdrop:blur-xl shadow-lg w-full md:w-1/2 lg:w-1/2 xl:w-1/2 rounded-3xl md:p-3 lg:p-3 xl:p-5 items-center justify-center p-6 flex">
                 <div className="login signup tabs flex flex-col items-center justify-center w-full min-h-full">
-                  <h1 className="text-zinc-700 font-bold text-2xl md:text-3xl lg:text-4xl tracking-wider">
-                    Login/Signup
+                  <h1 className=" text-zinc-500 hover:text-white font-bold text-2xl md:text-xl lg:text-4xl tracking-wider">
+                    Sign in/Sign up
                   </h1>
-                  <Tabs className="w-3/4 mt-10" defaultValue="Login">
+                  <Tabs className="w-3/4 mt-10" defaultValue="signin">
                     <TabsList className="bg-transparent rounded-none w-full ">
                       <TabsTrigger
-                        value="Login"
-                        className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-bold data-[state=active]:border-b-zinc-100 p-3 transition-all duration-300 ease-in-out "
+                        value="signin"
+                        className="data-[state=active]:bg-transparent text-zinc-500 hover:text-white border-b-2 rounded-none w-full data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:border-b-zinc-600 p-3 transition-all duration-300 ease-in-out "
                       >
-                        Login
+                        Sign in
                       </TabsTrigger>
                       <TabsTrigger
                         value="Signup"
-                        className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-bold data-[state=active]:border-b-zinc-100 p-3 transition-all duration-300 ease-in-out "
+                        className="data-[state=active]:bg-transparent text-zinc-500 hover:text-white border-b-2 rounded-none w-full data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:border-b-zinc-600 p-3 transition-all duration-300 ease-in-out "
                       >
-                        Signup
+                        Sign up
                       </TabsTrigger>
                     </TabsList>
 
                     {/* Login content */}
                     <TabsContent
                       className="flex mt-10 flex-col gap-5"
-                      value="Login"
+                      value="signin"
                     >
                       <Input
                         type="email"
                         placeholder="email"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white text-white bg-zinc-800 border-1 border-zinc-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                       <Input
                         type="password"
                         placeholder="password"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white text-white bg-zinc-800 border-1 border-zinc-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
 
                       <Button
-                        className="w-full font-bold rounded-full"
+                        className="w-full bg-zinc-800 border-1 border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full"
                         onClick={handleLogin}
                       >
-                        Login
+                        Sign in
                       </Button>
-                      <p className="font-light text-center md:text-sm ">
+                      <p className="font-light text-center md:text-sm text-white">
                         <span>Forget your Password? </span>
                         <span
                           onClick={handleOpenModal}
-                          className="text-blue-500 cursor-pointer"
+                          className="text-blue-500 hover:text-blue-600 hover:text-lg cursor-pointer"
                         >
                           Reset Here
                         </span>
@@ -245,7 +247,7 @@ const Auth = () => {
                       <div className="relative flex justify-center items-center ">
                         {/* Avatar */}
                         <div
-                          className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-1 border-white shadow-lg"
+                          className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-1 border-zinc-700 hover:border-zinc-600 bg-zinc-800 shadow-lg"
                           onMouseEnter={() => setHovered(true)}
                           onMouseLeave={() => setHovered(false)}
                         >
@@ -260,7 +262,7 @@ const Auth = () => {
                           {/* Hover Overlay */}
                           {hovered && (
                             <div
-                              className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full cursor-pointer"
+                              className="absolute inset-0 bg-zinc-800/50 flex items-center justify-center rounded-full cursor-pointer"
                               onClick={handleFileInputClick}
                             >
                               <Add className="text-white text-3xl" />
@@ -283,7 +285,7 @@ const Auth = () => {
                         type="text"
                         placeholder="Name"
                         name="name"
-                        className="rounded-full p-6 placeholder:text-zinc-700 "
+                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -292,7 +294,7 @@ const Auth = () => {
                         type="email"
                         placeholder="email"
                         name="email"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -300,7 +302,7 @@ const Auth = () => {
                         type="password"
                         placeholder="password"
                         name="password"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -308,16 +310,16 @@ const Auth = () => {
                       <Input
                         type="password"
                         placeholder="Confirm password"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                       />
 
                       <Button
-                        className="w-full font-bold rounded-full"
+                        className="w-full bg-zinc-800 border-1 border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full"
                         onClick={handleSignup}
                       >
-                        {loading ? "Signin Up" : "Signup"}
+                        {loading ? "Signin Up" : "Sign up"}
                       </Button>
                     </TabsContent>
                   </Tabs>
@@ -326,7 +328,7 @@ const Auth = () => {
 
               <div className=" items-center justify-center w-full h-full p-3">
                 <h1 className="flex items-center md:text-4xl lg:text-5xl xl:text-6xl text-3xl justify-center w-full h-full text-white rounded-3xl ">
-                  <span className="text-3xl text-zinc-700 md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-center">
+                  <span className="text-3xl text-zinc-500 hover:text-white md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-center">
                     Welcome to the{" "}
                     <span className="text-blue-500 font-['COMIC_SANS_MS'] ">
                       ShopEazy

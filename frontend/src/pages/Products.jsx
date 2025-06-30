@@ -76,11 +76,11 @@ const Products = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="product min-h-screen bg-zinc-900 flex flex-col">
+        <div className="product min-h-screen bg-zinc-950 flex flex-col">
           <main className="flex-grow">
             <Navbar />
             <div className="product-layout flex items-start gap-5 p-5 mt-[100PX]">
-              <div className="filter-section w-[250px] flex-none borde-1 border-zinc-600 bg-zinc-800 p-5 rounded-lg shadow-md">
+              <div className="filter-section w-[250px] flex-none borde-1 border-zinc-600 bg-zinc-900 p-5 rounded-lg shadow-md">
                 <h3 className="filter-heading text-lg font-semibold mb-2 text-white text-primary-800">
                   CATEGORIES
                 </h3>
