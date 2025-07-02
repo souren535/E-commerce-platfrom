@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import withAuthProtection from "../Security/withAuthProtection";
 
 const Payment = () => {
   const orderItem = JSON.parse(sessionStorage.getItem("orderItem"));
@@ -124,4 +125,6 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+const ProtectedPayment = withAuthProtection(Payment);
+
+export default ProtectedPayment;

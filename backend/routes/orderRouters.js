@@ -15,17 +15,17 @@ router
   .route("/get/:id")
   .post(verifyUserAuth, roleBaseAccess("admin"), getSingleOrder);
 
-router.route("/orders/user").post(verifyUserAuth, getAllOrder);
+router.route("/orderDetail/:id").get(verifyUserAuth, getSingleOrder);
+
+router.route("/orders/user").get(verifyUserAuth, getAllOrder);
 router
-  .route("/getAll")
+  .route("/getAll/products")
   .post(verifyUserAuth, roleBaseAccess("admin"), getAllOrders);
 
 router
   .route("/orderStatus/:id")
   .put(verifyUserAuth, roleBaseAccess("admin"), updateOrderStatus);
 
-router
-  .route("/deleteOrder/:id")
-  .delete(verifyUserAuth, deleteDeliveredOrder);
+router.route("/deleteOrder/:id").delete(verifyUserAuth, deleteDeliveredOrder);
 
 export default router;

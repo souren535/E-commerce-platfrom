@@ -39,7 +39,7 @@ router
 
 router
   .route("/admin/list")
-  .post(verifyUserAuth, roleBaseAccess("admin"), getAdminProduct);
+  .get(verifyUserAuth, roleBaseAccess("admin"), getAdminProduct);
 
 // product Review -
 router.route("/review").put(verifyUserAuth, createProductReview);

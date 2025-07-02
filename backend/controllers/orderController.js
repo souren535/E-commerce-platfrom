@@ -1,6 +1,5 @@
 import { orderModel, orderValidationSchema } from "../models/orderModel.js";
 import { Product } from "../models/productModel.js";
-import { userModel } from "../models/userModel.js";
 import handleAsyncError from "../middleware/handleAsyncError.js";
 import JoiValidation from "../utils/joivalidation.js";
 import HandleEror from "../utils/handleError.js";
@@ -52,10 +51,10 @@ export const getSingleOrder = handleAsyncError(async (req, res, next) => {
     }
     res.status(200).json({
       success: true,
-      message: "order fetch successfully",
       order,
     });
   } catch (error) {
+    console.log(error);
     return next(new HandleEror("Internal Server Error", 500));
   }
 });
@@ -63,14 +62,14 @@ export const getSingleOrder = handleAsyncError(async (req, res, next) => {
 // Get all my order
 export const getAllOrder = handleAsyncError(async (req, res, next) => {
   try {
-    const order = await orderModel.find({ user: req.user.id });
-    if (!order) {
+    const orders = await orderModel.find({ user: req.user.id });
+    if (!orders) {
       return next(new HandleEror("No Order Found", 404));
     }
     res.status(200).json({
       success: true,
       message: "order fetch successfully",
-      order,
+      orders,
     });
   } catch (error) {
     return next(new HandleEror("Internal Server Error", 500));

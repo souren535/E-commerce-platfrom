@@ -16,7 +16,16 @@ import ShippingPage from "./features/shipping_page/ShippingPage";
 import OrderConfirmPage from "./Cart/orderConfirmPage";
 import Payment from "./Cart/Payment";
 import Footer from "./components/Footer";
-import PaymentSuccess from "./Cart/paymentSuccess";
+import MyOrders from "./Orders/MyOrders";
+import OrderDetails from "./Orders/OrderDetails";
+import ProtectedPaymentSuccess from "./Cart/paymentSuccess";
+import Unauthorized from "./Security/unauthorized/Unauthorized";
+import ProtectedAdminDashboard from "./Admin/AdminDashboard";
+import ProtectedOrderConfirmPage from "./Cart/orderConfirmPage";
+import ProtectedPayment from "./Cart/Payment";
+import ProtectedAdminDashboardProductList from "./Admin/productList";
+import ProtectedAdminProductUpdate from "./Admin/productUpdate";
+import ProtectedAdminProductCreate from "./Admin/ProductCreate";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -38,17 +47,31 @@ const App = () => {
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
+        <Route path="/admin/dashboard" element={<ProtectedAdminDashboard />} />
         <Route
-          path="/paymentSuccess"
-          element={<ProtectedRoute element={<PaymentSuccess />} />}
+          path="/admin/products"
+          element={<ProtectedAdminDashboardProductList />}
         />
         <Route
-          path="/order/confirm"
-          element={<ProtectedRoute element={<OrderConfirmPage />} />}
+          path="/admin/products/create"
+          element={<ProtectedAdminProductCreate />}
         />
         <Route
-          path="/process/payment"
-          element={<ProtectedRoute element={<Payment />} />}
+          path="/admin/products/edit/:id"
+          element={<ProtectedAdminProductUpdate />}
+        />
+        <Route path="/paymentSuccess" element={<ProtectedPaymentSuccess />} />
+        <Route path="/order/confirm" element={<ProtectedOrderConfirmPage />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        <Route path="/process/payment" element={<ProtectedPayment />} />
+        <Route
+          path="/orders/user"
+          element={<ProtectedRoute element={<MyOrders />} />}
+        />
+        <Route
+          path="/order/:id"
+          element={<ProtectedRoute element={<OrderDetails />} />}
         />
         <Route
           path="/cart"

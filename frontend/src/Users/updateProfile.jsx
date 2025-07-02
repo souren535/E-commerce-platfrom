@@ -178,12 +178,11 @@ const UpdateProfile = () => {
                   </div>
                 </div>
                 <button className="mt-15 bg-zinc-700 text-white hover:font-semibold px-6 py-2 rounded-xl w-full transition-transform duration-300 ease-in-out hover:translate-y-1">
-                  Save Changes
+                  {loading ? "Save Changes...." : "Save Changes"}
                 </button>
               </form>
             </div>
           </div>
-          <Footer />
         </>
       )}
     </>

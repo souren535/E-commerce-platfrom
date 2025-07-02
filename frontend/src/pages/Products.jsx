@@ -120,7 +120,6 @@ const Products = () => {
               </div>
             </div>
           </main>
-          <Footer />
         </div>
       )}
     </>

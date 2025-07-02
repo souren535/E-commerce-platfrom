@@ -184,7 +184,7 @@ const Navbar = () => {
             <form className="relative w-full" onSubmit={handleSubmit}>
               <input
                 className={`bg-zinc-900 text-white ${
-                  !showDropdown ? "rounded-full":"rounded-t-lg"
+                  !showDropdown ? "rounded-full" : "rounded-t-lg"
                 } w-full px-3 py-2 pr-10 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-800 focus:border-zinc-800`}
                 placeholder="Search for products"
                 type="text"

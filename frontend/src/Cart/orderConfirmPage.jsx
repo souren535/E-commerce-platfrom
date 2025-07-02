@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import CheckoutPath from "../features/shipping_page/components/CheckoutPath";
 import PageTitle from "../components/PageTitle";
 import { useNavigate } from "react-router-dom";
+import withAuthProtection from "../Security/withAuthProtection";
 const OrderConfirmPage = () => {
   const { cartItems, shippingInfo } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
@@ -24,22 +25,20 @@ const OrderConfirmPage = () => {
   const shipping = subTotal > 500 ? 0 : 500;
   const tax = subTotal * 0.18;
   const total = subTotal + tax + shipping;
-  const navigate = useNavigate()
-  const ProceedToPayment = ()=>{
-
-       const data = {
-
-          subTotal,
-          tax,
-          shipping,
-          total
-       }
-       sessionStorage.setItem('orderItem',JSON.stringify(data));
-       navigate("/process/payment");
-  }
+  const navigate = useNavigate();
+  const ProceedToPayment = () => {
+    const data = {
+      subTotal,
+      tax,
+      shipping,
+      total,
+    };
+    sessionStorage.setItem("orderItem", JSON.stringify(data));
+    navigate("/process/payment");
+  };
   return (
     <>
-    <PageTitle title="Confirm Order"/>
+      <PageTitle title="Confirm Order" />
       <div className="bg-zinc-950 min-h-screen flex flex-col justify-center items-center px-4">
         <div className="flex items-center mb-8 lg:mt-15 w-full max-w-[1600px] justify-center">
           <CheckoutPath activePath={1} />
@@ -184,8 +183,7 @@ const OrderConfirmPage = () => {
           </div>
           <div className="w-full justify-center flex">
             <Button
-
-            onClick={ProceedToPayment}
+              onClick={ProceedToPayment}
               className={`md:w-1/4 lg:w-1/5 lg:text-lg border-1 border-zinc-700 justify-center hover:bg-zinc-800 cursor-pointer items-center text-white bg-zinc-800 py-6`}
             >
               Proceed to Payment
@@ -198,4 +196,5 @@ const OrderConfirmPage = () => {
   );
 };
 
-export default OrderConfirmPage;
+const ProtectedOrderConfirmPage = withAuthProtection(OrderConfirmPage);
+export default ProtectedOrderConfirmPage;
