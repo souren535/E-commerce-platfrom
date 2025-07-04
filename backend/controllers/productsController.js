@@ -3,21 +3,49 @@ import HandleEror from "../utils/handleError.js";
 import handleAsyncError from "../middleware/handleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import JoiValidation from "../utils/joivalidation.js";
+import { v2 as cloudinary } from "cloudinary";
 
 //  CreateProduct
 export const createProducts = handleAsyncError(async (req, res, next) => {
   try {
     new JoiValidation(req.body, productValidationSchema).validator();
 
-    req.body.user = req.user.id;
+    let image = [];
+    if (typeof req.body.image === "string") {
+      image.push(req.body.image);
+    } else if (Array.isArray(req.body.image)) {
+      image = req.body.image;
+    } else if (req.body.image) {
+      image = [req.body.image];
+    } else {
+      image = [];
+    }
+
+    if (!image || !image.length) {
+      return next(new HandleEror("No images provided", 400));
+    }
+
+    const imageLinks = [];
+    for (let i = 0; i < image.length; i++) {
+      const result = await cloudinary.uploader.upload(image[i], {
+        folder: "Products",
+      });
+      imageLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    req.body.image = imageLinks;
 
     const result = await Product.findOne({ name: req.body.name });
     if (result) return next(new HandleEror("Product already exists", 400));
 
+    req.body.user = req.user.id;
     const newProduct = await Product.create(req.body);
 
     res.status(201).json({
-      seccess: true,
+      success: true,
       message: "Product created successfully",
       newProduct,
     });
@@ -30,7 +58,10 @@ export const createProducts = handleAsyncError(async (req, res, next) => {
 export const getAllProducts = handleAsyncError(async (req, res, next) => {
   try {
     const resultPerPage = parseInt(req.query.limit) || 10;
-    const apiFeture = new APIFunctionality(Product.find(), req.query)
+    const apiFeture = new APIFunctionality(
+      Product.find({ is_deleted: false }),
+      req.query
+    )
       .search()
       .filter();
 
@@ -105,6 +136,35 @@ export const updateProducts = handleAsyncError(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
     if (!product) return next(new HandleEror("Product not found", 404));
 
+    let images = [];
+    if (req.body.image === "String") {
+      images.push(req.body.image);
+    } else if (Array.isArray(req.body.image)) {
+      images = req.body.image;
+    }
+
+    // destroy images
+    if (images.length > 0) {
+      for (let i = 0; i < product.image.length; i++) {
+        await cloudinary.uploader.destroy(product.image[i].public_id);
+      }
+    }
+
+    // uploads images
+    let imageLinks = [];
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.uploader.upload(images[i], {
+        folder: "Products",
+      });
+
+      imageLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    req.body.image = imageLinks;
+
     const updateProduct = await Product.findByIdAndUpdate(
       req.params.id,
 
@@ -114,7 +174,7 @@ export const updateProducts = handleAsyncError(async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "product updated successfully",
-      product: updateProduct,
+      updateProduct,
     });
   } catch (error) {
     next(new HandleEror(error.message, 500));
@@ -122,36 +182,99 @@ export const updateProducts = handleAsyncError(async (req, res, next) => {
 });
 
 // Soft_deleteProduct
-export const deleteProduct = handleAsyncError(async (req, res) => {
+export const deleteProduct = handleAsyncError(async (req, res, next) => {
   try {
     const product = await Product.findOne({
       _id: req.params.id,
       is_deleted: false,
     });
+
     if (!product) return next(new HandleEror("Product not found", 404));
+
     product.is_deleted = true;
-    const result = await product.save();
-    if (result) next(new HandleEror("Product deleted successfully", 200));
+
+    const result = await product.save({ validateBeforeSave: false });
+
+    if (result) {
+      return res.status(200).json({
+        message: "Product deleted successfully",
+        success: true,
+      });
+    }
   } catch (error) {
-    next(new HandleEror(error.message, 500));
+    console.log(error);
+    return next(new HandleEror(error.message, 500));
   }
 });
+
+// get soft deleted product
+export const getsoftdeletedProduct = handleAsyncError(
+  async (req, res, next) => {
+    try {
+      const products = await Product.find({ is_deleted: true });
+      res.status(200).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+// parmanant delete product
+
+export const parmanentDeleteProducts = handleAsyncError(
+  async (req, res, next) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return next(new HandleEror("Product not found", 404));
+
+      if (product.image && product.image.length > 0) {
+        for (let i = 0; i < product.image.length; i++) {
+          await cloudinary.uploader.destroy(product.image[i].public_id);
+        }
+      }
+
+      const deleteProduct = await Product.findByIdAndDelete(req.params.id);
+
+      res.status(200).json({
+        success: true,
+        message: "Product deleted successfully",
+        product: deleteProduct, 
+      });
+    } catch (error) {
+      next(new HandleEror(error.message, 500));
+    }
+  }
+);
+
 // RestoreProduct
-export const restoreProduct = handleAsyncError(async (req, res) => {
+export const restoreProduct = handleAsyncError(async (req, res, next) => {
   try {
     const product = await Product.findOne({
       _id: req.params.id,
       is_deleted: true,
     });
-    if (!product) next(new HandleEror("Product not found", 404));
-    product.is_deleted = false;
-    product.save();
+
+    if (!product) {
+      return next(new HandleEror("Product not found", 404));
+    }
+
+    // Restore the product without triggering full validation
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { is_deleted: false },
+      { new: true } // return updated doc
+    );
+
     res.status(200).json({
       success: true,
       message: "Product restored successfully",
-      product: product,
+      product: updatedProduct,
     });
   } catch (error) {
+    console.log(error);
     next(new HandleEror(error.message, 500));
   }
 });
@@ -159,7 +282,7 @@ export const restoreProduct = handleAsyncError(async (req, res) => {
 //  admin - get all products
 export const getAdminProduct = handleAsyncError(async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({ is_deleted: false });
     res.status(200).json({
       success: true,
       message: "products fetched successfully",

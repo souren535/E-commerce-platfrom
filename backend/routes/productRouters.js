@@ -11,6 +11,8 @@ import {
   getAllReviews,
   getProductSuggestions,
   GetSingleProduct,
+  getsoftdeletedProduct,
+  parmanentDeleteProducts,
   restoreProduct,
   updateProducts,
 } from "../controllers/productsController.js";
@@ -33,9 +35,14 @@ router
 router
   .route("/admin/delete/:id")
   .delete(verifyUserAuth, roleBaseAccess("admin"), deleteProduct);
+
+router
+  .route("/admin/getSoftDeleted/")
+  .get(verifyUserAuth, roleBaseAccess("admin"), getsoftdeletedProduct);
+
 router
   .route("/admin/restore/:id")
-  .post(verifyUserAuth, roleBaseAccess("admin"), restoreProduct);
+  .put(verifyUserAuth, roleBaseAccess("admin"), restoreProduct);
 
 router
   .route("/admin/list")
@@ -49,5 +56,10 @@ router.route("/getall/reviews").post(verifyUserAuth, getAllReviews);
 
 // delete product review
 router.route("/delete/reviews").delete(verifyUserAuth, deleteReview);
+
+// delete  parmanent product
+router
+  .route("/admin/parmanentDelete/:id")
+  .delete(verifyUserAuth, parmanentDeleteProducts);
 
 export default router;

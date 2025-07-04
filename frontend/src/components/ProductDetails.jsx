@@ -5,6 +5,8 @@ import Footer from "./Footer";
 import Rating from "./Rating";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 import {
   createProductReview,
   getProductdetails,
@@ -19,6 +21,7 @@ const ProductDetails = () => {
   const [userRating, setUserRating] = useState(0);
   const [comment, setComment] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState("");
   const { loading, error, product, reviewLoading, reviewSuccess } = useSelector(
     (state) => state.product
   );
@@ -100,19 +103,40 @@ const ProductDetails = () => {
         <>
           <PageTitle title={`${product.name} - details`} />
           <div className="product-details p-[100px] max-sm:w-[80%] bg-zinc-950 max-sm:mx-auto">
-            <div className="product-detail max-w-[1200px] mx-auto flex md:flex-row text-white flex-col justify-around items-stretch min-h-[600px]">
-              <div className="flex items-center justify-center z-10 mb-[20px] w-[500px] max-md:static flex-1 pt-[20px]">
+            <div className="product-detail max-w-[1500px] mx-auto flex md:flex-row text-white flex-col  justify-around items-stretch min-h-[600px]">
+              <div className="flex items-center justify-center  z-10 mb-[20px] w-[700px] max-md:static flex-1 pt-[20px]">
+                <div className="h-full space-y-7 w-[200px]  flex flex-col justify-center items-center">
+                  {product.image.map((image, i) => (
+                    <motion.img
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        opacity: {
+                          duration: 1,
+                          ease: "easeInOut",
+                        },
+                      }}
+                      whileHover={{ scale: 1.3 }}
+                      key={i}
+                      src={image.url}
+                      alt={`Thumbnail ${i + 1}`}
+                      className="w-[100px] h-[80px] cursor-pointer"
+                      onMouseEnter={() => setSelectedImage(image.url)}
+                      onMouseLeave={() => selectedImage(image[0].url)}
+                    />
+                  ))}
+                </div>
                 <img
-                  src={product.image[0].url}
-                  className=" w-[100%] max-h-[ 500px] object-contain rounded-b-[8px] "
+                  src={selectedImage || product.image[0].url}
+                  className=" w-[70%] max-h-[ 500px] object-contain rounded-b-[8px] "
                   alt="Product Title"
                 />
               </div>
 
-              <div className="p-[20px] w-[500px] flex-1 left-4">
-                <h2 className="text-5xl mb-[15px]">{product.name}</h2>
-                <p className="text-left text-xl">{product.description}</p>
-                <p className="text-left text-xl font-semibold">
+              <div className="p-[20px] max-w-1/3 flex-1 left-4">
+                <h2 className="text-3xl mb-[15px]">{product.name}</h2>
+                <p className="text-left text-lg">{product.description}</p>
+                <p className="text-left text-2xl font-semibold">
                   {product.price} /-
                 </p>
                 <div className="justify-center items-center">
