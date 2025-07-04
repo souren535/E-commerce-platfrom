@@ -125,7 +125,6 @@ export const restoreDeletedProduct = createAsyncThunk(
 );
 
 // create product
-
 export const productCreate = createAsyncThunk(
   "admin/productCreate",
   async (productData, { rejectWithValue }) => {
@@ -152,6 +151,74 @@ export const productCreate = createAsyncThunk(
   }
 );
 
+//  fetch all user data
+
+export const fetchAllUser = createAsyncThunk(
+  "admin/fetchAllUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post("/api/user/admin/allUsers");
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to fetch user data",
+      });
+    }
+  }
+);
+
+// get gingle user
+
+export const AdminGetSingleUser = createAsyncThunk(
+  "admin/AdminGetSingleUser",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(`/api/user/admin/user/${userId}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to fetch user data",
+      });
+    }
+  }
+);
+
+// delete user
+
+export const AdminDeleteUser = createAsyncThunk(
+  "admin/AdminDeleteUser",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/user/admin/user/delete/${userId}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to fetch user data",
+      });
+    }
+  }
+);
+
+// update role
+export const updateUserRoll = createAsyncThunk(
+  "admin/updateUserRoll",
+  async ({ userId, role }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        `/api/user/admin/user/update/${userId}`,
+        { role }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to update role",
+      });
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
@@ -168,6 +235,9 @@ const adminSlice = createSlice({
     deleteLoading: false,
     softDeleted: [],
     deleting: {},
+    users: [],
+    user: {},
+    message: null,
   },
   reducers: {
     removeErrors: (state) => {
@@ -184,6 +254,9 @@ const adminSlice = createSlice({
           delete: false,
         };
       }
+    },
+    clearMessage: (state) => {
+      state.message = null;
     },
   },
   extraReducers: (builder) => {
@@ -305,9 +378,68 @@ const adminSlice = createSlice({
         state.deleting[id] = false;
         state.error = action.payload?.message || "Something went wrong";
       });
+
+    // users details reducers
+
+    builder
+      .addCase(fetchAllUser.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(fetchAllUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.users;
+      })
+      .addCase(fetchAllUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to fetch user data";
+      });
+
+    builder
+      .addCase(AdminGetSingleUser.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(AdminGetSingleUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+      })
+      .addCase(AdminGetSingleUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to fetch user data";
+      });
+
+    builder
+      .addCase(updateUserRoll.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(updateUserRoll.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.update = action.payload.success;
+      })
+      .addCase(updateUserRoll.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to fetch user data";
+      });
+
+    builder
+      .addCase(AdminDeleteUser.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(AdminDeleteUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.update = action.payload.success;
+        state.message = action.payload.message;
+      })
+      .addCase(AdminDeleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to delete user ";
+      });
   },
 });
 
-export const { removeErrors, removeSuccess } = adminSlice.actions;
+export const { removeErrors, removeSuccess, clearMessage } = adminSlice.actions;
 
 export default adminSlice.reducer;

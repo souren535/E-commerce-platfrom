@@ -118,8 +118,8 @@ const Navbar = () => {
   const navLinks = [
     { label: "Home", to: "/" },
     { label: "Products", to: "/products" },
-    { label: "About Us", to: "/about-us" },
-    { label: "Contact us", to: "/contact-us" },
+    { label: "About Us", to: "/aboutUs" },
+    { label: "Contact us", to: "/contactUs" },
   ];
 
   function userAccount() {

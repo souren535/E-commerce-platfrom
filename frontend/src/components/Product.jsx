@@ -1,54 +1,46 @@
-import React, { useState } from "react";
-// eslint-disable-next-line no-unused-vars
+import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
 
 const Product = ({ product }) => {
-  const [rating, setRating] = useState(0);
-  const handelRatingChange = (newRating) => {
-    setRating(rating);
-    console.lognewRating(`Rating change to : ${newRating}`);
-  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      whileHover={{ scale: 1.08 }}
-      className="flex flex-col text-center w-full bg-zinc-900 md:w-[250px] text-white border-2 border-zinc-700 lg:w-[280px] sm:w-[200px] shadow-md p-5 rounded-xl"
+      whileHover={{ scale: 1.05 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700 text-white shadow-xl rounded-2xl overflow-hidden w-full sm:w-[250px] md:w-[260px] lg:w-[280px] flex flex-col"
     >
-      <img
-        src={product.image[0].url}
-        alt={product.name}
-        className="w-[100%] h-[100%]  object-contain rounded-tl-[8px] rounded-tr-[8px] max-h-[200px]"
-      />
-      <div className="p-4 flex flex-col items-center text-center">
-        <h3 className=" text-base sm:text-mb font-semibold mb-1 ">
-          {product.name}
-        </h3>
-        <p className="text-center">
-          <strong>price: </strong>
-          {product.price}/-
-        </p>
-        <div className="flex justify-center items-center">
-          <Rating
-            value={product.ratings}
-            onChangeRating={handelRatingChange}
-            disabled={true}
-          />
+      {/* Product Image */}
+      <div className="relative group">
+        <img
+          src={product.image[0]?.url}
+          alt={product.name}
+          className="w-full h-56 object-contain bg-zinc-950 p-4 transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+
+      {/* Product Details */}
+      <div className="p-4 flex flex-col items-center text-center gap-2">
+        <h3 className="text-lg font-semibold truncate">{product.name}</h3>
+        <p className="text-indigo-400 font-bold text-base">₹ {product.price}</p>
+
+        <div className="flex justify-center">
+          <Rating value={product.ratings} disabled={true} />
         </div>
-        <span
-          className={`p-1 text-white rounded-md text-base ${
-            product.numOfReviews > 0 && "font-semibold"
-          }`}
-        >
+
+        <p className="text-sm text-zinc-400">
           {product.numOfReviews}{" "}
-          {product.numOfReviews === 1 ? "Reviews" : "Review"}
-        </span>
-        <button className="w-full bg-zinc-500 rounded-lg shadow-sm hover:bg-zinc-600 py-1 transition mt-2 ">
-          <Link to={`/list/${product._id}`}>Check Out</Link>
-        </button>
+          {product.numOfReviews === 1 ? "Review" : "Reviews"}
+        </p>
+
+        <Link
+          to={`/list/${product._id}`}
+          className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 transition text-white py-2 rounded-lg font-semibold shadow-sm"
+        >
+          View Details
+        </Link>
       </div>
     </motion.div>
   );

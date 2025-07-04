@@ -28,14 +28,14 @@ const Sidebar = ({ setshowSocal }) => {
       icon: <Package />,
       to: "/admin/products/create",
     },
-    { label: "All Users", icon: <Users />, to: "/admin/users" },
-    { label: "All Orders", icon: <ShoppingCart />, to: "/admin/orders" },
-    { label: "All Reviews", icon: <Star />, to: "/admin/reviewId" },
+    { label: "All Users", icon: <Users />, to: "/admin/allUsers" },
+    { label: "All Orders", icon: <ShoppingCart />, to: "/admin/allOrders" },
+    { label: "All Reviews", icon: <Star />, to: "/admin/allReviews" },
     { label: "Social Media", icon: <Globe />, to: "#", isToggle: true },
   ];
 
   return (
-    <aside className="w-full lg:w-64 min-h-[calc(100vh-4rem)] bg-zinc-900/60 text-white backdrop-blur-md border-r border-indigo-800 px-6 pt-8 pb-10 shadow-2xl mt-20 overflow-y-auto sticky top-16 lg:top-0">
+    <aside className="w-full  lg:w-64 min-h-[calc(100vh-4rem)] bg-zinc-900/60 text-white backdrop-blur-md border-r border-indigo-800 px-6 pt-8 pb-10 shadow-2xl mt-20 overflow-y-auto sticky top-16 lg:top-0">
       <h2 className="text-3xl font-bold text-center text-indigo-400 tracking-widest uppercase mb-10">
         Admin
       </h2>

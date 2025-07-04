@@ -12,6 +12,7 @@ import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import { v2 as cloudinary } from "cloudinary";
+import c from "config";
 
 // user registration
 export const userRegister = handleAsyncError(async (req, res, next) => {
@@ -265,34 +266,13 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
 
 export const getUserList = handleAsyncError(async (req, res, next) => {
   try {
-    const resultPerPage = parseInt(req.query.limit) || 10;
-    const apiFeture = new APIFunctionality(userModel.find(), req.query)
-      .seacrh()
-      .filter();
-
-    const filteredQuery = apiFeture.query.clone();
-    const totalProducts = await filteredQuery.countDocuments();
-
-    const totalPages = Math.ceil(totalProducts / resultPerPage);
-    const page = parseInt(req.query.page) || 1;
-
-    if (page > totalPages && totalProducts > 0)
-      return next(new HandleEror("This Page doesn't exist", 404));
-
-    apiFeture.pagination(resultPerPage);
-    const users = await apiFeture.query;
-    if (!users || users.length === 0) {
-      return next(new HandleEror("No User Found", 400));
-    }
+    const users = await userModel.find();
     res.status(200).json({
       success: true,
-      message: "products fetched successfully",
-      totalProducts,
-      totalPages,
-      currentPage: page,
       users,
     });
   } catch (error) {
+    console.log(error);
     return next(new HandleEror(error.message, 500));
   }
 });
@@ -317,19 +297,20 @@ export const getSingleUser = handleAsyncError(async (req, res, next) => {
 export const updateRole = handleAsyncError(async (req, res, next) => {
   try {
     let { role } = req.body;
-    const updateDetails = {
-      role,
-    };
-    const user = await userModel.findByIdAndUpdate(req.user.id, updateDetails, {
-      new: true,
-      runValidators: true,
-    });
+    const user = await userModel.findByIdAndUpdate(
+      req.params.id,
+      { role },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!user) {
       return next(new HandleEror("User doesn't exist, with this id", 404));
     }
     res.status(200).json({
       success: true,
-      message: "profile update successfully",
+      message: "user role update successfully",
       user,
     });
   } catch (error) {
@@ -339,18 +320,25 @@ export const updateRole = handleAsyncError(async (req, res, next) => {
 
 // admin - delete user -
 
-export const deleteUser = handleAsyncError(async (re, res, next) => {
+export const deleteUser = handleAsyncError(async (req, res, next) => {
   try {
     const user = await userModel.findById(req.params.id);
     if (!user) {
       return next(new HandleEror("user doesn't exist", 400));
     }
+
+    // const imageId = user.avatar?.public_id;
+    // if (user.avatar && imageId) {
+    //   await cloudinary.uploader.destroy(imageId);
+    //   console.log("Avatar deleted from cloudinary");
+    // }
     await userModel.findByIdAndDelete(req.params.id);
     res.status(200).json({
       seccess: true,
       message: "User Deleted Successfully",
     });
   } catch (error) {
+    console.log(error);
     return next(new HandleEror("Internal Server Error", 500));
   }
 });

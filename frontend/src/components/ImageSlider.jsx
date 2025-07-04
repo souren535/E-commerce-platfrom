@@ -27,7 +27,7 @@ const ImageSlider = () => {
   useEffect(() => {
     const interval = setInterval(nextSlide, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentIndex]);
 
   return (
     <div className="w-full relative h-[250px] sm:h-[350px] md:h-[450px] overflow-hidden pt-[100px]">

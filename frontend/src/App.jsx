@@ -26,6 +26,12 @@ import ProtectedPayment from "./Cart/Payment";
 import ProtectedAdminDashboardProductList from "./Admin/productList";
 import ProtectedAdminProductUpdate from "./Admin/productUpdate";
 import ProtectedAdminProductCreate from "./Admin/ProductCreate";
+import ProtectedAllUsers from "./Admin/AllUsers";
+import ProtectedAllOrders from "./Admin/AllOrders";
+import ProtectedAllReviews from "./Admin/AllReviews";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import ProtectedEditUser from "./Admin/components/editUser";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -42,6 +48,8 @@ const App = () => {
       {isAuthenticated && <Navbar user={user} />}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
+        <Route path="/contactUs" element={<ContactUs />} />
         <Route path="/products" element={<Products />} />
         <Route path="/list/:id" element={<ProductDetails />} />
         <Route path="/products/:keyword" element={<Products />} />
@@ -60,6 +68,13 @@ const App = () => {
           path="/admin/products/edit/:id"
           element={<ProtectedAdminProductUpdate />}
         />
+        <Route path="/admin/allUsers" element={<ProtectedAllUsers />} />
+        <Route
+          path="/admin/user/edit/:userId"
+          element={<ProtectedEditUser />}
+        />
+        <Route path="/admin/allReviews" element={<ProtectedAllReviews />} />
+        <Route path="/admin/allOrders" element={<ProtectedAllOrders />} />
         <Route path="/paymentSuccess" element={<ProtectedPaymentSuccess />} />
         <Route path="/order/confirm" element={<ProtectedOrderConfirmPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />

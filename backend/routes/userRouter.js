@@ -27,7 +27,7 @@ router.route("/profile/update").put(verifyUserAuth, updateProfile);
 
 // admin - getting user information
 router
-  .route("/admin/users")
+  .route("/admin/allUsers")
   .post(verifyUserAuth, roleBaseAccess("admin"), getUserList);
 
 // admin - getting single user information
@@ -46,4 +46,3 @@ router
   .delete(verifyUserAuth, roleBaseAccess("admin"), deleteUser);
 
 export default router;
-
