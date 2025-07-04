@@ -38,7 +38,6 @@ const AllUsers = () => {
     if (success?.delete) {
       toast.success("User deleted successfully");
       dispatch(removeSuccess("delete"));
-      dispatch(fetchAllUser());
     }
 
     if (error) {

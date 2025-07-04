@@ -2,21 +2,26 @@ import React from "react";
 import withRoleAccess from "../Security/withRoleAccess";
 import { Button } from "../components/ui/button";
 import { Search } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const AllOrders = () => {
+  const { orders, loading, success, error } = useSelector(
+    (state) => state.admin
+  );
+  console.log("all orders", orders);
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 mt-20">
         <h1 className="text-3xl font-bold text-indigo-400">All Orders</h1>
-        <div className="flex items-center bg-zinc-900 border border-indigo-600 px-4 py-2 rounded-lg">
+        {/* <div className="flex items-center bg-zinc-900 border border-indigo-600 px-4 py-2 rounded-lg">
           <Search className="text-indigo-400 mr-2" size={18} />
           <input
             type="text"
             placeholder="Search by Order ID / User..."
             className="bg-transparent outline-none text-white"
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Table */}
@@ -35,7 +40,7 @@ const AllOrders = () => {
             </tr>
           </thead>
           <tbody className="text-zinc-300">
-            {[...Array(5)].map((_, i) => (
+            {orders.map((_, i) => (
               <tr
                 key={i}
                 className="border-b border-zinc-800 hover:bg-zinc-800 transition"

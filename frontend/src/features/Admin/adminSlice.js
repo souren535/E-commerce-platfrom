@@ -219,6 +219,22 @@ export const updateUserRoll = createAsyncThunk(
   }
 );
 
+// fetch oredr api
+export const getAllOrders = createAsyncThunk(
+  "admin/getAllOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put("/api/order/getAll/adminOrders");
+
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to update role",
+      });
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
@@ -238,6 +254,7 @@ const adminSlice = createSlice({
     users: [],
     user: {},
     message: null,
+    orders: [],
   },
   reducers: {
     removeErrors: (state) => {
@@ -436,6 +453,21 @@ const adminSlice = createSlice({
       .addCase(AdminDeleteUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "faild to delete user ";
+      });
+
+    builder
+      .addCase(getAllOrders.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.update = action.payload.success;
+        state.message = action.payload.message;
+      })
+      .addCase(getAllOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to orders data ";
       });
   },
 });

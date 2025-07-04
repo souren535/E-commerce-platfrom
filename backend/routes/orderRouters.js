@@ -19,7 +19,7 @@ router.route("/orderDetail/:id").get(verifyUserAuth, getSingleOrder);
 
 router.route("/orders/user").get(verifyUserAuth, getAllOrder);
 router
-  .route("/getAll/products")
+  .route("/getAll/adminOrders")
   .post(verifyUserAuth, roleBaseAccess("admin"), getAllOrders);
 
 router
