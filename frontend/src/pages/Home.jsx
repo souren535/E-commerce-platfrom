@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProduct, removeErrors } from "../features/products/productSlice";
 import Loader from "../components/Loader";
 import { toast } from "sonner";
+import WithLayout from "../components/HOC/WithLayout";
 
 const Home = () => {
   const { loading, error, products, productCount } = useSelector(
@@ -52,4 +53,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default WithLayout(Home);

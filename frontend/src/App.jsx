@@ -33,6 +33,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import ProtectedEditUser from "./Admin/components/editUser";
 import ProtectedOrderEdit from "./Admin/components/editOrder";
+import WithLayout from "./components/HOC/WithLayout";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -46,76 +47,72 @@ const App = () => {
   console.log(isAuthenticated, user);
   return (
     <Router>
-      {isAuthenticated && <Navbar user={user} />}
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/contactUs" element={<ContactUs />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/list/:id" element={<ProductDetails />} />
-        <Route path="/products/:keyword" element={<Products />} />
+        <Route path="/" element={React.createElement(WithLayout(Home))} />
+        <Route path="/aboutUs" element={React.createElement(WithLayout(AboutUs))} />
+        <Route path="/contactUs" element={React.createElement(WithLayout(ContactUs))} />
+        <Route path="/products" element={React.createElement(WithLayout(Products))} />
+        <Route path="/list/:id" element={React.createElement(WithLayout(ProductDetails))} />
+        <Route path="/products/:keyword" element={React.createElement(WithLayout(Products))} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
-        <Route path="/admin/dashboard" element={<ProtectedAdminDashboard />} />
+        <Route path="/admin/dashboard" element={React.createElement(WithLayout(ProtectedAdminDashboard))} />
         <Route
           path="/admin/order/edit/:orderId"
-          element={<ProtectedOrderEdit />}
+          element={React.createElement(WithLayout(ProtectedOrderEdit))}
         />
         <Route
           path="/admin/products"
-          element={<ProtectedAdminDashboardProductList />}
+          element={React.createElement(WithLayout(ProtectedAdminDashboardProductList))}
         />
-
         <Route
           path="/admin/products/:keyword"
-          element={<ProtectedAdminDashboardProductList />}
+          element={React.createElement(WithLayout(ProtectedAdminDashboardProductList))}
         />
         <Route
           path="/admin/products/create"
-          element={<ProtectedAdminProductCreate />}
+          element={React.createElement(WithLayout(ProtectedAdminProductCreate))}
         />
         <Route
           path="/admin/products/edit/:id"
-          element={<ProtectedAdminProductUpdate />}
+          element={React.createElement(WithLayout(ProtectedAdminProductUpdate))}
         />
-        <Route path="/admin/allUsers" element={<ProtectedAllUsers />} />
+        <Route path="/admin/allUsers" element={React.createElement(WithLayout(ProtectedAllUsers))} />
         <Route
           path="/admin/user/edit/:userId"
-          element={<ProtectedEditUser />}
+          element={React.createElement(WithLayout(ProtectedEditUser))}
         />
-        <Route path="/admin/allReviews" element={<ProtectedAllReviews />} />
-        <Route path="/admin/allOrders" element={<ProtectedAllOrders />} />
-        <Route path="/paymentSuccess" element={<ProtectedPaymentSuccess />} />
-        <Route path="/order/confirm" element={<ProtectedOrderConfirmPage />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-
-        <Route path="/process/payment" element={<ProtectedPayment />} />
+        <Route path="/admin/allReviews" element={React.createElement(WithLayout(ProtectedAllReviews))} />
+        <Route path="/admin/allOrders" element={React.createElement(WithLayout(ProtectedAllOrders))} />
+        <Route path="/paymentSuccess" element={React.createElement(WithLayout(ProtectedPaymentSuccess))} />
+        <Route path="/order/confirm" element={React.createElement(WithLayout(ProtectedOrderConfirmPage))} />
+        <Route path="/unauthorized" element={React.createElement(WithLayout(Unauthorized))} />
+        <Route path="/process/payment" element={React.createElement(WithLayout(ProtectedPayment))} />
         <Route
           path="/orders/user"
-          element={<ProtectedRoute element={<MyOrders />} />}
+          element={React.createElement(WithLayout(() => <ProtectedRoute element={<MyOrders />} />))}
         />
         <Route
           path="/order/:id"
-          element={<ProtectedRoute element={<OrderDetails />} />}
+          element={React.createElement(WithLayout(() => <ProtectedRoute element={<OrderDetails />} />))}
         />
         <Route
           path="/cart"
-          element={<ProtectedRoute element={<CartPage />} />}
+          element={React.createElement(WithLayout(() => <ProtectedRoute element={<CartPage />} />))}
         />
         <Route
           path="/shipping"
-          element={<ProtectedRoute element={<ShippingPage />} />}
+          element={React.createElement(WithLayout(() => <ProtectedRoute element={<ShippingPage />} />))}
         />
         <Route
           path="/profile"
-          element={<ProtectedRoute element={<Profile />} />}
+          element={React.createElement(WithLayout(() => <ProtectedRoute element={<Profile />} />))}
         />
         <Route
           path="/profile/update"
-          element={<ProtectedRoute element={<UpdateProfile />} />}
+          element={React.createElement(WithLayout(() => <ProtectedRoute element={<UpdateProfile />} />))}
         />
       </Routes>
-      {isAuthenticated && <Footer />}
     </Router>
   );
 };
