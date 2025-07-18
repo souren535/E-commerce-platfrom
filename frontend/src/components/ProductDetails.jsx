@@ -120,7 +120,7 @@ const ProductDetails = () => {
                       key={i}
                       src={image.url}
                       alt={`Thumbnail ${i + 1}`}
-                      className="w-[100px] h-[80px] cursor-pointer"
+                      className="w-[100px] h-[100px] cursor-pointer rounded-2xl"
                       onMouseEnter={() => setSelectedImage(image.url)}
                       onMouseLeave={() => selectedImage(image[0].url)}
                     />
@@ -128,7 +128,7 @@ const ProductDetails = () => {
                 </div>
                 <img
                   src={selectedImage || product.image[0].url}
-                  className=" w-[70%] max-h-[ 500px] object-contain rounded-b-[8px] "
+                  className=" w-[70%] max-h-[ 500px] object-contain rounded-3xl "
                   alt="Product Title"
                 />
               </div>

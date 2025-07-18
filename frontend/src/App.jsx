@@ -46,7 +46,7 @@ const App = () => {
   console.log(isAuthenticated, user);
   return (
     <Router>
-      <Navbar user={user} />
+      {isAuthenticated && <Navbar user={user} />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/aboutUs" element={<AboutUs />} />
@@ -56,7 +56,6 @@ const App = () => {
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
-        <Route path="/reset" element={<ResetPassword />} />
         <Route path="/admin/dashboard" element={<ProtectedAdminDashboard />} />
         <Route
           path="/admin/order/edit/:orderId"
@@ -64,6 +63,11 @@ const App = () => {
         />
         <Route
           path="/admin/products"
+          element={<ProtectedAdminDashboardProductList />}
+        />
+
+        <Route
+          path="/admin/products/:keyword"
           element={<ProtectedAdminDashboardProductList />}
         />
         <Route
@@ -111,7 +115,7 @@ const App = () => {
           element={<ProtectedRoute element={<UpdateProfile />} />}
         />
       </Routes>
-      <Footer />
+      {isAuthenticated && <Footer />}
     </Router>
   );
 };

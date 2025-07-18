@@ -38,7 +38,7 @@ const Home = () => {
                 <h2 className="text-[2.5rem] text-zinc-50 font-semibold mb-3 text-shadow-2xs text-center">
                   Trending Now
                 </h2>
-                <div className="grid gap-12 mt-8 pb-12 px-4 grid-cols-5 md:grid-cols-2 xl:grid-cols-5">
+                <div className="grid gap-6 sm:gap-8 md:gap-10 mt-8 pb-8 px-2 sm:px-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full">
                   {products.map((product, index) => (
                     <Product key={index} product={product} />
                   ))}

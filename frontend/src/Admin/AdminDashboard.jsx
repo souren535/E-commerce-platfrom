@@ -110,10 +110,16 @@ const AdminDashboard = () => {
     dispatch(getAllOrders());
     dispatch(fetchAllReviews());
   }, [dispatch]);
-  const outOfStock = products.filter((product) => product.stock === 0).length;
-  const inStock = products.filter((product) => product.stock > 0).length;
-  const totalReviews = products.reduce(
-    (acc, product) => acc + (product.reviews.length || 0),
+
+  // Ensure only valid products are processed
+  const validProducts = Array.isArray(products)
+    ? products.filter((product) => product && typeof product.stock === 'number')
+    : [];
+
+  const outOfStock = validProducts.filter((product) => product.stock === 0).length;
+  const inStock = validProducts.filter((product) => product.stock > 0).length;
+  const totalReviews = validProducts.reduce(
+    (acc, product) => acc + (Array.isArray(product.reviews) ? product.reviews.length : 0),
     0
   );
   return (

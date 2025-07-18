@@ -65,6 +65,10 @@ const ProductUpdate = () => {
     });
   };
 
+  useEffect(() => {
+    dispatch(removeSuccess("update"));
+  }, [dispatch]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -226,7 +230,7 @@ const ProductUpdate = () => {
                   </label>
                 </div>
                 <span className="mb-3 text-zinc-600">New image Preview</span>
-                <div className="Image-review mt-5 flex flex-wrap overflow-hidden">
+                <div className="Image-review mt-5 flex gap-2 flex-wrap overflow-hidden">
                   {imageReview.map((image, i) => (
                     <img
                       key={i}
@@ -237,7 +241,7 @@ const ProductUpdate = () => {
                   ))}
                 </div>
                 <span className="mb-3 text-zinc-600">old image Preview</span>
-                <div className="Image-review mt-5 flex flex-wrap overflow-hidden">
+                <div className="Image-review mt-5 gap-2 flex flex-wrap overflow-hidden">
                   {Array.isArray(oldImages) &&
                     oldImages.map((image, i) => (
                       <img

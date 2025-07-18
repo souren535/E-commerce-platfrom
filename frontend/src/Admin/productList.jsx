@@ -19,7 +19,6 @@ import RecycleBin from "./components/recycleBin";
 const ProductList = () => {
   // Dummy data — replace with real API data
   const { products, loading, error } = useSelector((state) => state.admin);
-  console.log(products);
   const { softDeleted } = useSelector((state) => state.admin);
 
   const dispatch = useDispatch();
@@ -67,13 +66,17 @@ const ProductList = () => {
             </h1>
 
             {/* Search */}
-            <div className="mb-6">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full sm:w-96 px-4 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
+            {/* <div className="mb-6">
+              <form onSubmit={(e) => handleSubmit(e)}>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full sm:w-96 px-4 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </form>
+            </div> */}
 
             {/* Recycle Bin Button and Modal */}
             {softDeleted.length > 0 && <RecycleBin />}

@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const signup = createAsyncThunk(
   "user/signup",
-  async (userData, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
       let link = "/api/user/add";
       const config = {
@@ -13,7 +13,7 @@ export const signup = createAsyncThunk(
           "Content-Type": "multipart/form-data",
         },
       };
-      const { data } = await axios.post(link, userData, config);
+      const { data } = await axios.post(link, formData, config);
       return data;
     } catch (error) {
       return rejectWithValue({

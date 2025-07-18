@@ -96,6 +96,7 @@ const Navbar = () => {
     navigate(`/list/${productId}`);
     setSearchQuery("");
     setShowDropdown(false);
+    setIsMenuOpen(false); // Close mobile menu on selection
   };
 
   const handleViewAll = () => {
@@ -103,6 +104,7 @@ const Navbar = () => {
       navigate(`/products?keyword=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setShowDropdown(false);
+      setIsMenuOpen(false); // Close mobile menu on view all
     }
   };
 
@@ -305,7 +307,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation Slide-in Panel */}
       <div
-        className={`md:hidden fixed top-0 left-0 h-full w-2/3 max-w-xs bg-zinc-700 z-40 transform transition-transform duration-300 ease-in-out shadow-lg ${
+        className={`md:hidden fixed top-0 left-0 h-full w-2/3 max-w-xs bg-zinc-900 z-40 transform transition-transform duration-300 ease-in-out shadow-lg ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -319,13 +321,91 @@ const Navbar = () => {
 
           {/* ✅ MOVE SEARCH + ICONS TO TOP */}
           <div className="mb-6">
+            {/* Profile, User Name, and Cart Icon for Mobile */}
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 border-2 border-zinc-400 rounded-full overflow-hidden shrink-0">
+                  <img
+                    src={user?.avatar.url ? user.avatar?.url : "/images/profile_avatar.png"}
+                    alt="profile image"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                {user?.name && (
+                  <span className="text-white uppercase text-base font-semibold tracking-wide">
+                    {user.name.split(" ")[0]}
+                  </span>
+                )}
+                <div className="ml-auto flex items-center gap-2">
+                  <button
+                    onClick={() => setOpen(!open)}
+                    className="focus:outline-none"
+                  >
+                    <span className="sr-only">Open profile menu</span>
+                    {/* Avatar acts as menu trigger */}
+                  </button>
+                  <Link to="/cart" className="relative inline-block">
+                    <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
+                    {cartItems.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {cartItems.length}
+                      </span>
+                    )}
+                  </Link>
+                </div>
+                {/* Mobile Profile Dropdown */}
+                <AnimatePresence>
+                  {open && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute left-6 top-20 w-40 py-2 z-50"
+                    >
+                      {popupLinks.map((item, index) => (
+                        <motion.button
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.08 * index }}
+                          whileHover={{ scale: 1.2 }}
+                          onClick={item.funcName}
+                          key={item.lable}
+                          className={`block w-full text-center cursor-pointer px-4 py-2 mt-2 rounded-md text-white bg-zinc-700 hover:bg-zinc-800 text-sm ${item.isCart && "bg-zinc-800"}`}
+                        >
+                          {item.lable}
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <div className="flex gap-4 mb-4">
+                <Link to="/auth">
+                  <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
+                </Link>
+                <Link to="/cart" className="relative inline-block">
+                  <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </Link>
+              </div>
+            )}
             <form className="relative w-full mb-4" onSubmit={handleSubmit}>
               <input
                 className="bg-zinc-300 text-black rounded-full w-full px-3 py-2 pr-10"
                 placeholder="Search for products"
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowDropdown(true)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowDropdown(true);
+                }}
               />
               <button
                 type="submit"
@@ -334,30 +414,32 @@ const Navbar = () => {
                 <Search />
               </button>
             </form>
-            <div className="flex gap-4">
-              <Link to="/cart" className="relative inline-block">
-                <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
-                {cartItems.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                    {cartItems.length}
-                  </span>
-                )}
-              </Link>
-              <Link to="/auth">
-                <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
-              </Link>
+            {/* Mobile Search Suggestions */}
+            <div className="relative w-full z-50">
+              <SearchSuggestion
+                suggestions={suggestions}
+                loading={suggestionLoading}
+                open={showDropdown && searchQuery.length > 0 && isMenuOpen}
+                searchQuery={searchQuery}
+                onSelect={handleSelectSuggestion}
+                viewAllHandler={handleViewAll}
+              />
             </div>
           </div>
 
           {/* 🔽 Navigation Links BELOW search */}
-          <ul className="flex flex-col gap-6 text-white text-lg">
+          <ul
+            className={`flex flex-col gap-6 text-white text-lg transition-all duration-300 ${
+              showDropdown && searchQuery.length > 0 && isMenuOpen ? "mt-32" : "mt-0"
+            }`}
+          >
             {navLinks.map((item, index) => (
               <li key={index}>
                 <Link
                   to={item.to}
                   onClick={() => setIsMenuOpen(false)}
                   className={`hover:text-black transition-colors duration-300 ${
-                    location.pathname === item.to ? "text-black font-bold" : ""
+                    location.pathname === item.to ? "text-white text-3xl font-bold" : ""
                   }`}
                 >
                   {item.label}

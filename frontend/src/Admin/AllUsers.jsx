@@ -21,6 +21,11 @@ const AllUsers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Clear any leftover messages when the page loads
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
+
   useEffect(() => {
     dispatch(fetchAllUser());
 
@@ -45,7 +50,8 @@ const AllUsers = () => {
       dispatch(removeErrors());
     }
 
-    if (message) {
+    // Only redirect if the message is about user deletion
+    if (message && message.toLowerCase().includes("user")) {
       toast.success(message);
       dispatch(clearMessage());
       navigate("/admin/dashboard");

@@ -26,12 +26,13 @@ const Products = () => {
 
   const [currentPage, setCurrentPage] = useState(pageFromURL);
   const categories = [
-    "Laptop",
-    "Mobile",
-    "Tablate",
+    "Garments",
+    "Laptops",
+    "Mobiles",
+    "Shoes",
+    "TV & Appliances",
     "Watches",
-    "Monitor",
-    "TV",
+    "Tablet"
   ];
 
   const handleCategoryClick = (cat) => {
@@ -79,8 +80,8 @@ const Products = () => {
         <div className="product min-h-screen bg-zinc-950 flex flex-col">
           <main className="flex-grow">
             <Navbar />
-            <div className="product-layout flex items-start gap-5 p-5 mt-[100PX]">
-              <div className="filter-section w-[250px] flex-none borde-1 border-zinc-600 bg-zinc-900 p-5 rounded-lg shadow-md">
+            <div className="product-layout flex flex-col lg:flex-row items-start gap-5 p-2 sm:p-4 md:p-5 mt-[80px] md:mt-[100px]">
+              <div className="filter-section w-full lg:w-[250px] flex-none border-1 border-zinc-600 bg-zinc-900 p-4 md:p-5 rounded-lg shadow-md mb-4 lg:mb-0">
                 <h3 className="filter-heading text-lg font-semibold mb-2 text-white text-primary-800">
                   CATEGORIES
                 </h3>
@@ -105,7 +106,7 @@ const Products = () => {
 
               <div className="products section w-full flex flex-col items-stretch ">
                 {products.length > 0 ? (
-                  <div className="products-product-container grid grid-cols-5 gap-x-2 gap-y-3 ">
+                  <div className="products-product-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-2 gap-y-3 ">
                     {products.map((product) => (
                       <Product key={product._id} product={product} />
                     ))}

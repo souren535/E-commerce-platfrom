@@ -3,6 +3,8 @@ import withRoleAccess from "../Security/withRoleAccess";
 import { AwardIcon, UploadCloud } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
+import Lottie from "lottie-react";
+import CircleSignupLoading from "../assets/animations/Loading_Circle_signUp.json";
 import {
   productCreate,
   removeErrors,
@@ -27,6 +29,7 @@ const ProductCreate = () => {
     "Shoes",
     "TV & Appliances",
     "Watches",
+    "Tablet",
   ];
 
   const [image, setImage] = useState([]);
@@ -112,10 +115,10 @@ const ProductCreate = () => {
   return (
     <>
       <PageTitle title={`Product create page`} />
-      <div className="min-h-screen px-4 py-10 bg-gradient-to-br from-zinc-950 mt-20 to-zinc-900 text-white flex justify-center">
+      <div className="min-h-screen px-4 py-10 bg-zinc-950 mt-20 text-white flex justify-center">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-4xl space-y-8 bg-zinc-900/80 p-8 rounded-xl shadow-xl border border-zinc-800"
+          className="w-full max-w-4xl space-y-8 bg-zinc-900 p-8 rounded-xl shadow-xl border border-zinc-800"
         >
           <h1 className="text-3xl font-bold text-indigo-400 border-b pb-3">
             Add New Product
@@ -231,9 +234,18 @@ const ProductCreate = () => {
             <Button
               type="submit"
               disabled={isLoading || loading}
-              className="bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded-lg text-white font-medium shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 px-6 py-2 rounded-lg text-white font-medium shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading || isLoading ? "Creating..." : "Create Product"}
+              {loading || isLoading ? (
+                <span className="flex items-center gap-2">
+                  Creating.....
+                  <span className="w-6 h-6">
+                    <Lottie animationData={CircleSignupLoading} loop={true} />
+                  </span>
+                </span>
+              ) : (
+                "Create"
+              )}
             </Button>
           </div>
         </form>

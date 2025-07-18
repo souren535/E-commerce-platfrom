@@ -10,14 +10,14 @@ const Product = ({ product }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700 text-white shadow-xl rounded-2xl overflow-hidden w-full sm:w-[250px] md:w-[260px] lg:w-[280px] flex flex-col"
+      className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700 text-white shadow-xl rounded-2xl overflow-hidden w-full sm:w-[250px] md:w-[260px] lg:w-[280px] flex flex-col mx-auto"
     >
       {/* Product Image */}
       <div className="relative group">
         <img
           src={product.image[0]?.url}
           alt={product.name}
-          className="w-full h-56 object-contain bg-zinc-950 p-4 transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-48 sm:h-56 object-contain bg-zinc-950 p-4 transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
