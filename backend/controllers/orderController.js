@@ -54,7 +54,6 @@ export const getSingleOrder = handleAsyncError(async (req, res, next) => {
       order,
     });
   } catch (error) {
-    console.log(error);
     return next(new HandleEror("Internal Server Error", 500));
   }
 });
@@ -129,7 +128,6 @@ export const updateOrderStatus = handleAsyncError(async (req, res, next) => {
       order,
     });
   } catch (error) {
-    console.log(error)
     return next(new HandleEror("Internal Server Error", 500));
   }
 });

@@ -203,8 +203,7 @@ export const deleteProduct = handleAsyncError(async (req, res, next) => {
       });
     }
   } catch (error) {
-    console.log(error);
-    return next(new HandleEror(error.message, 500));
+    next(new HandleEror(error.message, 500));
   }
 });
 
@@ -218,7 +217,7 @@ export const getsoftdeletedProduct = handleAsyncError(
         products,
       });
     } catch (error) {
-      console.log(error);
+      next(new HandleEror(error.message, 500));
     }
   }
 );
@@ -275,7 +274,6 @@ export const restoreProduct = handleAsyncError(async (req, res, next) => {
       product: updatedProduct,
     });
   } catch (error) {
-    console.log(error);
     next(new HandleEror(error.message, 500));
   }
 });
@@ -290,7 +288,7 @@ export const getAdminProduct = handleAsyncError(async (req, res, next) => {
       products,
     });
   } catch (error) {
-    console.log(error);
+    next(new HandleEror(error.message, 500));
   }
 });
 
@@ -390,7 +388,6 @@ export const deleteReview = handleAsyncError(async (req, res, next) => {
       reviews: product.reviews,
     });
   } catch (error) {
-    console.error("Error deleting review:", error);
-    return next(new HandleEror("Internal Server Error", 500));
+    next(new HandleEror("Internal Server Error", 500));
   }
 });

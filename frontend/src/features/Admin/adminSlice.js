@@ -11,7 +11,6 @@ export const getAdminProducts = createAsyncThunk(
       }
       return data;
     } catch (error) {
-      console.log(error);
       return rejectWithValue({
         message:
           error.response?.data?.message ||
@@ -36,7 +35,6 @@ export const updateAdminProduct = createAsyncThunk(
         productData,
         config
       );
-      console.log(data);
       return data;
     } catch (error) {
       return rejectWithValue({
@@ -54,7 +52,6 @@ export const deleteAdminProduct = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await axios.delete(`/api/product/admin/delete/${id}`);
-      console.log(data);
       return { id };
     } catch (error) {
       return rejectWithValue({
@@ -92,10 +89,8 @@ export const getAdminSoftDeleted = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get("/api/product/admin/getSoftDeleted/");
-      console.log(data);
       return data;
     } catch (error) {
-      console.log(error);
       return rejectWithValue({
         message:
           error.response?.data?.message ||
@@ -114,7 +109,6 @@ export const restoreDeletedProduct = createAsyncThunk(
       const { data } = await axios.put(`/api/product/admin/restore/${id}`);
       return data;
     } catch (error) {
-      console.log(error);
       return rejectWithValue({
         message:
           error.response?.data?.message ||
@@ -139,7 +133,6 @@ export const productCreate = createAsyncThunk(
         productData,
         config
       );
-      console.log(data);
       return data;
     } catch (error) {
       return rejectWithValue({
@@ -318,7 +311,6 @@ export const adminDeleteReviews = createAsyncThunk(
       const { data } = await axios.delete(
         `/api/product/admin/delete/reviews?productId=${productId}&id=${reviewId}`
       );
-      console.log("Deleted review:", data);
       return data;
     } catch (error) {
       return rejectWithValue({

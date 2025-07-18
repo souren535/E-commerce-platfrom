@@ -173,7 +173,6 @@ export const resetPassword = handleAsyncError(async (req, res, next) => {
 
     sendToken(user, 200, res);
   } catch (error) {
-    console.log(error);
     return next(
       new HandleEror("Could save reset token, Please try again later", 500)
     );
@@ -189,7 +188,6 @@ export const updatePassword = handleAsyncError(async (req, res, next) => {
     if (!user) return next(new HandleEror("User not found", 404));
 
     if (!user.password) {
-      console.log("Password not fetched from DB");
       return next(new HandleEror("User password not found", 500));
     }
     const isMatch = await user.verifyPassword(oldPassword);
@@ -237,8 +235,6 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
         url: myCloud.secure_url,
       };
 
-      console.log("Avatar length:", avatar?.length);
-      console.log("Avatar starts with:", avatar?.substring(0, 30));
     }
     const userData = await userModel.findByIdAndUpdate(
       req.user.id,
@@ -254,7 +250,6 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
       user: userData,
     });
   } catch (error) {
-    console.log("Cloudinary Upload Error", error);
     res.status(500).json({
       message: "Internal Server Error",
     });
@@ -271,7 +266,6 @@ export const getUserList = handleAsyncError(async (req, res, next) => {
       users,
     });
   } catch (error) {
-    console.log(error);
     return next(new HandleEror(error.message, 500));
   }
 });
@@ -337,7 +331,6 @@ export const deleteUser = handleAsyncError(async (req, res, next) => {
       message: "User Deleted Successfully",
     });
   } catch (error) {
-    console.log(error);
     return next(new HandleEror("Internal Server Error", 500));
   }
 });

@@ -14,7 +14,6 @@ export const ProcessPayment = handleAsyncError(async (req, res) => {
       order,
     });
   } catch (error) {
-    console.log(error);
   }
 });
 
@@ -24,7 +23,6 @@ export const sendApiKey = handleAsyncError(async (req, res) => {
       key: process.env.RAZORPAY_API_KEY,
     });
   } catch (error) {
-    console.log(error);
   }
 });
 
@@ -49,6 +47,5 @@ export const paymentVerification = handleAsyncError(async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
   }
 });

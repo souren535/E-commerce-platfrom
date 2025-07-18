@@ -15,7 +15,6 @@ export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.log(error);
     return next(new HandleEror("Invalid or expired token", 401));
   }
 });

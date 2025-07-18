@@ -36,7 +36,6 @@ export const getProductSuggestions = createAsyncThunk(
       const { data } = await axios.get(
         `/api/product/suggestions?keyword=${keyword}`
       );
-      console.log("get suggesstion data", data.suggestions);
       return data.suggestions;
     } catch (error) {
       return rejectWithValue({
@@ -124,7 +123,6 @@ const productSlice = createSlice({
         state.error = null;
       })
       .addCase(getProduct.fulfilled, (state, action) => {
-        console.log("Fuillfilled action payload", action.payload);
         state.loading = false;
         state.error = null;
         state.products = action.payload.products;
@@ -158,7 +156,6 @@ const productSlice = createSlice({
         (state.loading = true), (state.error = null);
       })
       .addCase(getProductdetails.fulfilled, (state, action) => {
-        console.log("Fuillfilled action payload", action.payload);
         state.loading = false;
         state.error = null;
         state.product = action.payload.product;
