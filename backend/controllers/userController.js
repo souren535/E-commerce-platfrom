@@ -12,7 +12,6 @@ import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import { v2 as cloudinary } from "cloudinary";
-import c from "config";
 
 // user registration
 export const userRegister = handleAsyncError(async (req, res, next) => {

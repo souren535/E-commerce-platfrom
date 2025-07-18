@@ -1,4 +1,4 @@
-import expresss from "express";
+import express from "express";
 import {
   deleteUser,
   getSingleUser,
@@ -14,7 +14,7 @@ import {
   userRegister,
 } from "../controllers/userController.js";
 import { roleBaseAccess, verifyUserAuth } from "../middleware/userAuth.js";
-const router = expresss.Router();
+const router = express.Router();
 
 router.route("/add").post(userRegister);
 router.route("/login").post(userLogin);
