@@ -7,12 +7,21 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dotenv from "dotenv";
 import payment from "./routes/PaymentRouter.js";
+import cors from "cors";
 const app = express();
 
 // Middleware
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10mb" }));
+
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
 app.use(fileUpload());
 
 // Importing routes

@@ -124,15 +124,15 @@ const ResetPassword = () => {
       ) : (
         <>
           <PageTitle title={"Reset password Page"} />
-          <div className="w-[100vw] h-[100vh] flex justify-center items-center">
-            <div className="grid xl:grid-cols-2 w-[60vw] h-[60vh] justify-between bg-white border-2 border-white rounded-2xl shadow-lg">
+          <div className="w-[100vw] h-[100vh] flex justify-center items-center bg-zinc-950">
+            <div className="grid xl:grid-cols-2 w-[60vw] h-[60vh] justify-between bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-lg">
               <div className="Input flex w-full h-full items-center justify-center">
                 <div className="w-3/4 max-w-md">
                   <Tabs className="w-full mt-10" defaultValue="Reset_Password">
                     <TabsList className="bg-transparent rounded-none w-full">
                       <TabsTrigger
                         value="Reset_Password"
-                        className="data-[state=active]:bg-transparent text-black text-2xl text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-bold data-[state=active]:border-b-zinc-100 p-3 transition-all duration-300 ease-in-out"
+                        className="data-[state=active]:bg-transparent pb-4 text-white text-2xl text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:border-b-zinc-800 p-3 transition-all duration-300 ease-in-out"
                       >
                         Reset Password
                       </TabsTrigger>
@@ -145,7 +145,7 @@ const ResetPassword = () => {
                       <Input
                         type="password"
                         placeholder="New Password"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-500 border border-zinc-700"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                       />
@@ -157,7 +157,7 @@ const ResetPassword = () => {
                       <Input
                         type="password"
                         placeholder="Confirm Password"
-                        className="rounded-full p-6 placeholder:text-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-500 border border-zinc-700"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                       />
@@ -168,7 +168,7 @@ const ResetPassword = () => {
                       )}
 
                       <Button
-                        className="w-full font-bold rounded-full"
+                        className="w-full text-white font-bold rounded-full bg-zinc-800 py-6 border border-zinc-700 hover:bg-zinc-950 hover:border-zinc-900 cursor-pointer"
                         disabled={
                           !newPassword ||
                           !confirmPassword ||

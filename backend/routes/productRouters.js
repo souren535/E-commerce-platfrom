@@ -22,6 +22,17 @@ const router = express.Router();
 
 router.route("/list").post(getAllProducts);
 router.route("/suggestions").get(getProductSuggestions);
+
+// --- MOVE THESE STATIC ROUTES ABOVE /list/:id ---
+router
+  .route("/admin/getall/reviews")
+  .get(verifyUserAuth, roleBaseAccess("admin"), getAllReviews);
+
+router
+  .route("/admin/delete/reviews")
+  .delete(verifyUserAuth, roleBaseAccess("admin"), deleteReview);
+// ------------------------------------------------
+
 router.route("/list/:id").get(GetSingleProduct);
 
 // admin products
@@ -50,12 +61,6 @@ router
 
 // product Review -
 router.route("/review").put(verifyUserAuth, createProductReview);
-
-// get all product reviews -
-router.route("/getall/reviews").post(verifyUserAuth, getAllReviews);
-
-// delete product review
-router.route("/delete/reviews").delete(verifyUserAuth, deleteReview);
 
 // delete  parmanent product
 router

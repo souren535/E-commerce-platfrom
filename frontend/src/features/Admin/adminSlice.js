@@ -224,12 +224,105 @@ export const getAllOrders = createAsyncThunk(
   "admin/getAllOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put("/api/order/getAll/adminOrders");
+      const { data } = await axios.post("/api/order/getAll/adminOrders");
 
       return data;
     } catch (error) {
       return rejectWithValue({
         message: error.response?.data?.message || "faild to update role",
+      });
+    }
+  }
+);
+
+// fetch order details api
+export const getAdminOrderDetails = createAsyncThunk(
+  "admin/getAdminAdminOrderDetails",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `/api/order/admin/OrderDetails/${orderId}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to fetch order detail",
+      });
+    }
+  }
+);
+
+// update order status
+export const AdminUpdateOrderStatus = createAsyncThunk(
+  "admin/AdminUpdateOrderStatus",
+  async ({ orderId, status }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.put(
+        `/api/order/adminUpdate/orderStatus/${orderId}`,
+        { status },
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to fetch order detail",
+      });
+    }
+  }
+);
+
+//  delete order
+export const AdminDeleteOrder = createAsyncThunk(
+  "admin/AdminDeleteOrder",
+  async (oredrId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/order/admin/deleteOrder/${oredrId}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to delete order",
+      });
+    }
+  }
+);
+
+// fetch all reviews
+export const fetchAllReviews = createAsyncThunk(
+  "admin/fetchAllReviews",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `/api/product/admin/getall/reviews?productId=${productId}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to fetch all reviews",
+      });
+    }
+  }
+);
+
+// fetch all reviews
+export const adminDeleteReviews = createAsyncThunk(
+  "admin/adminDeleteReviews",
+  async ({ productId, reviewId }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/product/admin/delete/reviews?productId=${productId}&id=${reviewId}`
+      );
+      console.log("Deleted review:", data);
+      return data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "faild to delete reviews",
       });
     }
   }
@@ -255,6 +348,9 @@ const adminSlice = createSlice({
     user: {},
     message: null,
     orders: [],
+    order: {},
+    totalAmount: null,
+    reviews: [],
   },
   reducers: {
     removeErrors: (state) => {
@@ -463,11 +559,89 @@ const adminSlice = createSlice({
       .addCase(getAllOrders.fulfilled, (state, action) => {
         state.loading = false;
         state.success.update = action.payload.success;
+        state.orders = action.payload.orders;
         state.message = action.payload.message;
+        state.totalAmount = action.payload.totalAmount;
       })
       .addCase(getAllOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "faild to orders data ";
+      });
+
+    builder
+      .addCase(getAdminOrderDetails.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(getAdminOrderDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.fetch = action.payload.success;
+        state.order = action.payload.order;
+      })
+      .addCase(getAdminOrderDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to orders data ";
+      });
+
+    builder
+      .addCase(AdminUpdateOrderStatus.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(AdminUpdateOrderStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.update = action.payload.success;
+        state.order = action.payload.order;
+      })
+      .addCase(AdminUpdateOrderStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to update status ";
+      });
+
+    builder
+      .addCase(AdminDeleteOrder.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(AdminDeleteOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.update = action.payload.success;
+        state.message = action.payload.message;
+      })
+      .addCase(AdminDeleteOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to delete order ";
+      });
+
+    builder
+      .addCase(fetchAllReviews.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(fetchAllReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.update = action.payload.success;
+        state.reviews = action.payload.reviews;
+      })
+      .addCase(fetchAllReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to fetch all reviews ";
+      });
+
+    builder
+      .addCase(adminDeleteReviews.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(adminDeleteReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success.delete = action.payload.success;
+        state.reviews = action.payload.reviews;
+        state.message = action.payload.message;
+      })
+      .addCase(adminDeleteReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "faild to delete reviews ";
       });
   },
 });

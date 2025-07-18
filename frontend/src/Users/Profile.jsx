@@ -37,8 +37,8 @@ const Profile = () => {
 
   return (
     <>
-      <div className="w-full h-screen bg-zinc-900 flex justify-center items-center">
-        <div className="max-w-[800px] p-8 rounded-xl bg-zinc-800 shadow-lg">
+      <div className="w-full h-screen bg-zinc-950 flex justify-center items-center">
+        <div className="max-w-[800px] p-8 rounded-xl bg-zinc-900 shadow-lg">
           <PageTitle title={`${user?.name || "User"} Profile`} />
           <div className="text-center rounded-xl mb-10">
             <h1 className="text-4xl text-white m-8 font-semibold tracking-[-0.5px]">
@@ -62,14 +62,14 @@ const Profile = () => {
 
             <Link
               to="/profile/update"
-              className="inline-block py-1 px-4 bg-zinc-700 text-white rounded-[10px] font-semibold transition-all duration-300 border-2 border-zinc-600 ease-in-out hover:translate-y-1 shadow-2xl"
+              className="inline-block py-1 px-4 bg-zinc-800 text-white rounded-[10px] font-semibold transition-all duration-300 border-2 border-zinc-700 ease-in-out hover:translate-y-1 shadow-2xl"
             >
               Edit Profile
             </Link>
           </div>
 
           <div className="profile-details p-5 rounded-xl mx-0 my-8">
-            <div className="flex items-center p-5 mb-4 bg-zinc-700 border-2 border-zinc-600 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
+            <div className="flex items-center p-5 mb-4 bg-zinc-800 border-2 border-zinc-700 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
               <h2 className="text-[1.1rem] text-white min-w-[130px] font-semibold">
                 Username:
               </h2>
@@ -78,7 +78,7 @@ const Profile = () => {
               </p>
             </div>
 
-            <div className="flex items-center p-5 mb-4 bg-zinc-700 border-2 border-zinc-600 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
+            <div className="flex items-center p-5 mb-4 bg-zinc-800 border-2 border-zinc-700 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
               <h2 className="text-[1.1rem] text-white min-w-[130px] font-semibold">
                 Email:
               </h2>
@@ -87,11 +87,11 @@ const Profile = () => {
               </p>
             </div>
 
-            <div className="flex items-center p-5 mb-4 bg-zinc-700 border-2 border-zinc-600 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
+            <div className="flex items-center p-5 mb-4 bg-zinc-800 border-2 border-zinc-700 rounded-2xl transition-all duration-300 ease-in-out shadow-[8px] hover:translate-x-1 hover:shadow-2xl">
               <h2 className="text-[1.1rem] text-white min-w-[130px] font-semibold">
                 Joined On:
               </h2>
-              <p className="text-[1.1rem] text-white bg-zinc-700 pl-4 font-semibold">
+              <p className="text-[1.1rem] text-white bg-zinc-800 pl-4 font-semibold">
                 {user?.createdAt
                   ? new Date(user.createdAt).toLocaleDateString()
                   : "N/A"}
@@ -100,12 +100,12 @@ const Profile = () => {
           </div>
 
           <div className="profile-button flex gap-4 justify-center mt-9">
-            <Link className="py-1 px-4 bg-zinc-700 text-white border-2 border-zinc-600 rounded-[10px] font-semibold transition-all duration-300 ease-in-out shadow-[12px] hover:bg-zinc-700 hover:translate-y-1">
+            <Link className="py-1 px-4 bg-zinc-800 text-white border-2 border-zinc-700 rounded-[10px] font-semibold transition-all duration-300 ease-in-out shadow-[12px] hover:bg-zinc-700 hover:translate-y-1">
               My Orders
             </Link>
             <button
               onClick={opnenModal}
-              className="py-1 px-4 bg-zinc-700 text-white border-2 border-zinc-600 rounded-[10px] font-semibold transition-all duration-300 ease-in-out shadow-[12px] hover:bg-zinc-700 hover:translate-y-1"
+              className="py-1 px-4 bg-zinc-800 text-white border-2 border-zinc-700 rounded-[10px] font-semibold transition-all duration-300 ease-in-out shadow-[12px] hover:bg-zinc-700 hover:translate-y-1"
             >
               Change Password
             </button>

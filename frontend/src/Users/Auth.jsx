@@ -285,7 +285,7 @@ const Auth = () => {
                         type="text"
                         placeholder="Name"
                         name="name"
-                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                        className="rounded-full p-6 text-white placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -294,7 +294,7 @@ const Auth = () => {
                         type="email"
                         placeholder="email"
                         name="email"
-                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -302,7 +302,7 @@ const Auth = () => {
                         type="password"
                         placeholder="password"
                         name="password"
-                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -310,7 +310,7 @@ const Auth = () => {
                       <Input
                         type="password"
                         placeholder="Confirm password"
-                        className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                        className="rounded-full p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                       />

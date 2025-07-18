@@ -90,8 +90,8 @@ const UpdateProfile = () => {
         <Loader />
       ) : (
         <>
-          <div className="flex items-center bg-zinc-900 justify-center w-full min-h-screen px-4 py-10">
-            <div className="shadow-xl bg-zinc-800 text-white flex justify-center items-center w-[50vw] min-h-[50vh] border-2 border-zinc-700 rounded-3xl p-6 sm:p-8 md:p-10 ">
+          <div className="flex items-center bg-zinc-950 justify-center w-full min-h-screen px-4 py-10">
+            <div className="shadow-xl bg-zinc-900 text-white flex justify-center items-center w-[50vw] min-h-[50vh] border-2 border-zinc-800 rounded-3xl p-6 sm:p-8 md:p-10 ">
               <form onSubmit={updateSubmit} encType="multipart/form-data">
                 <h1 className="text-2xl md:text-3xl font-bold text-center mb-10">
                   Update Profile
@@ -177,7 +177,7 @@ const UpdateProfile = () => {
                     </div>
                   </div>
                 </div>
-                <button className="mt-15 bg-zinc-700 text-white hover:font-semibold px-6 py-2 rounded-xl w-full transition-transform duration-300 ease-in-out hover:translate-y-1">
+                <button className="mt-15 bg-zinc-800 cursor-pointer text-white hover:font-semibold px-6 py-2 rounded-xl w-full transition-transform duration-300 ease-in-out hover:translate-y-1">
                   {loading ? "Save Changes...." : "Save Changes"}
                 </button>
               </form>

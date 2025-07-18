@@ -12,8 +12,8 @@ const router = express.Router();
 
 router.route("/create").post(verifyUserAuth, createNewOrder);
 router
-  .route("/get/:id")
-  .post(verifyUserAuth, roleBaseAccess("admin"), getSingleOrder);
+  .route("/admin/OrderDetails/:id")
+  .get(verifyUserAuth, roleBaseAccess("admin"), getSingleOrder);
 
 router.route("/orderDetail/:id").get(verifyUserAuth, getSingleOrder);
 
@@ -23,9 +23,11 @@ router
   .post(verifyUserAuth, roleBaseAccess("admin"), getAllOrders);
 
 router
-  .route("/orderStatus/:id")
+  .route("/adminUpdate/orderStatus/:id")
   .put(verifyUserAuth, roleBaseAccess("admin"), updateOrderStatus);
 
-router.route("/deleteOrder/:id").delete(verifyUserAuth, deleteDeliveredOrder);
+router
+  .route("/admin/deleteOrder/:id")
+  .delete(verifyUserAuth, roleBaseAccess("admin"), deleteDeliveredOrder);
 
 export default router;

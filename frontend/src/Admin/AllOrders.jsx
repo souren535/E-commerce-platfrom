@@ -1,94 +1,125 @@
-import React from "react";
+import React, { useEffect } from "react";
 import withRoleAccess from "../Security/withRoleAccess";
 import { Button } from "../components/ui/button";
-import { Search } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Edit3Icon, Search, Trash } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  AdminDeleteOrder,
+  getAllOrders,
+  removeErrors,
+  removeSuccess,
+} from "../features/Admin/adminSlice";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import Loader from "../components/Loader";
 
 const AllOrders = () => {
-  const { orders, loading, success, error } = useSelector(
+  const { orders, loading, message, success, error } = useSelector(
     (state) => state.admin
   );
-  console.log("all orders", orders);
-  return (
-    <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 mt-20">
-        <h1 className="text-3xl font-bold text-indigo-400">All Orders</h1>
-        {/* <div className="flex items-center bg-zinc-900 border border-indigo-600 px-4 py-2 rounded-lg">
-          <Search className="text-indigo-400 mr-2" size={18} />
-          <input
-            type="text"
-            placeholder="Search by Order ID / User..."
-            className="bg-transparent outline-none text-white"
-          />
-        </div> */}
-      </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg shadow border border-indigo-800">
-        <table className="min-w-full text-sm text-left bg-zinc-900">
-          <thead className="text-xs uppercase bg-zinc-800 text-indigo-300 border-b border-indigo-700">
-            <tr>
-              <th className="px-6 py-3">#</th>
-              <th className="px-6 py-3">Order ID</th>
-              <th className="px-6 py-3">User</th>
-              <th className="px-6 py-3">Date</th>
-              <th className="px-6 py-3">Total</th>
-              <th className="px-6 py-3">Payment</th>
-              <th className="px-6 py-3">Delivery</th>
-              <th className="px-6 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="text-zinc-300">
-            {orders.map((_, i) => (
-              <tr
-                key={i}
-                className="border-b border-zinc-800 hover:bg-zinc-800 transition"
-              >
-                <td className="px-6 py-4 font-medium">{i + 1}</td>
-                <td className="px-6 py-4">ORD1234{i}</td>
-                <td className="px-6 py-4">User{i + 1}</td>
-                <td className="px-6 py-4">2025-07-01</td>
-                <td className="px-6 py-4">₹{(i + 1) * 1500}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      i % 2 === 0
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-yellow-500/20 text-yellow-400"
-                    }`}
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllOrders());
+  }, [dispatch]);
+
+  const handleDelerteOrder = (oredrId) => {
+    dispatch(AdminDeleteOrder(oredrId));
+  };
+
+  useEffect(() => {
+    if (success?.delete) {
+      toast.success(message);
+      dispatch(removeSuccess("delete"));
+    }
+    if (error) {
+      toast.error(error);
+      dispatch(removeErrors());
+    }
+  }, [dispatch, message, error, success]);
+
+  return (
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6 mt-20">
+            <h1 className="text-3xl font-bold text-indigo-400 ml-15">
+              All Orders
+            </h1>
+            {/* <div className="flex items-center bg-zinc-900 border border-indigo-600 px-4 py-2 rounded-lg">
+                  <Search className="text-indigo-400 mr-2" size={18} />
+                  <input
+                    type="text"
+                    placeholder="Search by Order ID / User..."
+                    className="bg-transparent outline-none text-white"
+                  />
+                </div> */}
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto rounded-lg shadow border ml-15 mr-15 border-indigo-800">
+            <table className="min-w-full text-sm text-left  bg-zinc-900">
+              <thead className="text-xs uppercase bg-zinc-800 text-indigo-300 border-b border-indigo-700">
+                <tr>
+                  <th className="px-6 py-3">#</th>
+                  <th className="px-6 py-3">Order ID</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Total Price</th>
+                  <th className="px-6 py-3">Number of Items</th>
+                  <th className="px-6 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-300">
+                {orders.map((order, i) => (
+                  <tr
+                    key={order._id}
+                    className="border-b border-zinc-800 hover:bg-zinc-800 transition"
                   >
-                    {i % 2 === 0 ? "Paid" : "Pending"}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      i % 3 === 0
-                        ? "bg-rose-500/20 text-rose-400"
-                        : "bg-blue-500/20 text-blue-400"
-                    }`}
-                  >
-                    {i % 3 === 0 ? "Not Delivered" : "Delivered"}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right space-x-2">
-                  <Button className="text-xs bg-blue-600 hover:bg-blue-700">
-                    View
-                  </Button>
-                  <Button className="text-xs bg-green-600 hover:bg-green-700">
-                    Deliver
-                  </Button>
-                  <Button className="text-xs bg-rose-600 hover:bg-rose-700">
-                    Cancel
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                    <td className="px-6 py-4 font-medium">{i + 1}</td>
+                    <td className="px-6 py-4">{order._id}</td>
+                    <td
+                      className={`px-6 py-4 ${
+                        order.orderStatus === "Processing"
+                          ? "text-yellow-500"
+                          : order.orderStatus === "Cancelled"
+                          ? "text-red-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {order.orderStatus}
+                    </td>
+                    <td className="px-6 py-4">{order.totalPrice.toFixed(2)}</td>
+                    <td className={`px-6 py-4`}>{order.orderItems.length}</td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end items-center space-x-4">
+                        <Link
+                          to={`/admin/order/edit/${order._id}`}
+                          className="text-indigo-400 hover:text-indigo-200"
+                        >
+                          <Edit3Icon size={25} />
+                        </Link>
+
+                        <button
+                          onClick={() => handleDelerteOrder(order._id)}
+                          className="text-red-500 hover:text-red-300 cursor-pointer"
+                        >
+                          <Trash size={25} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

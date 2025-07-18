@@ -4,6 +4,7 @@ import handleAsyncError from "../middleware/handleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import JoiValidation from "../utils/joivalidation.js";
 import { v2 as cloudinary } from "cloudinary";
+import { mongoose } from "mongoose";
 
 //  CreateProduct
 export const createProducts = handleAsyncError(async (req, res, next) => {
@@ -241,7 +242,7 @@ export const parmanentDeleteProducts = handleAsyncError(
       res.status(200).json({
         success: true,
         message: "Product deleted successfully",
-        product: deleteProduct, 
+        product: deleteProduct,
       });
     } catch (error) {
       next(new HandleEror(error.message, 500));
@@ -340,7 +341,6 @@ export const getAllReviews = handleAsyncError(async (req, res, next) => {
     if (!product) return next(new HandleEror("Product Not Found", 400));
     res.status(200).json({
       seccess: true,
-      name: product.name,
       reviews: product.reviews,
     });
   } catch (error) {
@@ -352,39 +352,45 @@ export const getAllReviews = handleAsyncError(async (req, res, next) => {
 
 export const deleteReview = handleAsyncError(async (req, res, next) => {
   try {
-    const product = await Product.findById(req.query.productId);
-    if (!product) {
-      return next(new HandleEror("Product not found", 400));
-    }
-    const reviews = product.reviews.filter(
-      (review) => review._id.toString() !== req.query.id.toString()
-    );
-    let sum = 0;
-    reviews.forEach((review) => {
-      sum += review.rating;
-    });
+    const { productId, id: reviewId } = req.query;
 
-    const ratings = reviews.length > 0 ? sum / reviews.length : 0;
-    const numOfReviews = reviews.length;
-    await Product.findByIdAndUpdate(
-      req.query.productId,
-      {
-        reviews,
-        ratings,
-        numOfReviews,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
+    if (!productId || !reviewId) {
+      return next(new HandleEror("Missing productId or reviewId", 400));
+    }
+
+    if (
+      !mongoose.Types.ObjectId.isValid(productId) ||
+      !mongoose.Types.ObjectId.isValid(reviewId)
+    ) {
+      return next(new HandleEror("Invalid productId or reviewId", 400));
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return next(new HandleEror("Product not found", 404));
+    }
+
+    const filteredReviews = product.reviews.filter(
+      (review) => review._id.toString() !== reviewId
     );
+
+    const sum = filteredReviews.reduce((acc, r) => acc + r.rating, 0);
+    const ratings =
+      filteredReviews.length > 0 ? sum / filteredReviews.length : 0;
+
+    product.reviews = filteredReviews;
+    product.ratings = ratings;
+    product.numOfReviews = filteredReviews.length;
+
+    await product.save({ validateModifiedOnly: true });
+
     res.status(200).json({
       success: true,
-      message: "delete product review successfully",
-      reviews:
-        product.reviews.length > 0 ? product.reviews : "No reviews found",
+      message: "Review deleted successfully",
+      reviews: product.reviews,
     });
   } catch (error) {
+    console.error("Error deleting review:", error);
     return next(new HandleEror("Internal Server Error", 500));
   }
 });

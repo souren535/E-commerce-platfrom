@@ -109,13 +109,18 @@ export const updateOrderStatus = handleAsyncError(async (req, res, next) => {
     if (order.orderStatus === "Delivered") {
       return next(new HandleEror("This order is already been delivered", 404));
     }
-    await Promise.all(
-      order.orderItems.map((item) =>
-        updateQuantity(item.product, item.quantity)
-      )
-    );
+    if (req.body.status === "Delivered") {
+      await Promise.all(
+        order.orderItems.map((item) =>
+          updateQuantity(item.product, item.quantity)
+        )
+      );
+    }
     order.orderStatus = req.body.status;
     if (order.orderStatus === "Delivered") {
+      order.deliveredAt = Date.now();
+    }
+    if (order.orderStatus === "Cancelled") {
       order.deliveredAt = Date.now();
     }
     await order.save({ validateBeforeSave: false });
@@ -124,6 +129,7 @@ export const updateOrderStatus = handleAsyncError(async (req, res, next) => {
       order,
     });
   } catch (error) {
+    console.log(error)
     return next(new HandleEror("Internal Server Error", 500));
   }
 });
@@ -131,7 +137,7 @@ export const updateOrderStatus = handleAsyncError(async (req, res, next) => {
 async function updateQuantity(id, quantity) {
   const product = await Product.findById(id);
   if (!product) {
-    return next(new HandleEror("Product Not Found", 404));
+    throw new Error("Product Not Found", 404);
   }
   product.stock -= quantity;
   await product.save({ validateBeforeSave: false });

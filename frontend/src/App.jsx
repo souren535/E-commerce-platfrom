@@ -32,6 +32,7 @@ import ProtectedAllReviews from "./Admin/AllReviews";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import ProtectedEditUser from "./Admin/components/editUser";
+import ProtectedOrderEdit from "./Admin/components/editOrder";
 
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -45,7 +46,7 @@ const App = () => {
   console.log(isAuthenticated, user);
   return (
     <Router>
-      {isAuthenticated && <Navbar user={user} />}
+      <Navbar user={user} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/aboutUs" element={<AboutUs />} />
@@ -55,7 +56,12 @@ const App = () => {
         <Route path="/products/:keyword" element={<Products />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
+        <Route path="/reset" element={<ResetPassword />} />
         <Route path="/admin/dashboard" element={<ProtectedAdminDashboard />} />
+        <Route
+          path="/admin/order/edit/:orderId"
+          element={<ProtectedOrderEdit />}
+        />
         <Route
           path="/admin/products"
           element={<ProtectedAdminDashboardProductList />}
@@ -105,7 +111,7 @@ const App = () => {
           element={<ProtectedRoute element={<UpdateProfile />} />}
         />
       </Routes>
-      {isAuthenticated && <Footer />}
+      <Footer />
     </Router>
   );
 };

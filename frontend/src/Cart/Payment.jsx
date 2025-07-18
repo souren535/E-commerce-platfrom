@@ -15,11 +15,17 @@ const Payment = () => {
   const { shippinginfo } = useSelector((state) => state.cart);
   const completePayment = async (amount) => {
     try {
-      const { data: keyData } = await axios.get("/api/payment/getKey");
-      const { key } = keyData;
-      const { data: orderData } = await axios.post("/api/payment/process", {
-        amount,
+      const { data: keyData } = await axios.get("/api/payment/getKey", {
+        withCredentials: true,
       });
+      const { key } = keyData;
+      const { data: orderData } = await axios.post(
+        "/api/payment/process",
+        {
+          amount,
+        },
+        { withCredentials: true }
+      );
       const { order } = orderData;
 
       const options = {
@@ -36,7 +42,8 @@ const Payment = () => {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
-            }
+            },
+            { withCredentials: true }
           );
           if (data.success) {
             navigate(`/paymentSuccess?reference=${data.reference}`, {

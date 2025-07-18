@@ -27,6 +27,7 @@ const Navbar = () => {
   const dropDownRef = useRef(null);
 
   const { user, isAuthenticated } = useSelector((state) => state.user);
+  console.log("user navbar data", user);
   const { cartItems } = useSelector((state) => state.cart);
   const { suggestions, suggestionLoading } = useSelector(
     (state) => state.product
@@ -275,7 +276,7 @@ const Navbar = () => {
                           whileHover={{ scale: 1.2 }}
                           onClick={item.funcName}
                           key={item.lable}
-                          className={`block w-full text-center px-4 py-2 mt-2 rounded-md text-white bg-zinc-700 hover:bg-zinc-800 text-sm ${
+                          className={`block w-full text-center cursor-pointer px-4 py-2 mt-2 rounded-md text-white bg-zinc-700 hover:bg-zinc-800 text-sm ${
                             item.isCart && "bg-zinc-800"
                           }`}
                         >
@@ -316,7 +317,40 @@ const Navbar = () => {
             <Close />
           </button>
 
-          <ul className="flex flex-col gap-6 text-white text-lg mb-6">
+          {/* ✅ MOVE SEARCH + ICONS TO TOP */}
+          <div className="mb-6">
+            <form className="relative w-full mb-4" onSubmit={handleSubmit}>
+              <input
+                className="bg-zinc-300 text-black rounded-full w-full px-3 py-2 pr-10"
+                placeholder="Search for products"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black"
+              >
+                <Search />
+              </button>
+            </form>
+            <div className="flex gap-4">
+              <Link to="/cart" className="relative inline-block">
+                <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {cartItems.length}
+                  </span>
+                )}
+              </Link>
+              <Link to="/auth">
+                <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 🔽 Navigation Links BELOW search */}
+          <ul className="flex flex-col gap-6 text-white text-lg">
             {navLinks.map((item, index) => (
               <li key={index}>
                 <Link
@@ -331,38 +365,6 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-
-          {/* Mobile Search + Icons */}
-          <div className="mt-auto">
-            <div className="relative w-full mb-4">
-              <form className="relative w-full mb-4" onSubmit={handleSubmit}>
-                <input
-                  className="bg-zinc-300 text-black rounded-full w-full px-3 py-2 pr-10"
-                  placeholder="Search for products"
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-black"
-                >
-                  <Search />
-                </button>
-              </form>
-            </div>
-            <div className="flex gap-4">
-              <Link to="#" className="relative inline-block">
-                <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
-                <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                  6
-                </span>
-              </Link>
-              <Link to="/auth">
-                <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </nav>

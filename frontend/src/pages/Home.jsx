@@ -31,7 +31,7 @@ const Home = () => {
       ) : (
         <>
           <PageTitle title={"Home - My Website"} />
-          <div className="home min-h-screen bg-zinc-900 flex flex-col">
+          <div className="home min-h-screen bg-zinc-950 flex flex-col">
             <main className="flex-grow">
               <ImageSlider />
               <div className=" flex items-center w-full p-[2rem] flex-col mt-3 justify-around">

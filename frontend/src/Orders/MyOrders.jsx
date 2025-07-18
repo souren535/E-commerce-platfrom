@@ -92,7 +92,7 @@ const MyOrders = () => {
                         {order.orderItems?.map((item) => (
                           <div
                             key={item._id}
-                            className="flex items-center justify-between text-sm bg-zinc-800 rounded-lg px-4 py-2"
+                            className="flex items-center justify-between mb-2 text-sm bg-zinc-800 rounded-lg px-4 py-2"
                           >
                             <div className="flex items-center gap-3">
                               <img

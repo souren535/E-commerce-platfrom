@@ -4,8 +4,8 @@ import loaderAnimation from "../assets/animations/loader.json";
 
 const Loader = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="w-80 h-80 text-zinc-700">
+    <div className="flex justify-center bg-zinc-950 items-center h-screen">
+      <div className="w-80 h-80 text-zinc-600">
         <Lottie
           animationData={loaderAnimation}
           loop={true}

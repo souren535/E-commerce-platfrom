@@ -16,7 +16,11 @@ import { Link } from "react-router-dom";
 import withRoleAccess from "../Security/withRoleAccess";
 import { AttachMoney, ErrorOutline, Inventory } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { getAdminProducts } from "../features/Admin/adminSlice";
+import {
+  fetchAllReviews,
+  getAdminProducts,
+  getAllOrders,
+} from "../features/Admin/adminSlice";
 
 // Sidebar Component
 const Sidebar = ({ setshowSocal }) => {
@@ -95,13 +99,23 @@ const SocalCard = ({ title, color, icon, bColor }) => (
 
 const AdminDashboard = () => {
   const [showSocal, setshowSocal] = useState(false);
-  const { products } = useSelector((state) => state.admin);
+  const { products, orders, totalAmount } = useSelector(
+    (state) => state.admin
+  );
   const dispatch = useDispatch();
   console.log("admin products details", products);
 
   useEffect(() => {
     dispatch(getAdminProducts());
+    dispatch(getAllOrders());
+    dispatch(fetchAllReviews());
   }, [dispatch]);
+  const outOfStock = products.filter((product) => product.stock === 0).length;
+  const inStock = products.filter((product) => product.stock > 0).length;
+  const totalReviews = products.reduce(
+    (acc, product) => acc + (product.reviews.length || 0),
+    0
+  );
   return (
     <div className="flex flex-col lg:flex-row bg-zinc-950 min-h-screen">
       <Sidebar setshowSocal={setshowSocal} />
@@ -126,35 +140,35 @@ const AdminDashboard = () => {
             <StatsCard
               icon={<ShoppingCart />}
               title="Total Orders"
-              value={340}
+              value={orders.length}
               color="border-green-500"
               textColor="text-green-500"
             />
             <StatsCard
               icon={<Star />}
               title="Total Reviews"
-              value={87}
+              value={totalReviews}
               color="border-yellow-500"
               textColor="text-yellow-500"
             />
             <StatsCard
               icon={<AttachMoney />}
               title="Total Revenue"
-              value={`₹ 1,20,000`}
+              value={totalAmount}
               color="border-purple-500"
               textColor="text-purple-500"
             />
             <StatsCard
               icon={<CheckCircle />}
               title="In Stock"
-              value={93}
+              value={inStock}
               color="border-emerald-500"
               textColor="text-emerald-500"
             />
             <StatsCard
               icon={<ErrorOutline />}
               title="Out of Stock"
-              value={27}
+              value={outOfStock}
               color="border-rose-500"
               textColor="text-rose-500"
             />
