@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import ImageSlider from "../components/ImageSlider";
 import Product from "../components/Product";
 import PageTitle from "../components/PageTitle";
@@ -12,9 +9,7 @@ import { toast } from "sonner";
 import WithLayout from "../components/HOC/WithLayout";
 
 const Home = () => {
-  const { loading, error, products, productCount } = useSelector(
-    (state) => state.product
-  );
+  const { loading, error, products } = useSelector((state) => state.product);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getProduct({}));
