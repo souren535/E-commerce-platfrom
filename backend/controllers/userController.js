@@ -118,7 +118,9 @@ export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
     );
   }
 
-  const resetPasswordURL = `${process.env.FRONTEND_URL}/reset/${resetToken}`;
+  const resetPasswordURL = `${req.protocol}://${req.get(
+    "host"
+  )}/reset/${resetToken}`;
   const message = `Use the following link to reset your password: ${resetPasswordURL} - \n\n This link will expire in 5 minutes.\n\n
                    if  you didn't request a password reset, Please ignore this message.`;
 
@@ -137,9 +139,7 @@ export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(
-      new HandleEror("Could save reset token, Please try again later", 500)
-    );
+    return next(new HandleEror(`Email sending failed: ${error.message}`, 500));
   }
 });
 
@@ -234,7 +234,6 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
       };
-
     }
     const userData = await userModel.findByIdAndUpdate(
       req.user.id,

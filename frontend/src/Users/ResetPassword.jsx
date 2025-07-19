@@ -11,12 +11,12 @@ import resetAnimation from "../assets/animations/reset_password.json";
 import Lottie from "lottie-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import CircleSignupLoading from "../assets/animations/Loading_Circle_signUp.json";
 import {
   removeErrors,
   removeSuccess,
   resetPassword,
 } from "../features/User/userSlice";
-import Loader from "../components/Loader";
 import { toast } from "sonner";
 import PageTitle from "../components/PageTitle";
 const ResetPassword = () => {
@@ -30,8 +30,8 @@ const ResetPassword = () => {
   const [submitted, setSubmitted] = useState(false);
   const { token } = useParams();
   const navigate = useNavigate();
-
-  const { loading, success, error } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(false);
+  const { success, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -85,6 +85,7 @@ const ResetPassword = () => {
   const handleResetpasswordSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
+    setLoading(true);
     const userData = {
       newPassword,
     };
@@ -98,9 +99,13 @@ const ResetPassword = () => {
   useEffect(() => {
     if (!mounted) return;
     if (success) {
-      toast.success("Password reset successfully");
-      dispatch(removeSuccess());
-      navigate("/auth");
+      const timer = setTimeout(() => {
+        toast.success("Password reset successfully");
+        dispatch(removeSuccess());
+        setLoading(false);
+        navigate("/auth");
+      });
+      return () => clearTimeout(timer);
     }
   }, [success, dispatch, mounted, navigate]);
 
@@ -119,80 +124,86 @@ const ResetPassword = () => {
 
   return (
     <>
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <PageTitle title={"Reset password Page"} />
-          <div className="w-[100vw] h-[100vh] flex justify-center items-center bg-zinc-950">
-            <div className="grid xl:grid-cols-2 w-[60vw] h-[60vh] justify-between bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-lg">
-              <div className="Input flex w-full h-full items-center justify-center">
-                <div className="w-3/4 max-w-md">
-                  <Tabs className="w-full mt-10" defaultValue="Reset_Password">
-                    <TabsList className="bg-transparent rounded-none w-full">
-                      <TabsTrigger
-                        value="Reset_Password"
-                        className="data-[state=active]:bg-transparent pb-4 text-white text-2xl text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:border-b-zinc-800 p-3 transition-all duration-300 ease-in-out"
-                      >
-                        Reset Password
-                      </TabsTrigger>
-                    </TabsList>
+      <PageTitle title={"Reset password Page"} />
+      <div className="w-[100vw] h-[100vh] flex justify-center items-center bg-zinc-950">
+        <div className="grid xl:grid-cols-2 w-[60vw] h-[60vh] justify-between bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-lg">
+          <div className="Input flex w-full h-full items-center justify-center">
+            <div className="w-3/4 max-w-md">
+              <Tabs className="w-full mt-10" defaultValue="Reset_Password">
+                <TabsList className="bg-transparent rounded-none w-full">
+                  <TabsTrigger
+                    value="Reset_Password"
+                    className="data-[state=active]:bg-transparent pb-4 text-white text-2xl text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:border-b-zinc-800 p-3 transition-all duration-300 ease-in-out"
+                  >
+                    Reset Password
+                  </TabsTrigger>
+                </TabsList>
 
-                    <TabsContent
-                      className="flex mt-10 flex-col gap-5"
-                      value="Reset_Password"
-                    >
-                      <Input
-                        type="password"
-                        placeholder="New Password"
-                        className="rounded-full p-6 placeholder:text-zinc-500 border border-zinc-700"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
-                      {validation.empty && (
-                        <p className="text-sm text-red-400 font-semibold ">
-                          {validation.empty}
-                        </p>
-                      )}
-                      <Input
-                        type="password"
-                        placeholder="Confirm Password"
-                        className="rounded-full p-6 placeholder:text-zinc-500 border border-zinc-700"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                      />
-                      {validation.confirmMatch && (
-                        <p className="text-sm text-red-400 font-semibold ">
-                          {validation.confirmMatch}
-                        </p>
-                      )}
+                <TabsContent
+                  className="flex mt-10 flex-col gap-5"
+                  value="Reset_Password"
+                >
+                  <Input
+                    type="password"
+                    placeholder="New Password"
+                    className="rounded-full p-6 text-white placeholder:text-zinc-500 border border-zinc-700"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  {validation.empty && (
+                    <p className="text-sm text-red-400 font-semibold ">
+                      {validation.empty}
+                    </p>
+                  )}
+                  <Input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="rounded-full p-6 text-white placeholder:text-zinc-500 border border-zinc-700"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  {validation.confirmMatch && (
+                    <p className="text-sm text-red-400 font-semibold ">
+                      {validation.confirmMatch}
+                    </p>
+                  )}
 
-                      <Button
-                        className="w-full text-white font-bold rounded-full bg-zinc-800 py-6 border border-zinc-700 hover:bg-zinc-950 hover:border-zinc-900 cursor-pointer"
-                        disabled={
-                          !newPassword ||
-                          !confirmPassword ||
-                          validation.empty ||
-                          validation.confirmMatch
-                        }
-                        onClick={handleResetpasswordSubmit}
-                      >
-                        Reset Password
-                      </Button>
-                    </TabsContent>
-                  </Tabs>
-                </div>
-              </div>
-
-              <div className="w-full flex items-center justify-center">
-                <div className="w-1/2 h-1/2 justify-center items-center flex">
-                  <Lottie animationData={resetAnimation} loop={true} />
-                </div>
-              </div>
+                  <Button
+                    className="w-full text-white font-bold rounded-full bg-zinc-800 py-6 border border-zinc-700 hover:bg-zinc-950 hover:border-zinc-900 cursor-pointer"
+                    disabled={
+                      !newPassword ||
+                      !confirmPassword ||
+                      validation.empty ||
+                      validation.confirmMatch
+                    }
+                    onClick={handleResetpasswordSubmit}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        Reseting...
+                        <span className="w-5 h-5 md:w-6 md:h-6">
+                          <Lottie
+                            animationData={CircleSignupLoading}
+                            loop={true}
+                          />
+                        </span>
+                      </span>
+                    ) : (
+                      "Reset"
+                    )}
+                  </Button>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
-        </>
-      )}
+
+          <div className="w-full flex items-center justify-center">
+            <div className="w-1/2 h-1/2 justify-center items-center flex">
+              <Lottie animationData={resetAnimation} loop={true} />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

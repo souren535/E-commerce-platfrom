@@ -45,16 +45,30 @@ const Auth = () => {
   const [authType, setAuthType] = useState("");
 
   const dispatch = useDispatch();
+  
+  // Clear any existing errors immediately when component mounts
   useEffect(() => {
-    if (error && !openModal) {
+    dispatch(removeErrors());
+  }, [dispatch]);
+  
+  // Clear any existing errors when component mounts
+  useEffect(() => {
+    if (error) {
+      dispatch(removeErrors());
+    }
+  }, [dispatch, error]);
+
+  // Handle authentication errors only when user actively tries to login/signup
+  useEffect(() => {
+    if (error && authType && !openModal) {
       const errorMessage =
         typeof error === "string"
           ? error
-          : error?.message || "Somthing went wrong. Please try again later";
+          : error?.message || "Something went wrong. Please try again later";
       toast.error(
         authType === "signup"
           ? `${errorMessage}`
-          : `Login Failed - ${errorMessage},`
+          : `Login Failed - ${errorMessage}`
       );
       dispatch(removeErrors());
       setAuthType("");
@@ -91,6 +105,13 @@ const Auth = () => {
       navigate(redirect);
     }
   }, [authType, isAuthenticated, navigate, redirect]);
+
+  // Cleanup effect to clear errors when component unmounts
+  useEffect(() => {
+    return () => {
+      dispatch(removeErrors());
+    };
+  }, [dispatch]);
 
   const handleFileInputClick = () => {
     fileRef.current?.click();
@@ -189,14 +210,14 @@ const Auth = () => {
   return (
     <>
       <PageTitle title={`Auth Page`} />
-      <div className="flex bg-zinc-950 items-center justify-center w-[100vw] h-[100vh]">
-        <div className=" flex flex-nowrap items-center justify-center shadow-lg w-full max-w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-auto md:h-[70vh] bg-zinc-900 border-2 border-zinc-800 rounded-3xl overflow-hidden">
-          <div className=" h-full left-full backdrop:blur-xl shadow-lg w-full md:w-1/2 lg:w-1/2 xl:w-1/2 rounded-3xl md:p-3 lg:p-3 xl:p-5 items-center justify-center p-6 flex">
+      <div className="flex bg-zinc-950 items-center justify-center w-[100vw] min-h-[100vh] p-4">
+        <div className="flex flex-col md:flex-row items-center justify-center shadow-lg w-full max-w-[95vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] min-h-[90vh] md:h-[70vh] bg-zinc-900 border-2 border-zinc-800 rounded-3xl overflow-hidden">
+          <div className="w-full md:w-1/2 lg:w-1/2 xl:w-1/2 backdrop:blur-xl shadow-lg rounded-3xl p-4 md:p-3 lg:p-3 xl:p-5 items-center justify-center flex">
             <div className="login signup tabs flex flex-col items-center justify-center w-full min-h-full">
-              <h1 className=" text-zinc-500 hover:text-white font-bold text-2xl md:text-xl lg:text-4xl tracking-wider">
+              <h1 className="text-zinc-500 hover:text-white font-bold text-xl md:text-xl lg:text-4xl tracking-wider mb-6 md:mb-0 md:mt-10">
                 Sign in/Sign up
               </h1>
-              <Tabs className="w-3/4 mt-10" defaultValue="signin">
+              <Tabs className="w-full md:w-3/4 mt-4 md:mt-10" defaultValue="signin">
                 <TabsList className="bg-transparent rounded-none w-full ">
                   <TabsTrigger
                     value="signin"
@@ -214,14 +235,14 @@ const Auth = () => {
 
                 {/* Login content */}
                 <TabsContent
-                  className="flex mt-10 flex-col gap-5"
+                  className="flex mt-6 md:mt-10 flex-col gap-4 md:gap-5"
                   value="signin"
                 >
                   <Input
                     type="email"
                     name="email"
                     placeholder="Email"
-                    className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white text-white bg-zinc-800 border-1 border-zinc-700"
+                    className="rounded-full p-4 md:p-6 placeholder:text-zinc-400 hover:placeholder:text-white text-white bg-zinc-800 border-1 border-zinc-700 text-sm md:text-base"
                     value={loginData.email}
                     onChange={(e) =>
                       setLoginData((prev) => ({
@@ -234,7 +255,7 @@ const Auth = () => {
                     type="password"
                     name="password"
                     placeholder="Password"
-                    className="rounded-full p-6 placeholder:text-zinc-400 hover:placeholder:text-white text-white bg-zinc-800 border-1 border-zinc-700"
+                    className="rounded-full p-4 md:p-6 placeholder:text-zinc-400 hover:placeholder:text-white text-white bg-zinc-800 border-1 border-zinc-700 text-sm md:text-base"
                     value={loginData.password}
                     onChange={(e) =>
                       setLoginData((prev) => ({
@@ -245,12 +266,12 @@ const Auth = () => {
                   />
 
                   <Button
-                    className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full"
+                    className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full p-4 md:p-6 text-sm md:text-base"
                     onClick={handleLogin}
                   >
                     Sign in
                   </Button>
-                  <p className="font-light text-center md:text-sm text-white">
+                  <p className="font-light text-center text-xs md:text-sm text-white">
                     <span>Forget your Password? </span>
                     <span
                       onClick={handleOpenModal}
@@ -266,13 +287,13 @@ const Auth = () => {
 
                 {/* signup content */}
                 <TabsContent
-                  className="flex mt-10 flex-col gap-5"
+                  className="flex mt-6 md:mt-10 flex-col gap-4 md:gap-5"
                   value="Signup"
                 >
-                  <div className="relative flex justify-center items-center ">
+                  <div className="relative flex justify-center items-center mb-2">
                     {/* Avatar */}
                     <div
-                      className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-1 border-zinc-700 hover:border-zinc-600 bg-zinc-800 shadow-lg"
+                      className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden border-1 border-zinc-700 hover:border-zinc-600 bg-zinc-800 shadow-lg"
                       onMouseEnter={() => setHovered(true)}
                       onMouseLeave={() => setHovered(false)}
                     >
@@ -290,7 +311,7 @@ const Auth = () => {
                           className="absolute inset-0 bg-zinc-800/50 flex items-center justify-center rounded-full cursor-pointer"
                           onClick={handleFileInputClick}
                         >
-                          <Add className="text-white text-3xl" />
+                          <Add className="text-white text-xl md:text-3xl" />
                         </div>
                       )}
                     </div>
@@ -310,7 +331,7 @@ const Auth = () => {
                     type="text"
                     placeholder="Name"
                     name="name"
-                    className="rounded-full p-6 text-white placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                    className="rounded-full p-4 md:p-6 text-white placeholder:text-zinc-400 hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700 text-sm md:text-base"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -319,7 +340,7 @@ const Auth = () => {
                     type="email"
                     placeholder="email"
                     name="email"
-                    className="rounded-full p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                    className="rounded-full p-4 md:p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700 text-sm md:text-base"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -327,7 +348,7 @@ const Auth = () => {
                     type="password"
                     placeholder="password"
                     name="password"
-                    className="rounded-full p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                    className="rounded-full p-4 md:p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700 text-sm md:text-base"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -335,19 +356,19 @@ const Auth = () => {
                   <Input
                     type="password"
                     placeholder="Confirm password"
-                    className="rounded-full p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700"
+                    className="rounded-full p-4 md:p-6 placeholder:text-zinc-400 text-white hover:placeholder:text-white bg-zinc-800 border-1 border-zinc-700 text-sm md:text-base"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
 
                   <Button
-                    className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full"
+                    className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full p-4 md:p-6 text-sm md:text-base"
                     onClick={handleSignup}
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
                         Signing Up...
-                        <span className="w-6 h-6">
+                        <span className="w-5 h-5 md:w-6 md:h-6">
                           <Lottie
                             animationData={CircleSignupLoading}
                             loop={true}
@@ -363,7 +384,44 @@ const Auth = () => {
             </div>
           </div>
 
-          <div className=" items-center justify-center w-full h-full p-3">
+          {/* Mobile Welcome Message */}
+          <div className="md:hidden flex items-center justify-center w-full p-4 mb-4">
+            <h1 className="text-center text-white">
+              <span className="text-lg text-zinc-500 hover:text-white font-semibold">
+                Welcome to{" "}
+                <span className="text-blue-500 font-['COMIC_SANS_MS']">
+                  ShopEazy
+                </span>
+                <span>
+                  {" "}
+                  <motion.img
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      rotate: [0, -5, 5, -5, 5, 0],
+                    }}
+                    transition={{
+                      opacity: { duration: 1 },
+                      rotate: {
+                        duration: 1,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatType: "loop",
+                      },
+                    }}
+                    whileHover={{ scale: 1.2 }}
+                    src="/images/shopping-bag-icon-by-Vexels.svg"
+                    alt="icon"
+                    className="inline-block w-6 h-6 ml-1"
+                  />
+                </span>
+              </span>
+            </h1>
+          </div>
+
+          {/* Desktop Welcome Message */}
+          <div className="hidden md:flex items-center justify-center w-full h-full p-3">
             <h1 className="flex items-center md:text-4xl lg:text-5xl xl:text-6xl text-3xl justify-center w-full h-full text-white rounded-3xl ">
               <span className="text-3xl text-zinc-500 hover:text-white md:text-4xl lg:text-5xl xl:text-6xl font-semibold text-center">
                 Welcome to the{" "}
