@@ -186,7 +186,10 @@ const Auth = () => {
   const handleLogin = () => {
     if (validateLogin()) {
       setAuthType("login");
-      dispatch(login(loginData));
+      // Add a minimum 2 second delay before dispatching login
+      setTimeout(() => {
+        dispatch(login(loginData));
+      }, 2000);
     }
   };
   const handleSignup = () => {
@@ -268,8 +271,21 @@ const Auth = () => {
                   <Button
                     className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full p-4 md:p-6 text-sm md:text-base"
                     onClick={handleLogin}
+                    disabled={loading}
                   >
-                    Sign in
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        Signing In...
+                        <span className="w-5 h-5 md:w-6 md:h-6">
+                          <Lottie
+                            animationData={CircleSignupLoading}
+                            loop={true}
+                          />
+                        </span>
+                      </span>
+                    ) : (
+                      "Sign in"
+                    )}
                   </Button>
                   <p className="font-light text-center text-xs md:text-sm text-white">
                     <span>Forget your Password? </span>
@@ -362,7 +378,7 @@ const Auth = () => {
                   />
 
                   <Button
-                    className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-800 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full p-4 md:p-6 text-sm md:text-base"
+                    className="w-full bg-zinc-800 border-1 cursor-pointer border-zinc-700 hover:bg-zinc-900 transform transition-all duration-300 ease-in-out hover:translate-y-1 font-bold rounded-full p-4 md:p-6 text-sm md:text-base"
                     onClick={handleSignup}
                   >
                     {loading ? (

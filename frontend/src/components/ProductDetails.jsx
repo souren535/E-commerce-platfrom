@@ -26,6 +26,8 @@ const ProductDetails = () => {
     (state) => state.product
   );
 
+  const isAuthenticated = useSelector((state) => state.user);
+
   const {
     loading: cartLoading,
     error: cartError,
@@ -124,11 +126,13 @@ const ProductDetails = () => {
                       alt={`Thumbnail ${i + 1}`}
                       className="w-[100px] h-[100px] cursor-pointer rounded-2xl"
                       onMouseEnter={() => setSelectedImage(image.url)}
-                      onMouseLeave={() => setSelectedImage(product.image[0].url)}
+                      onMouseLeave={() =>
+                        setSelectedImage(product.image[0].url)
+                      }
                     />
                   ))}
                 </div>
-                
+
                 {/* Main Product Image */}
                 <div className="w-full lg:w-[70%] flex flex-col items-center">
                   <img
@@ -136,7 +140,7 @@ const ProductDetails = () => {
                     className="w-full max-w-[500px] max-h-[500px] object-contain rounded-3xl"
                     alt="Product Title"
                   />
-                  
+
                   {/* Mobile Image Gallery - Horizontal scroll */}
                   <div className="lg:hidden w-full mt-4 overflow-x-auto">
                     <div className="flex space-x-4 pb-2">
@@ -157,17 +161,22 @@ const ProductDetails = () => {
               {/* Product Details Section */}
               <div className="p-4 lg:p-[20px] w-full lg:max-w-1/3 flex-1 space-y-6">
                 <div className="space-y-4">
-                  <h2 className="text-2xl sm:text-3xl font-bold">{product.name}</h2>
-                  <p className="text-sm sm:text-lg text-zinc-300 leading-relaxed">{product.description}</p>
+                  <h2 className="text-2xl sm:text-3xl font-bold">
+                    {product.name}
+                  </h2>
+                  <p className="text-sm sm:text-lg text-zinc-300 leading-relaxed">
+                    {product.description}
+                  </p>
                   <p className="text-xl sm:text-2xl font-semibold text-green-400">
                     ₹{product.price} /-
                   </p>
-                  
+
                   {/* Rating and Reviews */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                     <Rating value={product.ratings} disabled={true} />
                     <span className="text-sm sm:text-base text-zinc-400">
-                      {product.numOfReview} {product.numOfReviews === 0 ? "No Review" : "Reviews"}
+                      {product.numOfReview}{" "}
+                      {product.numOfReviews === 0 ? "No Review" : "Reviews"}
                     </span>
                   </div>
 
@@ -189,7 +198,9 @@ const ProductDetails = () => {
                 {product.stock > 0 && (
                   <div className="space-y-4">
                     <div className="quantity-container flex items-center gap-3">
-                      <span className="font-semibold text-sm sm:text-base">Quantity:</span>
+                      <span className="font-semibold text-sm sm:text-base">
+                        Quantity:
+                      </span>
                       <div className="flex items-center gap-2">
                         <button
                           disabled={quantity <= 1}
@@ -221,7 +232,13 @@ const ProductDetails = () => {
                     </div>
                     <button
                       disabled={cartLoading}
-                      onClick={handleAddToCart}
+                      onClick={() => {
+                        if (!isAuthenticated) {
+                          toast.message("Please login first");
+                          return;
+                        }
+                        handleAddToCart();
+                      }}
                       className="w-full px-4 sm:px-[20px] py-3 sm:py-[12px] border-2 rounded-[8px] text-sm sm:text-[16px] cursor-pointer text-white bg-zinc-900 border-zinc-800 transition-all duration-300 ease-in-out hover:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {cartLoading ? "Adding to cart..." : "Add to Cart"}
@@ -230,26 +247,30 @@ const ProductDetails = () => {
                 )}
 
                 {/* Review Form */}
-                <form
-                  className="space-y-4 rounded-b-[8px]"
-                  onSubmit={handleReviewSubmit}
-                >
-                  <h3 className="text-lg sm:text-xl font-semibold">Write a Review:</h3>
-                  <Rating
-                    value={0}
-                    disabled={false}
-                    onChangeRating={handelRatingChange}
-                  />
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Write your review here...."
-                    className="min-h-[100px] p-3 sm:p-[10px] border border-zinc-800 rounded-md bg-zinc-900 w-full resize-y text-sm sm:text-base"
-                  />
-                  <button className="bg-zinc-900 text-white px-4 sm:px-[20px] py-2 sm:py-[10px] border border-zinc-800 hover:text-zinc-500 rounded-lg cursor-pointer text-sm sm:text-base transition-colors">
-                    {reviewLoading ? "Submitting review..." : "Submit Review"}
-                  </button>
-                </form>
+                {isAuthenticated && (
+                  <form
+                    className="space-y-4 rounded-b-[8px]"
+                    onSubmit={handleReviewSubmit}
+                  >
+                    <h3 className="text-lg sm:text-xl font-semibold">
+                      Write a Review:
+                    </h3>
+                    <Rating
+                      value={0}
+                      disabled={false}
+                      onChangeRating={handelRatingChange}
+                    />
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Write your review here...."
+                      className="min-h-[100px] p-3 sm:p-[10px] border border-zinc-800 rounded-md bg-zinc-900 w-full resize-y text-sm sm:text-base"
+                    />
+                    <button className="bg-zinc-900 text-white px-4 sm:px-[20px] py-2 sm:py-[10px] border border-zinc-800 hover:text-zinc-500 rounded-lg cursor-pointer text-sm sm:text-base transition-colors">
+                      {reviewLoading ? "Submitting review..." : "Submit Review"}
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
 

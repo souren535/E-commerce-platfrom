@@ -321,7 +321,7 @@ const Navbar = () => {
 
           {/* ✅ MOVE SEARCH + ICONS TO TOP */}
           <div className="mb-6">
-            {/* Profile, User Name, and Cart Icon for Mobile */}
+            {/* Profile, User Name for Mobile */}
             {isAuthenticated ? (
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 border-2 border-zinc-400 rounded-full overflow-hidden shrink-0">
@@ -344,14 +344,6 @@ const Navbar = () => {
                     <span className="sr-only">Open profile menu</span>
                     {/* Avatar acts as menu trigger */}
                   </button>
-                  <Link to="/cart" className="relative inline-block">
-                    <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
-                    {cartItems.length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {cartItems.length}
-                      </span>
-                    )}
-                  </Link>
                 </div>
                 {/* Mobile Profile Dropdown */}
                 <AnimatePresence>
@@ -385,16 +377,19 @@ const Navbar = () => {
                 <Link to="/auth">
                   <PersonAdd className="text-zinc-300 hover:text-black text-2xl" />
                 </Link>
-                <Link to="/cart" className="relative inline-block">
-                  <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                      {cartItems.length}
-                    </span>
-                  )}
-                </Link>
               </div>
             )}
+            {/* Cart icon always visible on mobile */}
+            <div className="flex mb-4">
+              <Link to="/cart" className="relative inline-block">
+                <ShoppingCart className="text-zinc-300 hover:text-black text-3xl" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {cartItems.length}
+                  </span>
+                )}
+              </Link>
+            </div>
             <form className="relative w-full mb-4" onSubmit={handleSubmit}>
               <input
                 className="bg-zinc-300 text-black rounded-full w-full px-3 py-2 pr-10"
