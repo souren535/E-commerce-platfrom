@@ -193,14 +193,14 @@ const Modal = ({ onClose, modalType }) => {
                 <CardContent>
                   <div>
                     <Input
-                      className="py-6 mb-6 placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600"
+                      className="py-6 mb-6 text-white placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600"
                       type="password"
                       placeholder="Old Password"
                       value={oldPassword}
                       onChange={(e) => setOldPassword(e.target.value)}
                     />
                     <Input
-                      className="py-6 mb-6 placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 "
+                      className="py-6 mb-6 text-white placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 "
                       type="password"
                       placeholder="New Password"
                       value={newPassword}
@@ -212,7 +212,7 @@ const Modal = ({ onClose, modalType }) => {
                       </p>
                     )}
                     <Input
-                      className="py-6 mb-6 placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600"
+                      className="py-6 mb-6 text-white placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600"
                       type="password"
                       placeholder="Confirm Password"
                       value={confirmPassword}
@@ -277,20 +277,22 @@ const Modal = ({ onClose, modalType }) => {
             >
               <button
                 onClick={onClose}
-                className="absolute top-2 right-3 text-zinc-600 p-1 hover:text-black rounded-full hover:bg-zinc-300 transition-colors"
+                className="absolute top-2 right-3 text-zinc-500 p-1 hover:text-black rounded-full hover:bg-zinc-300 transition-colors"
               >
                 <Close />
               </button>
-              <Card>
+              <Card
+                className={`bg-zinc-800 border border-zinc-800 overflow-x-hidden`}
+              >
                 <CardHeader>
-                  <CardTitle className="text-center text-2xl">
+                  <CardTitle className="text-center text-2xl text-white">
                     Forget Password
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div>
                     <Input
-                      className="py-6 mb-6 placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600"
+                      className="py-6 mb-6 text-white placeholder:text-zinc-400 border-1 border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600"
                       type="email"
                       name="email"
                       placeholder="Enter your ragistration Email"
@@ -312,7 +314,7 @@ const Modal = ({ onClose, modalType }) => {
                   )}
                   <Button
                     onClick={handleForgotEmailSubmit}
-                    className="mt-3 text-center w-full p-7 rounded-lg text-lg bg-zinc-600 hover:bg-zinc-900"
+                    className="mt-3 text-zinc-400 text-center w-full p-7 rounded-lg text-lg bg-zinc-700 border border-zinc-600 hover:border-zinc-800 hover:bg-zinc-900"
                   >
                     {loading ? "Sending..." : "Send"}
                   </Button>
