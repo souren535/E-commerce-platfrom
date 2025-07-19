@@ -102,10 +102,12 @@ const ProductDetails = () => {
       ) : (
         <>
           <PageTitle title={`${product.name} - details`} />
-          <div className="product-details p-[100px] max-sm:w-[80%] bg-zinc-950 max-sm:mx-auto">
-            <div className="product-detail max-w-[1500px] mx-auto flex md:flex-row text-white flex-col  justify-around items-stretch min-h-[600px]">
-              <div className="flex items-center justify-center  z-10 mb-[20px] w-[700px] max-md:static flex-1 pt-[20px]">
-                <div className="h-full space-y-7 w-[200px]  flex flex-col justify-center items-center">
+          <div className="product-details p-4 sm:p-8 md:p-12 lg:p-[100px] bg-zinc-950 min-h-screen">
+            <div className="product-detail max-w-[1500px] mx-auto flex flex-col lg:flex-row text-white justify-around items-stretch min-h-[600px] gap-8">
+              {/* Product Images Section */}
+              <div className="flex flex-col lg:flex-row items-center justify-center z-10 w-full lg:w-[700px] flex-1 pt-4 lg:pt-[20px]">
+                {/* Thumbnail Images - Hidden on mobile, shown on desktop */}
+                <div className="hidden lg:flex h-full space-y-7 w-[200px] flex-col justify-center items-center">
                   {product.image.map((image, i) => (
                     <motion.img
                       initial={{ opacity: 0, y: -10 }}
@@ -122,92 +124,117 @@ const ProductDetails = () => {
                       alt={`Thumbnail ${i + 1}`}
                       className="w-[100px] h-[100px] cursor-pointer rounded-2xl"
                       onMouseEnter={() => setSelectedImage(image.url)}
-                      onMouseLeave={() => selectedImage(image[0].url)}
+                      onMouseLeave={() => setSelectedImage(product.image[0].url)}
                     />
                   ))}
                 </div>
-                <img
-                  src={selectedImage || product.image[0].url}
-                  className=" w-[70%] max-h-[ 500px] object-contain rounded-3xl "
-                  alt="Product Title"
-                />
+                
+                {/* Main Product Image */}
+                <div className="w-full lg:w-[70%] flex flex-col items-center">
+                  <img
+                    src={selectedImage || product.image[0].url}
+                    className="w-full max-w-[500px] max-h-[500px] object-contain rounded-3xl"
+                    alt="Product Title"
+                  />
+                  
+                  {/* Mobile Image Gallery - Horizontal scroll */}
+                  <div className="lg:hidden w-full mt-4 overflow-x-auto">
+                    <div className="flex space-x-4 pb-2">
+                      {product.image.map((image, i) => (
+                        <img
+                          key={i}
+                          src={image.url}
+                          alt={`Product ${i + 1}`}
+                          className="w-20 h-20 rounded-lg cursor-pointer flex-shrink-0 border-2 border-zinc-800 hover:border-zinc-600 transition-colors"
+                          onClick={() => setSelectedImage(image.url)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="p-[20px] max-w-1/3 flex-1 left-4">
-                <h2 className="text-3xl mb-[15px]">{product.name}</h2>
-                <p className="text-left text-lg">{product.description}</p>
-                <p className="text-left text-2xl font-semibold">
-                  {product.price} /-
-                </p>
-                <div className="justify-center items-center">
-                  <Rating value={product.ratings} disabled={true} />
-                  <span
-                    className={`shadow-md p-1 text-white rounded-md ${
-                      product.numOfReview > 0 && "font-semibold"
-                    } text-base`}
-                  >
-                    {product.numOfReview}
-                    {product.numOfReviews === 0 ? "No Review" : "Reviews"}
-                  </span>
+              {/* Product Details Section */}
+              <div className="p-4 lg:p-[20px] w-full lg:max-w-1/3 flex-1 space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-2xl sm:text-3xl font-bold">{product.name}</h2>
+                  <p className="text-sm sm:text-lg text-zinc-300 leading-relaxed">{product.description}</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-green-400">
+                    ₹{product.price} /-
+                  </p>
+                  
+                  {/* Rating and Reviews */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <Rating value={product.ratings} disabled={true} />
+                    <span className="text-sm sm:text-base text-zinc-400">
+                      {product.numOfReview} {product.numOfReviews === 0 ? "No Review" : "Reviews"}
+                    </span>
+                  </div>
+
+                  {/* Stock Status */}
+                  <div className="text-sm sm:text-lg">
+                    <span
+                      className={
+                        product.stock > 1 ? `text-green-500` : "text-red-500"
+                      }
+                    >
+                      {product.stock > 0
+                        ? `In Stock (${product.stock})`
+                        : "Out Of Stock"}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="text-[16px] m-[10px] text-[#007600] text-lg">
-                  <span
-                    className={
-                      product.stock > 1 ? `text-green-500` : "text-red-500"
-                    }
-                  >
-                    {product.stock > 0
-                      ? `In Stoke (${product.stock})`
-                      : "Out Of Stock"}
-                  </span>
-                </div>
-
+                {/* Add to Cart Section */}
                 {product.stock > 0 && (
-                  <>
-                    <div className=" quentity-container flex items-center m-[20-px] gap-[10px]">
-                      <span className="font-semibold mr-[10px]">Quentity:</span>
-                      <button
-                        disabled={quantity <= 1}
-                        onClick={() => setQuantity(quantity - 1)}
-                        className="w-[35px] h-[35px] border-2 border-zinc-800 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-600 rounded-lg bg-zinc-900"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="text"
-                        value={quantity}
-                        className="w-[50px] h-[40px] text-center rounded-md border-2 border-zinc-800 mx-[5px] text-[16px]"
-                        readOnly
-                      />
-                      <button
-                        onClick={() => {
-                          if (product.stock <= quantity) {
-                            toast.error("cannot exceed available stock!");
-                            dispatch(removeErrors());
-                            return;
-                          }
-                          setQuantity((prev) => prev + 1);
-                        }}
-                        className="w-[35px] h-[35px] border-2 border-zinc-800 cursor-pointer text-[18px] hover:border-1 hover:border-zinc-600 rounded-lg bg-zinc-900"
-                      >
-                        +
-                      </button>
+                  <div className="space-y-4">
+                    <div className="quantity-container flex items-center gap-3">
+                      <span className="font-semibold text-sm sm:text-base">Quantity:</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          disabled={quantity <= 1}
+                          onClick={() => setQuantity(quantity - 1)}
+                          className="w-8 h-8 sm:w-[35px] sm:h-[35px] border-2 border-zinc-800 cursor-pointer text-sm sm:text-[18px] hover:border-zinc-600 rounded-lg bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="text"
+                          value={quantity}
+                          className="w-12 sm:w-[50px] h-8 sm:h-[40px] text-center rounded-md border-2 border-zinc-800 text-sm sm:text-[16px] bg-zinc-900"
+                          readOnly
+                        />
+                        <button
+                          onClick={() => {
+                            if (product.stock <= quantity) {
+                              toast.error("Cannot exceed available stock!");
+                              dispatch(removeErrors());
+                              return;
+                            }
+                            setQuantity((prev) => prev + 1);
+                          }}
+                          className="w-8 h-8 sm:w-[35px] sm:h-[35px] border-2 border-zinc-800 cursor-pointer text-sm sm:text-[18px] hover:border-zinc-600 rounded-lg bg-zinc-900"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                     <button
                       disabled={cartLoading}
                       onClick={handleAddToCart}
-                      className="w-full px-[20px] py-[12px] border-2 rounded-[8px] text-[16px] cursor-pointer my-[20px] text-white bg-zinc-900 border-zinc-800 transition-all duration-300 ease-in-out hover:translate-y-1"
+                      className="w-full px-4 sm:px-[20px] py-3 sm:py-[12px] border-2 rounded-[8px] text-sm sm:text-[16px] cursor-pointer text-white bg-zinc-900 border-zinc-800 transition-all duration-300 ease-in-out hover:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {cartLoading ? "Adding to cart..." : "Add to Cart"}
                     </button>
-                  </>
+                  </div>
                 )}
+
+                {/* Review Form */}
                 <form
-                  className="rounded-b-[8px] mb-[30px]"
+                  className="space-y-4 rounded-b-[8px]"
                   onSubmit={handleReviewSubmit}
                 >
-                  <h3>Write a Review:</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold">Write a Review:</h3>
                   <Rating
                     value={0}
                     disabled={false}
@@ -217,41 +244,42 @@ const ProductDetails = () => {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review here...."
-                    className=" min-h-[100px] p-[10px] border-1 border-zinc-800 rounded-md bg-zinc-900 w-full mx-0 my-[10px] resize-y"
+                    className="min-h-[100px] p-3 sm:p-[10px] border border-zinc-800 rounded-md bg-zinc-900 w-full resize-y text-sm sm:text-base"
                   />
-                  <button className="bg-zinc-900 text-white px-[20px] py-[10px] border-1 border-zinc-800 hover:text-zinc-500 rounded-lg cursor-pointer">
-                    {reviewLoading ? "submitting review.." : "Submit Review"}
+                  <button className="bg-zinc-900 text-white px-4 sm:px-[20px] py-2 sm:py-[10px] border border-zinc-800 hover:text-zinc-500 rounded-lg cursor-pointer text-sm sm:text-base transition-colors">
+                    {reviewLoading ? "Submitting review..." : "Submit Review"}
                   </button>
                 </form>
               </div>
             </div>
 
-            <div className=" reviews-container grid-cols-1/-1 mt-[40px] pt-[20px] border-t-[1px] border-solid border-zinc-800">
-              <h3 className="text-2xl text-white font-medium">
-                Coustomer reviews
+            {/* Reviews Section */}
+            <div className="reviews-container mt-8 sm:mt-[40px] pt-4 sm:pt-[20px] border-t border-zinc-800">
+              <h3 className="text-xl sm:text-2xl text-white font-medium mb-4 sm:mb-6">
+                Customer Reviews
               </h3>
               {product.reviews && product.reviews.length > 0 ? (
-                <div className="mt-[20px] text-white">
+                <div className="space-y-4 sm:space-y-6">
                   {product.reviews.map((review, index) => (
                     <div
-                      className="px-0 py-[20px] border-b-[1px] border-solid border-zinc-600 text-white"
+                      className="p-4 sm:p-6 border-b border-zinc-600 text-white bg-zinc-900/50 rounded-lg"
                       key={index}
                     >
-                      <div className="review header text-white">
+                      <div className="flex items-center gap-2 mb-2">
                         <Rating value={review.rating} disabled={true} />
                       </div>
-                      <p className="review-comment mx-0 my-[10px] text-left">
+                      <p className="text-sm sm:text-base text-zinc-300 mb-2 leading-relaxed">
                         {review.comment}
                       </p>
-                      <p className="mx-0 my-[10px] text-left font-sans">
+                      <p className="text-xs sm:text-sm text-zinc-400 font-medium">
                         By {review.name}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="font-sans tracking-wider text-zinc-600">
-                  No review yet. Be the first review this Product!
+                <p className="text-sm sm:text-base text-zinc-600 text-center py-8">
+                  No reviews yet. Be the first to review this product!
                 </p>
               )}
             </div>
