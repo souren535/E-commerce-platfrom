@@ -55,22 +55,22 @@ const AllReviews = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
-        <div className="flex ml-[10rem] mr-[10rem] items-center justify-between mt-20 mb-6">
-          <h1 className="text-3xl font-bold text-indigo-400">
+      <div className="min-h-screen bg-zinc-950 text-white px-2 sm:px-4 md:px-6 py-6 md:py-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-10 sm:mt-20 mb-6 gap-2 sm:gap-0 lg:mx-40">
+          <h1 className="text-2xl sm:text-3xl font-bold text-indigo-400">
             All Product Reviews
           </h1>
         </div>
 
-        <div className="overflow-x-auto ml-[10rem] mr-[10rem] rounded-lg shadow border border-indigo-800">
-          <table className="min-w-full text-sm text-left bg-zinc-900">
+        <div className="overflow-x-auto w-full rounded-lg shadow border border-indigo-800 lg:mx-40">
+          <table className="min-w-[600px] w-full text-xs sm:text-sm text-left bg-zinc-900">
             <thead className="text-xs uppercase bg-zinc-800 text-indigo-300 border-b border-indigo-700">
               <tr>
-                <th className="px-3 py-4">#</th>
-                <th className="px-3 py-4">Product</th>
-                <th className="px-3 py-4">Product Image</th>
-                <th className="px-3 py-4">Number of Reviews</th>
-                <th className="px-3 py-4 text-right">Actions</th>
+                <th className="px-2 sm:px-3 py-2 sm:py-4">#</th>
+                <th className="px-2 sm:px-3 py-2 sm:py-4">Product</th>
+                <th className="px-2 sm:px-3 py-2 sm:py-4">Product Image</th>
+                <th className="px-2 sm:px-3 py-2 sm:py-4">Number of Reviews</th>
+                <th className="px-2 sm:px-3 py-2 sm:py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="text-zinc-300">
@@ -79,17 +79,17 @@ const AllReviews = () => {
                   key={product._id}
                   className="border-b border-zinc-800 hover:bg-zinc-800 transition"
                 >
-                  <td className="px-3 py-4 font-medium">{i + 1}</td>
-                  <td className="px-3 py-4">{product.name}</td>
-                  <td className="px-3 py-4">
+                  <td className="px-2 sm:px-3 py-2 sm:py-4 font-medium">{i + 1}</td>
+                  <td className="px-2 sm:px-3 py-2 sm:py-4">{product.name}</td>
+                  <td className="px-2 sm:px-3 py-2 sm:py-4">
                     <img
                       src={product.image[0].url}
                       alt={product.name}
-                      className="w-15 h-15 object-cover rounded"
+                      className="w-12 h-12 sm:w-15 sm:h-15 object-cover rounded"
                     />
                   </td>
-                  <td className="px-3 py-4">{product.reviews?.length || 0}</td>
-                  <td className="px-3 py-4 text-right">
+                  <td className="px-2 sm:px-3 py-2 sm:py-4">{product.reviews?.length || 0}</td>
+                  <td className="px-2 sm:px-3 py-2 sm:py-4 text-right">
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
@@ -99,9 +99,9 @@ const AllReviews = () => {
                           <Eye size={14} className="mr-1" /> View
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="bg-zinc-900 border border-indigo-700 text-white">
+                      <DialogContent className="bg-zinc-900 border border-indigo-700 text-white max-w-xs sm:max-w-md md:max-w-lg w-full">
                         <DialogHeader>
-                          <DialogTitle className="text-indigo-400">
+                          <DialogTitle className="text-indigo-400 text-base sm:text-lg">
                             Reviews for {selectedProduct?.name}
                           </DialogTitle>
                         </DialogHeader>
@@ -110,7 +110,7 @@ const AllReviews = () => {
                             reviews.map((review) => (
                               <div
                                 key={review._id}
-                                className="p-4 border border-zinc-700 rounded-lg bg-zinc-800"
+                                className="p-3 sm:p-4 border border-zinc-700 rounded-lg bg-zinc-800"
                               >
                                 <p>
                                   <strong>User:</strong> {review.name}

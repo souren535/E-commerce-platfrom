@@ -87,6 +87,18 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    // Prevent body scroll when mobile menu is open
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
   console.log("isAuthenticated in App component", isAuthenticated);
   console.log("navbar use object", user);
   const location = useLocation();
@@ -261,6 +273,13 @@ const Navbar = () => {
 
                 {/* Pop up manu */}
 
+                {open && (
+                  <div
+                    className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+                    onClick={() => setOpen(false)}
+                  ></div>
+                )}
+
                 <AnimatePresence>
                   {open && (
                     <motion.div
@@ -305,6 +324,14 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Overlay for mobile menu */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+          onClick={toggleMenu}
+        ></div>
+      )}
+
       {/* Mobile Navigation Slide-in Panel */}
       <div
         className={`md:hidden fixed top-0 left-0 h-full w-2/3 max-w-xs bg-zinc-900 z-40 transform transition-transform duration-300 ease-in-out shadow-lg ${
@@ -323,29 +350,31 @@ const Navbar = () => {
           <div className="mb-6">
             {/* Profile, User Name for Mobile */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 border-2 border-zinc-400 rounded-full overflow-hidden shrink-0">
+              <div className="flex items-center gap-3 mb-4 relative">
+                <button
+                  onClick={() => setOpen(!open)}
+                  className="w-12 h-12 border-2 border-zinc-400 rounded-full overflow-hidden shrink-0 focus:outline-none"
+                  style={{ padding: 0, background: 'none', border: 'none' }}
+                  aria-label="Open profile menu"
+                >
                   <img
                     src={user?.avatar.url ? user.avatar?.url : "/images/profile_avatar.png"}
                     alt="profile image"
                     className="object-cover w-full h-full"
                   />
-                </div>
+                </button>
                 {user?.name && (
                   <span className="text-white uppercase text-base font-semibold tracking-wide">
                     {user.name.split(" ")[0]}
                   </span>
                 )}
-                <div className="ml-auto flex items-center gap-2">
-                  <button
-                    onClick={() => setOpen(!open)}
-                    className="focus:outline-none"
-                  >
-                    <span className="sr-only">Open profile menu</span>
-                    {/* Avatar acts as menu trigger */}
-                  </button>
-                </div>
                 {/* Mobile Profile Dropdown */}
+                {open && (
+                  <div
+                    className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+                    onClick={() => setOpen(false)}
+                  ></div>
+                )}
                 <AnimatePresence>
                   {open && (
                     <motion.div
@@ -353,15 +382,18 @@ const Navbar = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute left-6 top-20 w-40 py-2 z-50"
+                      className="absolute left-0 top-14 w-40 py-2 z-50 bg-transparent rounded-md shadow-lg"
                     >
                       {popupLinks.map((item, index) => (
                         <motion.button
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.08 * index }}
-                          whileHover={{ scale: 1.2 }}
-                          onClick={item.funcName}
+                          whileHover={{ scale: 1.1 }}
+                          onClick={() => {
+                            setOpen(false);
+                            item.funcName();
+                          }}
                           key={item.lable}
                           className={`block w-full text-center cursor-pointer px-4 py-2 mt-2 rounded-md text-white bg-zinc-700 hover:bg-zinc-800 text-sm ${item.isCart && "bg-zinc-800"}`}
                         >
@@ -379,6 +411,8 @@ const Navbar = () => {
                 </Link>
               </div>
             )}
+            {/* Divider between profile and cart icon */}
+            <hr className="my-2 border-zinc-700" />
             {/* Cart icon always visible on mobile */}
             <div className="flex mb-4">
               <Link to="/cart" className="relative inline-block">

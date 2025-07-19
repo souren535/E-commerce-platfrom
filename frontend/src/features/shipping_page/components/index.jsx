@@ -148,7 +148,7 @@ const CountrySelector = ({
     <>
       <div className="country_group flex flex-col pt-6.5 ">
         {/* country */}
-        <div className="Countries mb-10 w-full max-w-xs md:max-w-full">
+        <div className="Countries mb-10 pl-2.5 mb:pl-2.5 w-full">
           <Label htmlFor="country" className="text-xl mb-2">
             Country <span className="text-red-400">*</span>
           </Label>
@@ -157,7 +157,7 @@ const CountrySelector = ({
             onValueChange={handleCountryChange}
             disabled={loading}
           >
-            <SelectTrigger className="w-full md:w-[310px] p-4 md:p-5.5 placeholder:text-white border-1 bg-zinc-800 border-zinc-700 text-zinc-400 [&>span]:text-zinc-400">
+            <SelectTrigger className="w-full p-4 md:p-5.5 placeholder:text-white border-1 bg-zinc-800 border-zinc-700 text-zinc-400 [&>span]:text-zinc-400">
               <SelectValue
                 placeholder={
                   loading ? "Loading countries..." : "Select a country"
@@ -185,14 +185,18 @@ const CountrySelector = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-          {validation.country && (
-            <span className="text-red-300 text-sm mt-2 block">{validation.country}</span>
-          )}
+          <span
+            className={`text-red-300 text-sm mt-2 block${
+              validation.country ? "" : " invisible"
+            }`}
+          >
+            {validation.country || "placeholder"}
+          </span>
         </div>
 
         {/* states */}
         {selectedCountry && (
-          <div className="states mb-10 w-full max-w-xs md:max-w-full">
+          <div className="states mb-10 pl-2.5 mb:pl-2.5 w-full">
             <Label htmlFor="state" className="text-xl mb-2">
               State <span className="text-red-400">*</span>
             </Label>
@@ -201,7 +205,7 @@ const CountrySelector = ({
               onValueChange={handleStateChange}
               disabled={!selectedCountry || loading}
             >
-              <SelectTrigger className="w-full md:w-[310px] p-4 md:p-5.5 placeholder:text-white border-1 bg-zinc-800 border-zinc-700 text-zinc-400 [&>span]:text-zinc-400">
+              <SelectTrigger className="w-full p-4 md:p-5.5 placeholder:text-white border-1 bg-zinc-800 border-zinc-700 text-zinc-400 [&>span]:text-zinc-400">
                 <SelectValue
                   placeholder={
                     !selectedCountry
@@ -233,15 +237,19 @@ const CountrySelector = ({
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {validation.state && (
-              <span className="text-red-300 text-sm mt-2 block">{validation.state}</span>
-            )}
+            <span
+              className={`text-red-300 text-sm mt-2 block${
+                validation.state ? "" : " invisible"
+              }`}
+            >
+              {validation.state || "placeholder"}
+            </span>
           </div>
         )}
 
         {/* cities */}
         {selectedCountry && selectedState && (
-          <div className="cities mb-10 w-full max-w-xs md:max-w-full">
+          <div className="cities mb-10 pl-2.5 mb:pl-2.5 w-full">
             <Label htmlFor="city" className="text-xl mb-2">
               City <span className="text-red-400">*</span>
             </Label>
@@ -250,7 +258,7 @@ const CountrySelector = ({
               onValueChange={handleCityChange}
               disabled={!selectedState || loading}
             >
-              <SelectTrigger className="w-full md:w-[310px] p-4 md:p-5.5 placeholder:text-white border-1 bg-zinc-800 border-zinc-700 text-zinc-400 [&>span]:text-zinc-400">
+              <SelectTrigger className="w-full p-4 md:p-5.5 placeholder:text-white border-1 bg-zinc-800 border-zinc-700 text-zinc-400 [&>span]:text-zinc-400">
                 <SelectValue
                   placeholder={
                     !selectedState
@@ -284,9 +292,13 @@ const CountrySelector = ({
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {validation.city && (
-              <span className="text-red-300 text-sm mt-2 block">{validation.city}</span>
-            )}
+            <span
+              className={`text-red-300 text-sm mt-2 block${
+                validation.city ? "" : " invisible"
+              }`}
+            >
+              {validation.city || "placeholder"}
+            </span>
           </div>
         )}
       </div>

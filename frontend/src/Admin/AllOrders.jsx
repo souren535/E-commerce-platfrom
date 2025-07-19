@@ -44,33 +44,26 @@ const AllOrders = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
+        <div className="min-h-screen bg-zinc-950 text-white px-2 sm:px-4 md:px-6 py-6 md:py-10">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6 mt-20">
-            <h1 className="text-3xl font-bold text-indigo-400 ml-15">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-10 sm:mt-20 gap-2 sm:gap-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-indigo-400">
               All Orders
             </h1>
-            {/* <div className="flex items-center bg-zinc-900 border border-indigo-600 px-4 py-2 rounded-lg">
-                  <Search className="text-indigo-400 mr-2" size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search by Order ID / User..."
-                    className="bg-transparent outline-none text-white"
-                  />
-                </div> */}
+            {/* Search input can be made responsive if enabled */}
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-lg shadow border ml-15 mr-15 border-indigo-800">
-            <table className="min-w-full text-sm text-left  bg-zinc-900">
+          <div className="overflow-x-auto w-full rounded-lg shadow border border-indigo-800">
+            <table className="min-w-[600px] w-full text-xs sm:text-sm text-left bg-zinc-900">
               <thead className="text-xs uppercase bg-zinc-800 text-indigo-300 border-b border-indigo-700">
                 <tr>
-                  <th className="px-6 py-3">#</th>
-                  <th className="px-6 py-3">Order ID</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Total Price</th>
-                  <th className="px-6 py-3">Number of Items</th>
-                  <th className="px-6 py-3 text-right">Actions</th>
+                  <th className="px-2 sm:px-4 py-2 sm:py-3">#</th>
+                  <th className="px-2 sm:px-4 py-2 sm:py-3">Order ID</th>
+                  <th className="px-2 sm:px-4 py-2 sm:py-3">Status</th>
+                  <th className="px-2 sm:px-4 py-2 sm:py-3">Total Price</th>
+                  <th className="px-2 sm:px-4 py-2 sm:py-3">Number of Items</th>
+                  <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-zinc-300">
@@ -79,10 +72,10 @@ const AllOrders = () => {
                     key={order._id}
                     className="border-b border-zinc-800 hover:bg-zinc-800 transition"
                   >
-                    <td className="px-6 py-4 font-medium">{i + 1}</td>
-                    <td className="px-6 py-4">{order._id}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-4 font-medium">{i + 1}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-4">{order._id}</td>
                     <td
-                      className={`px-6 py-4 ${
+                      className={`px-2 sm:px-4 py-2 sm:py-4 ${
                         order.orderStatus === "Processing"
                           ? "text-yellow-500"
                           : order.orderStatus === "Cancelled"
@@ -92,23 +85,21 @@ const AllOrders = () => {
                     >
                       {order.orderStatus}
                     </td>
-                    <td className="px-6 py-4">{order.totalPrice.toFixed(2)}</td>
-                    <td className={`px-6 py-4`}>{order.orderItems.length}</td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex justify-end items-center space-x-4">
+                    <td className="px-2 sm:px-4 py-2 sm:py-4">{order.totalPrice.toFixed(2)}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-4">{order.orderItems.length}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-4">
+                      <div className="flex justify-end items-center space-x-2 sm:space-x-4">
                         <Link
                           to={`/admin/order/edit/${order._id}`}
                           className="text-indigo-400 hover:text-indigo-200"
                         >
-                          <Edit3Icon size={25} />
+                          <Edit3Icon size={20} className="sm:w-6 sm:h-6" />
                         </Link>
-
                         <button
                           onClick={() => handleDelerteOrder(order._id)}
                           className="text-red-500 hover:text-red-300 cursor-pointer"
                         >
-                          <Trash size={25} />
+                          <Trash size={20} className="sm:w-6 sm:h-6" />
                         </button>
                       </div>
                     </td>

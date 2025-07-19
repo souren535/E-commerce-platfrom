@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Footer from "@/components/Footer";
 import Lottie from "lottie-react";
 import addressAnimation from "@/assets/animations/Address.json";
 import CountrySelector from "./components";
@@ -14,7 +13,6 @@ import PageTitle from "../../components/PageTitle";
 
 const ShippingPage = () => {
   const { shippingInfo } = useSelector((state) => state.cart);
-  console.log("Shipping details", shippingInfo);
   const dispatch = useDispatch();
   const [address, setAddress] = useState(shippingInfo.address || "");
   const [pincode, setPincode] = useState(shippingInfo.pincode || "");
@@ -26,13 +24,27 @@ const ShippingPage = () => {
   );
   const [selectedState, setSelectedState] = useState(shippingInfo.state || "");
   const [selectedCity, setSelectedCity] = useState(shippingInfo.city || "");
-  const [validation, setValidation] = useState({ length: "", address: "", pincode: "", country: "", state: "", city: "" });
+  const [validation, setValidation] = useState({
+    length: "",
+    address: "",
+    pincode: "",
+    country: "",
+    state: "",
+    city: "",
+  });
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     let valid = true;
-    let errors = { length: "", address: "", pincode: "", country: "", state: "", city: "" };
+    let errors = {
+      length: "",
+      address: "",
+      pincode: "",
+      country: "",
+      state: "",
+      city: "",
+    };
     if (!address) {
       errors.address = "Address is required";
       valid = false;
@@ -42,7 +54,9 @@ const ShippingPage = () => {
       valid = false;
     }
     if (!phoneNumber || phoneNumber.length !== 10) {
-      errors.length = !phoneNumber ? "Phone number is required" : "Invalid phone number! it should be 10 digits";
+      errors.length = !phoneNumber
+        ? "Phone number is required"
+        : "Invalid phone number! it should be 10 digits";
       valid = false;
     }
     if (!selectedCountry) {
@@ -89,7 +103,14 @@ const ShippingPage = () => {
       validation.city
     ) {
       const timer = setTimeout(() => {
-        setValidation({ length: "", address: "", pincode: "", country: "", state: "", city: "" });
+        setValidation({
+          length: "",
+          address: "",
+          pincode: "",
+          country: "",
+          state: "",
+          city: "",
+        });
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -97,22 +118,29 @@ const ShippingPage = () => {
 
   return (
     <>
-     <PageTitle title={'Shipping Details'}/>
-      <div className="text-center bg-zinc-900 flex flex-col justify-center items-center w-full min-h-screen p-2">
-        <div className="w-full max-w-4xl flex items-center mb-8 justify-center mx-auto">
+      <PageTitle title={"Shipping Details"} />
+      <div className="text-center bg-zinc-950 flex flex-col justify-center items-center w-full min-h-screen p-2">
+        <div className="w-full max-w-4xl flex items-center mt-10 mb-6 md:mb-8 justify-center mx-auto">
           <CheckoutPath activePath={0} />
         </div>
-        <div className="w-full max-w-4xl bg-zinc-800 grid grid-cols-1 md:grid-cols-2 border-2 border-zinc-700 rounded-4xl min-h-[70vh]">
+        <div
+          className="
+          w-full max-w-4xl bg-zinc-900 border-2 pt-7 pb-7 border-zinc-700 rounded-3xl
+          grid grid-cols-1 md:grid-cols-2 
+          min-h-[70vh] gap-0 md:gap-4
+          shadow-xl
+        "
+        >
+          {/* Left Side: Form */}
           <form
-            className="flex items-center justify-center w-full h-full"
+            className="flex items-center justify-center w-full h-full py-8 md:py-0"
             onSubmit={handleSubmit}
           >
-            <div className="text-white justify-center flex flex-col items-center w-full">
-              <h2 className="text-3xl md:text-5xl font-semibold uppercase text-center">
+            <div className="text-white flex flex-col items-center w-full max-w-md mx-auto px-2 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold uppercase text-center">
                 Shipping Details
               </h2>
-              <div className="mt-6 md:mt-10 w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 justify-center">
-                {/* left side details */}
+              <div className="mt-6 md:mt-10 w-full flex flex-col gap-3">
                 <UserInput
                   address={address}
                   setAddress={setAddress}
@@ -122,36 +150,32 @@ const ShippingPage = () => {
                   setPhoneNumber={setPhoneNumber}
                   validation={validation}
                 />
-                {/* right side details */}
-                <div className="w-full md:w-auto">
-                  <CountrySelector
-                    selectedCountry={selectedCountry}
-                    setSelectedCountry={setSelectedCountry}
-                    selectedState={selectedState}
-                    setSelectedState={setSelectedState}
-                    selectedCity={selectedCity}
-                    setSelectedCity={setSelectedCity}
-                    validation={validation}
-                  />
-                </div>
+                <CountrySelector
+                  selectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                  selectedState={selectedState}
+                  setSelectedState={setSelectedState}
+                  selectedCity={selectedCity}
+                  setSelectedCity={setSelectedCity}
+                  validation={validation}
+                />
               </div>
               <Button
                 type="submit"
-                className={`w-full md:w-3/4 p-4 md:p-5 mt-3 bg-zinc-700 rounded-xl hover:bg-zinc-800 hoverz:border-1`}
+                className="w-full p-4 md:w-3/4 md:p-5 mt-4 bg-zinc-700 rounded-xl hover:bg-zinc-800 transition"
               >
                 Continue
               </Button>
             </div>
           </form>
-          {/* right side col */}
-          <div className="hidden md:flex w-full justify-center items-center">
-            <div className="w-3/4">
+          {/* Right Side: Animation */}
+          <div className="hidden md:flex w-full justify-center items-center p-6">
+            <div className="w-full max-w-xs md:max-w-sm lg:max-w-md">
               <Lottie animationData={addressAnimation} loop={true} />
             </div>
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

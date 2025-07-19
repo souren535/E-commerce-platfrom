@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -23,54 +23,81 @@ import {
 } from "../features/Admin/adminSlice";
 
 // Sidebar Component
-const Sidebar = ({ setshowSocal }) => {
-  const navItems = [
-    { label: "Dashboard", icon: <LayoutDashboard />, to: "#" },
-    { label: "All Products", icon: <Package />, to: "/admin/products" },
-    {
-      label: "Create Product",
-      icon: <Package />,
-      to: "/admin/products/create",
-    },
-    { label: "All Users", icon: <Users />, to: "/admin/allUsers" },
-    { label: "All Orders", icon: <ShoppingCart />, to: "/admin/allOrders" },
-    { label: "All Reviews", icon: <Star />, to: "/admin/allReviews" },
-    { label: "Social Media", icon: <Globe />, to: "#", isToggle: true },
-  ];
+const Sidebar = React.forwardRef(
+  ({ setshowSocal, isMobile, showSidebar, setShowSidebar }, ref) => {
+    const navItems = [
+      {
+        label: "Dashboard",
+        icon: `${!isMobile ? <LayoutDashboard /> : ""}`,
+        to: "#",
+      },
+      { label: "All Products", icon: <Package />, to: "/admin/products" },
+      {
+        label: "Create Product",
+        icon: <Package />,
+        to: "/admin/products/create",
+      },
+      { label: "All Users", icon: <Users />, to: "/admin/allUsers" },
+      { label: "All Orders", icon: <ShoppingCart />, to: "/admin/allOrders" },
+      { label: "All Reviews", icon: <Star />, to: "/admin/allReviews" },
+      { label: "Social Media", icon: <Globe />, to: "#", isToggle: true },
+    ];
 
-  return (
-    <aside className="w-full  lg:w-64 min-h-[calc(100vh-4rem)] bg-zinc-900/60 text-white backdrop-blur-md border-r border-indigo-800 px-6 pt-8 pb-10 shadow-2xl mt-20 overflow-y-auto sticky top-16 lg:top-0">
-      <h2 className="text-3xl font-bold text-center text-indigo-400 tracking-widest uppercase mb-10">
-        Admin
-      </h2>
-      <nav className="space-y-4">
-        {navItems.map((item) => (
-          <div
-            className="flex items-center gap-4 text-base px-5 py-3 rounded-xl hover:bg-indigo-800/30 transition-all duration-300 hover:translate-y-1 font-medium hover:text-indigo-300 group"
-            key={item.label}
+    // Hide sidebar on mobile if not toggled
+    if (isMobile && !showSidebar) return null;
+
+    return (
+      <aside
+        ref={ref}
+        className="fixed lg:static z-30 w-4/5 max-w-xs lg:w-64 min-h-screen bg-zinc-900/60 text-white backdrop-blur-md border-r border-indigo-800 px-4 sm:px-6 pt-8 pb-10 shadow-2xl top-0 left-0 transition-transform duration-300 lg:mt-20 mt-0 overflow-y-auto"
+        style={{
+          transform:
+            isMobile && !showSidebar ? "translateX(-100%)" : "translateX(0)",
+        }}
+      >
+        <div className="flex justify-between items-center mb-6 lg:hidden">
+          <h2 className="text-2xl font-bold text-indigo-400 tracking-widest uppercase">
+            Admin
+          </h2>
+          <button
+            onClick={() => setShowSidebar(false)}
+            className="text-white text-2xl"
           >
-            {item.isToggle ? (
-              <Button
-                className="text-indigo-300 group-hover:scale-110 transition cursor-pointer"
-                onClick={() => setshowSocal((prev) => !prev)}
-              >
-                {item.icon}
-              </Button>
-            ) : (
-              <Link
-                to={item.to}
-                className="text-indigo-300 group-hover:scale-110 transition"
-              >
-                {item.icon}
-              </Link>
-            )}
-            <Link to={item.to}>{item.label}</Link>
-          </div>
-        ))}
-      </nav>
-    </aside>
-  );
-};
+            &times;
+          </button>
+        </div>
+        <h2 className="hidden lg:block text-3xl font-bold text-center text-indigo-400 tracking-widest uppercase mb-10">
+          Admin
+        </h2>
+        <nav className="space-y-4">
+          {navItems.map((item) => (
+            <div
+              className="flex items-center gap-4 text-base px-3 sm:px-5 py-3 rounded-xl hover:bg-indigo-800/30 transition-all duration-300 hover:translate-y-1 font-medium hover:text-indigo-300 group"
+              key={item.label}
+            >
+              {item.isToggle ? (
+                <Button
+                  className="text-indigo-300 group-hover:scale-110 transition cursor-pointer"
+                  onClick={() => setshowSocal((prev) => !prev)}
+                >
+                  {item.icon}
+                </Button>
+              ) : (
+                <Link
+                  to={item.to}
+                  className="text-indigo-300 group-hover:scale-110 transition"
+                >
+                  {item.icon}
+                </Link>
+              )}
+              <Link to={item.to}>{item.label}</Link>
+            </div>
+          ))}
+        </nav>
+      </aside>
+    );
+  }
+);
 
 // StatsCard Component
 const StatsCard = ({ title, value, color, icon, textColor }) => (
@@ -99,11 +126,11 @@ const SocalCard = ({ title, color, icon, bColor }) => (
 
 const AdminDashboard = () => {
   const [showSocal, setshowSocal] = useState(false);
-  const { products, orders, totalAmount } = useSelector(
-    (state) => state.admin
-  );
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const sidebarRef = useRef(null);
+  const { products, orders, totalAmount } = useSelector((state) => state.admin);
   const dispatch = useDispatch();
-  console.log("admin products details", products);
 
   useEffect(() => {
     dispatch(getAdminProducts());
@@ -111,31 +138,81 @@ const AdminDashboard = () => {
     dispatch(fetchAllReviews());
   }, [dispatch]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) setShowSidebar(false);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || !showSidebar) return;
+    function handleClickOutside(event) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setShowSidebar(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isMobile, showSidebar]);
+
   // Ensure only valid products are processed
   const validProducts = Array.isArray(products)
-    ? products.filter((product) => product && typeof product.stock === 'number')
+    ? products.filter((product) => product && typeof product.stock === "number")
     : [];
 
-  const outOfStock = validProducts.filter((product) => product.stock === 0).length;
+  const outOfStock = validProducts.filter(
+    (product) => product.stock === 0
+  ).length;
   const inStock = validProducts.filter((product) => product.stock > 0).length;
   const totalReviews = validProducts.reduce(
-    (acc, product) => acc + (Array.isArray(product.reviews) ? product.reviews.length : 0),
+    (acc, product) =>
+      acc + (Array.isArray(product.reviews) ? product.reviews.length : 0),
     0
   );
   return (
-    <div className="flex flex-col lg:flex-row bg-zinc-950 min-h-screen">
-      <Sidebar setshowSocal={setshowSocal} />
-      <main className="flex-1 flex flex-col px-4 sm:px-6 md:px-8 lg:px-10 py-10 mt-15.5">
+    <div className="flex flex-col lg:flex-row bg-zinc-950 min-h-screen relative">
+      {/* Sidebar toggle button for mobile/tablet */}
+      {isMobile && !showSidebar && (
+        <button
+          className="fixed top-20 left-4 z-40 text-purple-400 p-4 shadow-lg flex flex-col items-center lg:hidden"
+          onClick={() => setShowSidebar((prev) => !prev)}
+        >
+          <LayoutDashboard className="w-6 h-6" />
+        </button>
+      )}
+      <Sidebar
+        ref={sidebarRef}
+        setshowSocal={setshowSocal}
+        isMobile={isMobile}
+        showSidebar={isMobile ? showSidebar : true}
+        setShowSidebar={setShowSidebar}
+      />
+      <main
+        className={`flex-1 flex flex-col px-2 sm:px-4 md:px-6 lg:px-10 py-6 sm:py-8 md:py-10 ${
+          isMobile ? "mt-32" : "mt-0"
+        } lg:mt-15.5`}
+      >
         {/* Header */}
         <div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
             Dashboard Overview
           </h1>
         </div>
 
         {/* Stats Section */}
-        <div className="mt-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="mt-8 sm:mt-10 md:mt-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
             <StatsCard
               icon={<Inventory />}
               title="Total Products"
@@ -185,10 +262,9 @@ const AdminDashboard = () => {
         <div className="flex-grow" />
 
         {/* Social Cards Section */}
-
         {showSocal && (
-          <div className="mt-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="mt-8 sm:mt-10 md:mt-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
               <SocalCard
                 title="Instagram"
                 color="text-pink-500"

@@ -40,17 +40,18 @@ const Auth = () => {
     (state) => state.user
   );
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const redirect = new URLSearchParams(location.search).get("redirect") || "/";
   const [authType, setAuthType] = useState("");
 
   const dispatch = useDispatch();
-  
+
   // Clear any existing errors immediately when component mounts
   useEffect(() => {
     dispatch(removeErrors());
   }, [dispatch]);
-  
+
   // Clear any existing errors when component mounts
   useEffect(() => {
     if (error) {
@@ -102,7 +103,11 @@ const Auth = () => {
   const closeModal = () => setOpenModal(false);
   useEffect(() => {
     if (authType === "login" && isAuthenticated) {
-      navigate(redirect);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        navigate(redirect);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
   }, [authType, isAuthenticated, navigate, redirect]);
 
@@ -186,10 +191,8 @@ const Auth = () => {
   const handleLogin = () => {
     if (validateLogin()) {
       setAuthType("login");
-      // Add a minimum 2 second delay before dispatching login
-      setTimeout(() => {
-        dispatch(login(loginData));
-      }, 2000);
+      setIsLoading(true);
+      dispatch(login(loginData));
     }
   };
   const handleSignup = () => {
@@ -220,7 +223,10 @@ const Auth = () => {
               <h1 className="text-zinc-500 hover:text-white font-bold text-xl md:text-xl lg:text-4xl tracking-wider mb-6 md:mb-0 md:mt-10">
                 Sign in/Sign up
               </h1>
-              <Tabs className="w-full md:w-3/4 mt-4 md:mt-10" defaultValue="signin">
+              <Tabs
+                className="w-full md:w-3/4 mt-4 md:mt-10"
+                defaultValue="signin"
+              >
                 <TabsList className="bg-transparent rounded-none w-full ">
                   <TabsTrigger
                     value="signin"
@@ -273,7 +279,7 @@ const Auth = () => {
                     onClick={handleLogin}
                     disabled={loading}
                   >
-                    {loading ? (
+                    {isLoading ? (
                       <span className="flex items-center gap-2">
                         Signing In...
                         <span className="w-5 h-5 md:w-6 md:h-6">
