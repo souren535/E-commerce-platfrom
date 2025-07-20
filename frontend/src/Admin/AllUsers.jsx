@@ -106,19 +106,23 @@ const AllUsers = () => {
                       {moment(user.createdAt).format("MMMM Do YYYY, h:mm A")}
                     </td>
                     <td className="px-8 py-6 flex justify-end items-center gap-5 text-sm">
-                      <Link
-                        to={`/admin/user/edit/${user._id}`}
-                        className="text-indigo-400 hover:text-indigo-200"
-                      >
-                        <Edit3Icon size={25} />
-                      </Link>
+                      {user.role !== "Admin" && (
+                        <>
+                          <Link
+                            to={`/admin/user/edit/${user._id}`}
+                            className="text-indigo-400 hover:text-indigo-200"
+                          >
+                            <Edit3Icon size={25} />
+                          </Link>
 
-                      <button
-                        onClick={() => handleDelerteUser(user._id)}
-                        className="text-red-500 hover:text-red-300 cursor-pointer"
-                      >
-                        <Trash size={25} />
-                      </button>
+                          <button
+                            onClick={() => handleDelerteUser(user._id)}
+                            className="text-red-500 hover:text-red-300 cursor-pointer"
+                          >
+                            <Trash size={25} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
