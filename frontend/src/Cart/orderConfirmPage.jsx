@@ -1,5 +1,4 @@
 import React from "react";
-import Footer from "../components/Footer";
 import {
   Table,
   TableBody,
@@ -197,7 +196,6 @@ const OrderConfirmPage = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };
