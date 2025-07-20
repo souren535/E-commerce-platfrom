@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, ArrowBack } from "@mui/icons-material";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
@@ -87,7 +87,17 @@ const UpdateProfile = () => {
   return (
     <>
       <div className="flex items-center bg-zinc-950 justify-center w-full min-h-screen px-2 sm:px-4 py-8 sm:py-10">
-        <div className="shadow-xl bg-zinc-900 text-white flex justify-center items-center w-full max-w-md sm:max-w-lg md:max-w-2xl lg:w-[50vw] min-h-[60vh] border-2 border-zinc-800 rounded-3xl p-4 sm:p-6 md:p-10">
+        <div className="shadow-xl bg-zinc-900 text-white flex justify-center items-center w-full max-w-md sm:max-w-lg md:max-w-2xl lg:w-[50vw] min-h-[60vh] border-2 border-zinc-800 rounded-3xl p-4 sm:p-6 md:p-10 relative">
+          {/* Back Arrow */}
+          <button
+            type="button"
+            className="absolute left-4 top-4 flex items-center gap-2 text-zinc-300 hover:text-white hover:bg-zinc-800 p-2 rounded-full transition"
+            onClick={() => navigate("/profile")}
+            aria-label="Back to Profile"
+          >
+            <ArrowBack className="!text-2xl" />
+            <span className="hidden sm:inline text-base font-medium">Back</span>
+          </button>
           <form
             onSubmit={updateSubmit}
             encType="multipart/form-data"
