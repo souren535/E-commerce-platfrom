@@ -8,6 +8,13 @@ import { ToastContainer } from "react-toastify";
 import { Toaster } from "./components/ui/sonner.jsx";
 import { BrowserRouter } from "react-router-dom";
 
+// Set --vh to the actual viewport height for mobile browsers
+function setVh() {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+}
+window.addEventListener('resize', setVh);
+setVh();
+
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <Provider store={store}>

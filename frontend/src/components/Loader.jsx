@@ -4,7 +4,10 @@ import loaderAnimation from "../assets/animations/loader.json";
 
 const Loader = () => {
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-zinc-950 w-full min-h-screen z-50">
+    <div
+      className="fixed top-0 left-0 w-screen flex justify-center items-center bg-zinc-950 z-50"
+      style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
+    >
       <div className="w-80 h-80 text-zinc-600">
         <Lottie
           animationData={loaderAnimation}

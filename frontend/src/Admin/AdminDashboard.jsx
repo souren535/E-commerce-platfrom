@@ -21,6 +21,7 @@ import {
   getAdminProducts,
   getAllOrders,
 } from "../features/Admin/adminSlice";
+import { Dashboard } from "@mui/icons-material";
 
 // Sidebar Component
 const Sidebar = React.forwardRef(
@@ -28,7 +29,7 @@ const Sidebar = React.forwardRef(
     const navItems = [
       {
         label: "Dashboard",
-        icon: `${!isMobile ? <LayoutDashboard /> : ""}`,
+        icon: !isMobile ? <LayoutDashboard /> : <Dashboard />,
         to: "#",
       },
       { label: "All Products", icon: <Package />, to: "/admin/products" },

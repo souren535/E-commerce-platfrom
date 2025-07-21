@@ -128,7 +128,8 @@ const EditUser = () => {
           <div className="flex justify-between mt-8">
             <button
               type="button"
-              className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg"
+              onClick={() => navigate("/admin/allUsers")}
+              className="bg-gray-700 cursor-pointer hover:bg-gray-600 text-white px-5 py-2 rounded-lg"
             >
               Cancel
             </button>
