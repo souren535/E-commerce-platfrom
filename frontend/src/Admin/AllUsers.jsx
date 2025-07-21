@@ -24,6 +24,9 @@ const AllUsers = () => {
   // Clear any leftover messages when the page loads
   useEffect(() => {
     dispatch(clearMessage());
+    dispatch(removeSuccess("update"));
+    dispatch(removeSuccess("delete"));
+    dispatch(removeErrors());
   }, [dispatch]);
 
   useEffect(() => {
