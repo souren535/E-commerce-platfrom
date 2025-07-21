@@ -35,7 +35,7 @@ const AllUsers = () => {
     }
   }, [dispatch, error]);
 
-  const handleDelerteUser = (userId) => {
+  const handleDeleteUser = (userId) => {
     dispatch(AdminDeleteUser(userId));
   };
 
@@ -106,7 +106,7 @@ const AllUsers = () => {
                       {moment(user.createdAt).format("MMMM Do YYYY, h:mm A")}
                     </td>
                     <td className="px-8 py-6 flex justify-end items-center gap-5 text-sm">
-                      {user.role !== "Admin" && (
+                      {user.role?.toLowerCase() !== "admin" && (
                         <>
                           <Link
                             to={`/admin/user/edit/${user._id}`}
@@ -116,7 +116,7 @@ const AllUsers = () => {
                           </Link>
 
                           <button
-                            onClick={() => handleDelerteUser(user._id)}
+                            onClick={() => handleDeleteUser(user._id)}
                             className="text-red-500 hover:text-red-300 cursor-pointer"
                           >
                             <Trash size={25} />

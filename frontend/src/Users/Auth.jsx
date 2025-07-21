@@ -73,6 +73,7 @@ const Auth = () => {
       );
       dispatch(removeErrors());
       setAuthType("");
+      setIsLoading(false);
     }
   }, [authType, dispatch, error, openModal]);
 
